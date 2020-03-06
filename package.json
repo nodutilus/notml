@@ -1,0 +1,35 @@
+{
+  "name": "@notml/core",
+  "version": "0.0.0",
+  "description": "Not a HTML - is object-oriented modeling of HTML",
+  "license": "Unlicense",
+  "repository": "github:notml/core",
+  "type": "module",
+  "files": [],
+  "browser": "./",
+  "exports": {
+    ".": "./"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@nodutilus/eslint-config": "latest",
+    "@nodutilus/nyc-config": "latest",
+    "@nodutilus/ci-cd": "latest",
+    "@nodutilus/test": "latest",
+    "@babel/plugin-proposal-class-properties": "latest",
+    "@rollup/plugin-alias": "latest",
+    "@rollup/plugin-commonjs": "latest",
+    "@rollup/plugin-node-resolve": "latest",
+    "rollup": "latest",
+    "rollup-plugin-babel": "latest",
+    "rollup-plugin-cleanup": "latest",
+    "rollup-plugin-terser": "latest",
+    "jsdom": "latest",
+    "fastify": "latest",
+    "fastify-static": "latest"
+  },
+  "scripts": {
+    "build": "npx rollup --config",
+    "prepack": "npx rollup --config"
+  }
+}
