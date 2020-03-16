@@ -1,3 +1,6 @@
+# Директория сборки
+build/
+
 # Logs
 logs
 *.log
