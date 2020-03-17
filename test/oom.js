@@ -39,15 +39,23 @@ export default class TestOOM extends Test {
 
   /** callback для чейнинга и модификаций вложенных элементов */
   ['chaining - with callback']() {
-    const form = oom('form', oom
+    const form1 = oom('form', oom
       .span('test', span => {
         span = span.dom
         span.textContent += '-ok'
         span.classList.add('test')
       })
     ).dom.outerHTML
+    const form2 = oom('form')
+      .span('test', span => {
+        span = span.dom
+        span.textContent += '-ok'
+        span.classList.add('test')
+      })
+      .dom.outerHTML
 
-    assert.equal(form, '<form><span class="test">test-ok</span></form>')
+    assert.equal(form1, '<form><span class="test">test-ok</span></form>')
+    assert.equal(form2, '<form><span class="test">test-ok</span></form>')
   }
 
   /** Пустой вызов oom и обращение к атрибутам oom создают фрагмент */
