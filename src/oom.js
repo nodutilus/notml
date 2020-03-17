@@ -164,7 +164,7 @@ const oomHandler = {
   },
   set: () => false
 }
-const oom = new Proxy(() => { }, oomHandler)
+const oom = new Proxy(OOMAbstract, oomHandler)
 
 
 export { oom }
