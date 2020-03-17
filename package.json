@@ -6,9 +6,9 @@
   "repository": "github:notml/core",
   "type": "module",
   "files": [],
-  "browser": "./",
+  "browser": "./notml.min.js",
   "exports": {
-    ".": "./"
+    ".": "./notml.js"
   },
   "dependencies": {},
   "devDependencies": {
@@ -17,8 +17,6 @@
     "@nodutilus/ci-cd": "latest",
     "@nodutilus/test": "latest",
     "@babel/plugin-proposal-class-properties": "latest",
-    "@rollup/plugin-alias": "latest",
-    "@rollup/plugin-commonjs": "latest",
     "@rollup/plugin-node-resolve": "latest",
     "rollup": "latest",
     "rollup-plugin-babel": "latest",

@@ -33,6 +33,8 @@
     }
   ],
   "ignorePatterns": [
-    "build/"
+    "/build/",
+    "/notml.js",
+    "/notml.min.js"
   ]
 }

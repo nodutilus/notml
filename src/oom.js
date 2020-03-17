@@ -45,15 +45,6 @@ class OOMFragment extends OOMAbstract {
     this.append(child)
   }
 
-  /**
-   * У фрагмента нет атрибутов
-   *
-   * @returns {OOMElement}
-   */
-  setAttributes() {
-    return this
-  }
-
 }
 
 
@@ -102,7 +93,6 @@ class OOMElement extends OOMAbstract {
    * Установка атрибутов элемента
    *
    * @param {Object<string, string>} [attributes]
-   * @returns {OOMElement}
    */
   setAttributes(attributes = {}) {
     for (const [attrName, attrValue] of Object.entries(attributes)) {
@@ -112,8 +102,6 @@ class OOMElement extends OOMAbstract {
         this.dom.setAttribute(attrName, attrValue)
       }
     }
-
-    return this
   }
 
 }
