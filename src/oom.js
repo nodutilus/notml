@@ -112,9 +112,12 @@ const elementHandler = {
       return target[tagName]
     } else {
       return (...args) => {
+        const callback = typeof args[args.length - 1] === 'function' ? args.pop() : null
         const element = new OOMElement(tagName, ...args)
 
         target.append(element)
+
+        if (callback) callback(new Proxy(element, elementHandler))
 
         return proxy
       }
@@ -130,11 +133,8 @@ const oomHandler = {
    * @returns {Proxy<OOMElement|OOMFragment>}
    */
   apply: (_, __, args) => {
-    const callback = typeof args[args.length] === 'function' ? args.pop() : null
     const element = new (typeof args[0] === 'string' ? OOMElement : OOMFragment)(...args)
     const proxy = new Proxy(element, elementHandler)
-
-    if (callback) callback(proxy)
 
     return proxy
   },
@@ -149,11 +149,12 @@ const oomHandler = {
      * @returns {Proxy<OOMFragment>}
      */
     return (...args) => {
-      const callback = typeof args[args.length] === 'function' ? args.pop() : null
-      const element = new OOMFragment(new OOMElement(tagName, ...args))
-      const proxy = new Proxy(element, elementHandler)
+      const callback = typeof args[args.length - 1] === 'function' ? args.pop() : null
+      const element = new OOMElement(tagName, ...args)
+      const fragment = new OOMFragment(element)
+      const proxy = new Proxy(fragment, elementHandler)
 
-      if (callback) callback(proxy)
+      if (callback) callback(new Proxy(element, elementHandler))
 
       return proxy
     }
