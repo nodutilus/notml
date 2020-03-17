@@ -133,8 +133,11 @@ const oomHandler = {
    * @returns {Proxy<OOMElement|OOMFragment>}
    */
   apply: (_, __, args) => {
+    const callback = typeof args[args.length - 1] === 'function' ? args.pop() : null
     const element = new (typeof args[0] === 'string' ? OOMElement : OOMFragment)(...args)
     const proxy = new Proxy(element, elementHandler)
+
+    if (callback) callback(proxy)
 
     return proxy
   },

@@ -44,8 +44,8 @@ export default class TestOOM extends Test {
         span = span.dom
         span.textContent += '-ok'
         span.classList.add('test')
-      })
-    ).dom.outerHTML
+      }))
+      .dom.outerHTML
     const form2 = oom('form')
       .span('test', span => {
         span = span.dom
@@ -53,9 +53,18 @@ export default class TestOOM extends Test {
         span.classList.add('test')
       })
       .dom.outerHTML
+    const form3 = oom('form', form => form
+      .span('test', span => {
+        span = span.dom
+        span.textContent += '-ok'
+        span.classList.add('test')
+      }))
+      .dom.outerHTML
+    const testForm = '<form><span class="test">test-ok</span></form>'
 
-    assert.equal(form1, '<form><span class="test">test-ok</span></form>')
-    assert.equal(form2, '<form><span class="test">test-ok</span></form>')
+    assert.equal(form1, testForm)
+    assert.equal(form2, testForm)
+    assert.equal(form3, testForm)
   }
 
   /** Пустой вызов oom и обращение к атрибутам oom создают фрагмент */
