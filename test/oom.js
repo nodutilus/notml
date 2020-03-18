@@ -203,4 +203,16 @@ export default class TestOOM extends Test {
     assert.equal(span.dom.childNodes.length, 1)
   }
 
+  /** Код из примера */
+  ['example in readme']() {
+    const div = oom('div')
+      .div({ class: 'header' })
+      .div({ class: 'test' }, oom
+        .span('Name: ', { class: 'test-label' })
+        .span('Test', { class: 'test-name' }))
+      .div({ class: 'footer' })
+
+    assert.equal(div.dom.outerHTML, '<div><div class="header"></div><div class="test"><span class="test-label">Name: </span><span class="test-name">Test</span></div><div class="footer"></div></div>')
+  }
+
 }
