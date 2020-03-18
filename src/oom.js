@@ -21,6 +21,7 @@ class OOMAbstract {
    * Добавление дочернего элемента
    *
    * @param {DocumentFragment|HTMLElement} child
+   * @returns {OOMAbstract}
    */
   append(child) {
     if (child instanceof OOMAbstract) {
@@ -28,6 +29,8 @@ class OOMAbstract {
     } else if (child) {
       this.dom.append(child)
     }
+
+    return this
   }
 
 }
@@ -93,6 +96,7 @@ class OOMElement extends OOMAbstract {
    * Установка атрибутов элемента
    *
    * @param {Object<string, string>} [attributes]
+   * @returns {OOMAbstract}
    */
   setAttributes(attributes = {}) {
     for (const [attrName, attrValue] of Object.entries(attributes)) {
@@ -102,6 +106,8 @@ class OOMElement extends OOMAbstract {
         this.dom.setAttribute(attrName, attrValue)
       }
     }
+
+    return this
   }
 
 }
@@ -109,7 +115,17 @@ class OOMElement extends OOMAbstract {
 const elementHandler = {
   get: (target, tagName, proxy) => {
     if (tagName in target) {
-      return target[tagName]
+      if (typeof target[tagName] === 'function') {
+        return (...args) => {
+          let result = target[tagName](...args)
+
+          result = result === target ? proxy : result
+
+          return result
+        }
+      } else {
+        return target[tagName]
+      }
     } else {
       return (...args) => {
         const callback = typeof args[args.length - 1] === 'function' ? args.pop() : null
@@ -126,12 +142,6 @@ const elementHandler = {
   set: () => false
 }
 const oomHandler = {
-  /**
-   * @param {any} _
-   * @param {any} __
-   * @param {Array<any>} args
-   * @returns {Proxy<OOMElement|OOMFragment>}
-   */
   apply: (_, __, args) => {
     const callback = typeof args[args.length - 1] === 'function' ? args.pop() : null
     const element = new (typeof args[0] === 'string' ? OOMElement : OOMFragment)(...args)
@@ -141,16 +151,7 @@ const oomHandler = {
 
     return proxy
   },
-  /**
-   * @param {any} _
-   * @param {string} tagName
-   * @returns {function}
-   */
   get: (_, tagName) => {
-    /**
-     * @param {Array<any>} args
-     * @returns {Proxy<OOMFragment>}
-     */
     return (...args) => {
       const callback = typeof args[args.length - 1] === 'function' ? args.pop() : null
       const element = new OOMElement(tagName, ...args)

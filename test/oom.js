@@ -67,6 +67,16 @@ export default class TestOOM extends Test {
     assert.equal(form3, testForm)
   }
 
+  /** Чейнинг методов OOMAbstract/OOMFragment/OOMElement */
+  ['chaining - oom methods']() {
+    const div = oom('div')
+      .append(oom('span'))
+      .setAttributes({ class: 'test' })
+      .dom.outerHTML
+
+    assert.equal(div, '<div class="test"><span></span></div>')
+  }
+
   /** Пустой вызов oom и обращение к атрибутам oom создают фрагмент */
   ['create Fragment with oom']() {
     const { DocumentFragment } = window
