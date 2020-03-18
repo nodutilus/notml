@@ -121,4 +121,86 @@ export default class TestOOM extends Test {
     assert.equal(counter, 1)
   }
 
+  /** Перетаскивание элемента между разными узлами DOM */
+  ['OOMElement - moving']() {
+    const span = oom('span', 'test')
+    const div1 = oom('div')
+    const div2 = oom('div')
+
+    div1.append(span)
+    assert.equal(span.dom.parentNode, div1.dom)
+    assert.equal(div1.dom.innerHTML, '<span>test</span>')
+    assert.equal(div2.dom.innerHTML, '')
+
+    div2.append(span)
+    assert.equal(span.dom.parentNode, div2.dom)
+    assert.equal(div1.dom.innerHTML, '')
+    assert.equal(div2.dom.innerHTML, '<span>test</span>')
+
+    assert.equal(span.dom.outerHTML, '<span>test</span>')
+  }
+
+  /** Клонирование элемента */
+  ['OOMElement - cloning']() {
+    const span = oom('span', 'test')
+    const div1 = oom('div')
+    const div2 = oom('div')
+    const div3 = oom('div')
+
+    div1.append(span.clone())
+    assert.equal(div1.dom.innerHTML, '<span>test</span>')
+    assert.equal(div2.dom.innerHTML, '')
+
+    div2.append(span.clone())
+    assert.equal(div1.dom.innerHTML, '<span>test</span>')
+    assert.equal(div2.dom.innerHTML, '<span>test</span>')
+
+    assert.equal(span.dom.outerHTML, '<span>test</span>')
+    assert.equal(span.dom.parentNode, null)
+
+    div3.append(span)
+    assert.equal(div2.dom.innerHTML, '<span>test</span>')
+    assert.equal(div3.dom.innerHTML, '<span>test</span>')
+    assert.equal(span.dom.parentNode, div3.dom)
+  }
+
+  /** Фрагмент не перетаскивается между разными узлами DOM,
+   *    его содержимое изымается и вставляется в DOM, оставляя фрагмент-пустышку */
+  ['OOMFragment - no moving']() {
+    const span = oom.span('test')
+    const div1 = oom('div')
+    const div2 = oom('div')
+
+    assert.equal(span.dom.childNodes.length, 1)
+
+    div1.append(span)
+    assert.equal(div1.dom.innerHTML, '<span>test</span>')
+    assert.equal(div2.dom.innerHTML, '')
+
+    div2.append(span)
+    assert.equal(div1.dom.innerHTML, '<span>test</span>')
+    assert.equal(div2.dom.innerHTML, '')
+
+    assert.equal(span.dom.childNodes.length, 0)
+  }
+
+  /** Клонирование фрагмента */
+  ['OOMFragment - cloning']() {
+    const span = oom.span('test')
+    const div1 = oom('div')
+    const div2 = oom('div')
+
+    assert.equal(span.dom.childNodes.length, 1)
+
+    div1.append(span.clone())
+    assert.equal(div1.dom.innerHTML, '<span>test</span>')
+    assert.equal(div2.dom.innerHTML, '')
+
+    div2.append(span.clone())
+    assert.equal(div1.dom.innerHTML, '<span>test</span>')
+    assert.equal(div2.dom.innerHTML, '<span>test</span>')
+
+    assert.equal(span.dom.childNodes.length, 1)
+  }
+
 }

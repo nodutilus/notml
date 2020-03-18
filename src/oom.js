@@ -33,6 +33,19 @@ class OOMAbstract {
     return this
   }
 
+  /**
+   * Клонирование элемента
+   *
+   * @returns {Proxy<DocumentFragment|HTMLElement>}
+   */
+  clone() {
+    const dom = document.importNode(this.dom, true)
+    const element = new this.constructor(dom)
+    const proxy = new Proxy(element, elementHandler)
+
+    return proxy
+  }
+
 }
 
 
@@ -44,8 +57,12 @@ class OOMFragment extends OOMAbstract {
    */
   constructor(child) {
     super()
-    this.dom = document.createDocumentFragment()
-    this.append(child)
+    if (child instanceof DocumentFragment) {
+      this.dom = child
+    } else {
+      this.dom = document.createDocumentFragment()
+      this.append(child)
+    }
   }
 
 }
@@ -75,19 +92,23 @@ class OOMElement extends OOMAbstract {
   }
 
   /**
-   * @param {string} tagName
+   * @param {HTMLElement|string} tagName
    * @param {Object<string, string>} attributes
    * @param {DocumentFragment|HTMLElement} child
    */
   constructor(tagName, attributes, child) {
     super()
-    if (tagName[0] === tagName[0].toUpperCase()) {
-      tagName = tagName
-        .replace((/^[A-Z]/), str => str.toLowerCase())
-        .replace((/[A-Z]/g), str => `-${str.toLowerCase()}`)
+    if (tagName instanceof HTMLElement) {
+      this.dom = tagName
+    } else {
+      if (tagName[0] === tagName[0].toUpperCase()) {
+        tagName = tagName
+          .replace((/^[A-Z]/), str => str.toLowerCase())
+          .replace((/[A-Z]/g), str => `-${str.toLowerCase()}`)
+      }
+      this.dom = document.createElement(tagName)
     }
     [attributes, child] = OOMElement.resolveArgs(attributes, child)
-    this.dom = document.createElement(tagName)
     this.setAttributes(attributes)
     this.append(child)
   }
