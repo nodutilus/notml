@@ -205,14 +205,35 @@ export default class TestOOM extends Test {
 
   /** Код из примера */
   ['example in readme']() {
-    const div = oom('div')
+    const { document } = window
+    const oomDiv = oom('div')
       .div({ class: 'header' })
       .div({ class: 'test' }, oom
         .span('Name: ', { class: 'test-label' })
         .span('Test', { class: 'test-name' }))
       .div({ class: 'footer' })
+    const divHeader = document.createElement('div')
+    const spanName = document.createElement('span')
+    const spanTest = document.createElement('span')
+    const divTest = document.createElement('div')
+    const divFooter = document.createElement('div')
+    const domDiv = document.createElement('div')
 
-    assert.equal(div.dom.outerHTML, '<div><div class="header"></div><div class="test"><span class="test-label">Name: </span><span class="test-name">Test</span></div><div class="footer"></div></div>')
+    divHeader.setAttribute('class', 'header')
+    spanName.setAttribute('class', 'test-label')
+    spanTest.setAttribute('class', 'test-name')
+    divTest.setAttribute('class', 'test')
+    divFooter.setAttribute('class', 'footer')
+    spanName.textContent = 'Name: '
+    spanTest.textContent = 'Test'
+
+    domDiv.append(divHeader)
+    divTest.append(spanName)
+    divTest.append(spanTest)
+    domDiv.append(divTest)
+    domDiv.append(divFooter)
+
+    assert.equal(oomDiv.dom.outerHTML, domDiv.outerHTML)
   }
 
 }
