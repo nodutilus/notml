@@ -39,7 +39,7 @@ const spanTest = document.createElement('span')
 const divTest = document.createElement('div')
 const divFooter = document.createElement('div')
 const domDiv = document.createElement('div')
-
+<br>
 divHeader.setAttribute('class', 'header')
 spanName.setAttribute('class', 'test-label')
 spanTest.setAttribute('class', 'test-name')
@@ -47,7 +47,7 @@ divTest.setAttribute('class', 'test')
 divFooter.setAttribute('class', 'footer')
 spanName.textContent = 'Name: '
 spanTest.textContent = 'Test'
-
+<br>
 domDiv.append(divHeader)
 divTest.append(spanName)
 divTest.append(spanTest)
