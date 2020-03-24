@@ -204,7 +204,7 @@ export default class TestOOM extends Test {
   }
 
   /** Код из примера */
-  ['example in readme']() {
+  ['example in readme - Example #1']() {
     const { document } = window
     const oomDiv = oom('div')
       .div({ class: 'header' })

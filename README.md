@@ -4,6 +4,8 @@ Not a HTML - is object-oriented modeling of HTML
 
 ### Example #1
 
+Simple layout. Comparison with HTML.
+
 ##### NotML
 
 ```js
