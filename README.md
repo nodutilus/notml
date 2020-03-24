@@ -32,7 +32,7 @@ const div = oom('div')
 
 ##### JavaScript native DOM
 
-> code executed inside NotML
+code executed inside NotML
 
 ```js
 const divHeader = document.createElement('div')
