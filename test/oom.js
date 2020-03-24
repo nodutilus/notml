@@ -203,7 +203,7 @@ export default class TestOOM extends Test {
     assert.equal(span.dom.childNodes.length, 1)
   }
 
-  /** Код из примера */
+  /** Код из примера - Простая верстка */
   ['example in readme - Example #1']() {
     const { document } = window
     const oomDiv = oom('div')
@@ -234,6 +234,31 @@ export default class TestOOM extends Test {
     domDiv.append(divFooter)
 
     assert.equal(oomDiv.dom.outerHTML, domDiv.outerHTML)
+  }
+
+  /** Код из примера - Переиспользование элементов */
+  ['example in readme - Example #2']() {
+    const header = oom('div', { class: 'header' })
+      .span('Test Header')
+    const block = oom('div')
+      .div(oom
+        .append(header.clone())
+        .div('div 1'))
+      .div(oom
+        .append(header.clone())
+        .div('div 2'))
+
+    assert.equal(block.dom.outerHTML,
+      '<div>' +
+      '<div>' +
+      '<div class="header"><span>Test Header</span></div>' +
+      '<div>div 1</div>' +
+      '</div>' +
+      '<div>' +
+      '<div class="header"><span>Test Header</span></div>' +
+      '<div>div 2</div>' +
+      '</div>' +
+      '</div>')
   }
 
 }
