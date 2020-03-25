@@ -53,6 +53,21 @@ class OOMAbstract {
 class OOMFragment extends OOMAbstract {
 
   /**
+   * HTML элемента
+   *
+   * @returns {string}
+   */
+  get html() {
+    let html = ''
+
+    for (const item of this.dom.children) {
+      html += item.outerHTML
+    }
+
+    return html
+  }
+
+  /**
    * @param {DocumentFragment|HTMLElement} child
    */
   constructor(child) {
@@ -89,6 +104,15 @@ class OOMElement extends OOMAbstract {
     } else {
       return [attributes, child]
     }
+  }
+
+  /**
+   * HTML элемента
+   *
+   * @returns {string}
+   */
+  get html() {
+    return this.dom.outerHTML
   }
 
   /**
@@ -162,6 +186,11 @@ const elementHandler = {
   },
   set: () => false
 }
+const oomOrigin = Object.assign(Object.create(null), {
+  append: (...args) => {
+    return oom().append(...args)
+  }
+})
 const oomHandler = {
   apply: (_, __, args) => {
     const callback = typeof args[args.length - 1] === 'function' ? args.pop() : null
@@ -173,7 +202,7 @@ const oomHandler = {
     return proxy
   },
   get: (_, tagName) => {
-    return (...args) => {
+    return oomOrigin[tagName] || ((...args) => {
       const callback = typeof args[args.length - 1] === 'function' ? args.pop() : null
       const element = new OOMElement(tagName, ...args)
       const fragment = new OOMFragment(element)
@@ -182,7 +211,7 @@ const oomHandler = {
       if (callback) callback(new Proxy(element, elementHandler))
 
       return proxy
-    }
+    })
   },
   set: () => false
 }

@@ -28,11 +28,10 @@ export default class TestOOM extends Test {
 
   /** Базовый чейнинг для создания верстки */
   ['chaining - base']() {
-    const html = oom('html')
+    const { html } = oom('html')
       .body(oom
         .div('test')
       )
-      .dom.outerHTML
 
     assert.equal(html, '<html><body><div>test</div></body></html>')
   }
@@ -45,21 +44,21 @@ export default class TestOOM extends Test {
         span.textContent += '-ok'
         span.classList.add('test')
       }))
-      .dom.outerHTML
+      .html
     const form2 = oom('form')
       .span('test', span => {
         span = span.dom
         span.textContent += '-ok'
         span.classList.add('test')
       })
-      .dom.outerHTML
+      .html
     const form3 = oom('form', form => form
       .span('test', span => {
         span = span.dom
         span.textContent += '-ok'
         span.classList.add('test')
       }))
-      .dom.outerHTML
+      .html
     const testForm = '<form><span class="test">test-ok</span></form>'
 
     assert.equal(form1, testForm)
@@ -72,7 +71,7 @@ export default class TestOOM extends Test {
     const div = oom('div')
       .append(oom('span'))
       .setAttributes({ class: 'test' })
-      .dom.outerHTML
+      .html
 
     assert.equal(div, '<div class="test"><span></span></div>')
   }
@@ -95,14 +94,14 @@ export default class TestOOM extends Test {
   ['customElements by class name']() {
     const custom = oom('div')
       .MyTagName()
-      .dom.outerHTML
+      .html
 
     assert.equal(custom, '<div><my-tag-name></my-tag-name></div>')
   }
 
   /** Простая запись атрибутов */
   ['setAttributes - simple']() {
-    const div = oom('div', { id: 'test' }).dom.outerHTML
+    const div = oom('div', { id: 'test' }).html
 
     assert.equal(div, '<div id="test"></div>')
   }
@@ -121,6 +120,17 @@ export default class TestOOM extends Test {
     assert.equal(counter, 1)
   }
 
+  /** Метод append от оом аналогичен методу от OOMAbstract */
+  ['oom - append']() {
+    const div11 = oom().div().append(oom('span'))
+    const div12 = oom.append(oom('div')).span()
+    const div13 = oom('div').append(oom('span'))
+
+    assert.equal(div11.html, '<div></div><span></span>')
+    assert.equal(div12.html, '<div></div><span></span>')
+    assert.equal(div13.html, '<div><span></span></div>')
+  }
+
   /** Перетаскивание элемента между разными узлами DOM */
   ['OOMElement - moving']() {
     const span = oom('span', 'test')
@@ -137,7 +147,7 @@ export default class TestOOM extends Test {
     assert.equal(div1.dom.innerHTML, '')
     assert.equal(div2.dom.innerHTML, '<span>test</span>')
 
-    assert.equal(span.dom.outerHTML, '<span>test</span>')
+    assert.equal(span.html, '<span>test</span>')
   }
 
   /** Клонирование элемента */
@@ -233,7 +243,7 @@ export default class TestOOM extends Test {
     domDiv.append(divTest)
     domDiv.append(divFooter)
 
-    assert.equal(oomDiv.dom.outerHTML, domDiv.outerHTML)
+    assert.equal(oomDiv.html, domDiv.outerHTML)
   }
 
   /** Код из примера - Переиспользование элементов */
@@ -248,7 +258,7 @@ export default class TestOOM extends Test {
         .append(header.clone())
         .div('div 2'))
 
-    assert.equal(block.dom.outerHTML,
+    assert.equal(block.html,
       '<div>' +
       '<div>' +
       '<div class="header"><span>Test Header</span></div>' +
