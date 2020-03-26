@@ -34,7 +34,7 @@ const div = oom('div')
 
 ##### JavaScript native DOM
 
-code executed inside NotML
+Code executed inside NotML
 
 ```js
 const divHeader = document.createElement('div')
@@ -57,6 +57,44 @@ divTest.append(spanName)
 divTest.append(spanTest)
 domDiv.append(divTest)
 domDiv.append(divFooter)
+```
+
+### Example #2
+
+Reuse of the prepared elements
+
+##### NotML
+
+```js
+const header = oom('div', { class: 'header' })
+  .span('Test Header')
+
+const block = oom('div')
+  .div(oom
+    .append(header.clone())
+    .div('div 1'))
+  .div(oom
+    .append(header.clone())
+    .div('div 2'))
+```
+
+##### HTML
+
+```html
+<div>
+  <div>
+    <div class="header">
+      <span>Test Header</span>
+    </div>
+    <div>div 1</div>
+  </div>
+  <div>
+    <div class="header">
+      <span>Test Header</span>
+    </div>
+    <div>div 2</div>
+  </div>
+</div>
 ```
 
 [npmbadge]: https://img.shields.io/npm/v/@notml/core
