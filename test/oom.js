@@ -231,10 +231,10 @@ export default class TestOOM extends Test {
     customElements.define('my-element', MyElement)
 
     const mye = oom('my-element')
-      .MyElement()
+      .MyElement('test', { class: 'Test' })
 
     assert.equal(cCount, 2)
-    assert.equal(mye.html, '<my-element><my-element></my-element></my-element>')
+    assert.equal(mye.html, '<my-element><my-element class="Test">test</my-element></my-element>')
   }
 
   /** Код из примера - Простая верстка */
