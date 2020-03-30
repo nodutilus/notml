@@ -90,15 +90,6 @@ export default class TestOOM extends Test {
     assert.ok(fr2.dom instanceof DocumentFragment)
   }
 
-  /** Создание кастомных элементов по имени класса */
-  ['customElements by class name']() {
-    const custom = oom('div')
-      .MyTagName()
-      .html
-
-    assert.equal(custom, '<div><my-tag-name></my-tag-name></div>')
-  }
-
   /** Простая запись атрибутов */
   ['setAttributes - simple']() {
     const div = oom('div', { id: 'test' }).html
@@ -211,6 +202,39 @@ export default class TestOOM extends Test {
     assert.equal(div2.dom.innerHTML, '<span>test</span>')
 
     assert.equal(span.dom.childNodes.length, 1)
+  }
+
+  /** Создание кастомных элементов по имени класса */
+  ['customElements - by class name']() {
+    const custom = oom('div')
+      .MyTagName()
+
+    assert.equal(custom.html, '<div><my-tag-name></my-tag-name></div>')
+  }
+
+  /** Создание и регистрация пользовательских элементов */
+  ['customElements - create']() {
+    const { HTMLElement, customElements } = window
+    let cCount = 0
+
+    /** Test custom element */
+    class MyElement extends HTMLElement {
+
+      /***/
+      constructor() {
+        super()
+        cCount++
+      }
+
+    }
+
+    customElements.define('my-element', MyElement)
+
+    const mye = oom('my-element')
+      .MyElement()
+
+    assert.equal(cCount, 2)
+    assert.equal(mye.html, '<my-element><my-element></my-element></my-element>')
   }
 
   /** Код из примера - Простая верстка */
