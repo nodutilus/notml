@@ -204,14 +204,6 @@ export default class TestOOM extends Test {
     assert.equal(span.dom.childNodes.length, 1)
   }
 
-  /** Создание кастомных элементов по имени класса */
-  ['customElements - by class name']() {
-    const custom = oom('div')
-      .MyTagName()
-
-    assert.equal(custom.html, '<div><my-tag-name></my-tag-name></div>')
-  }
-
   /** Создание и регистрация пользовательских элементов */
   ['customElements - create']() {
     const { HTMLElement, customElements } = window
