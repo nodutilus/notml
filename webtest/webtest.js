@@ -15,6 +15,7 @@ function assertEqual(name, actual, expected) {
   }
 }
 
+
 // Example #1
 const exp1 = document.getElementById('exp1')
 const div1 = oom('div')
@@ -35,6 +36,7 @@ assertEqual('Example #1-2', exp1.innerHTML,
   '</div>' +
   '<div class="footer"></div>' +
   '</div>')
+
 
 // Example #2
 const exp2 = document.getElementById('exp2')
