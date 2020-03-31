@@ -69,7 +69,7 @@ Reuse of the prepared elements
 const header = oom('div', { class: 'header' })
   .span('Test Header')
 
-const block = oom('div')
+const block = oom
   .div(oom
     .append(header.clone())
     .div('div 1'))
@@ -82,18 +82,16 @@ const block = oom('div')
 
 ```html
 <div>
-  <div>
-    <div class="header">
-      <span>Test Header</span>
-    </div>
-    <div>div 1</div>
+  <div class="header">
+    <span>Test Header</span>
   </div>
-  <div>
-    <div class="header">
-      <span>Test Header</span>
-    </div>
-    <div>div 2</div>
+  <div>div 1</div>
+</div>
+<div>
+  <div class="header">
+    <span>Test Header</span>
   </div>
+  <div>div 2</div>
 </div>
 ```
 

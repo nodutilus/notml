@@ -266,7 +266,7 @@ export default class TestOOM extends Test {
   ['example in readme - Example #2']() {
     const header = oom('div', { class: 'header' })
       .span('Test Header')
-    const block = oom('div')
+    const block = oom
       .div(oom
         .append(header.clone())
         .div('div 1'))
@@ -276,14 +276,12 @@ export default class TestOOM extends Test {
 
     assert.equal(block.html,
       '<div>' +
-      '<div>' +
       '<div class="header"><span>Test Header</span></div>' +
       '<div>div 1</div>' +
       '</div>' +
       '<div>' +
       '<div class="header"><span>Test Header</span></div>' +
       '<div>div 2</div>' +
-      '</div>' +
       '</div>')
   }
 
