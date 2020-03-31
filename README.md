@@ -61,7 +61,7 @@ domDiv.append(divFooter)
 
 ### Example #2
 
-Reuse of the prepared elements
+Reuse prepared elements
 
 ##### NotML
 
