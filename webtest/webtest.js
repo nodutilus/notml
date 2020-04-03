@@ -72,9 +72,8 @@ assertEqual('Example #2-2', exp2.innerHTML,
 /** Test custom element */
 class MyElement extends HTMLElement {
 
-  /** @returns {oom} */
-  template = () => oom('div', { class: 'MyElement__inner' })
-    .span('My element new text')
+  span = oom.span('My element new text')
+  template = oom('div', { class: 'MyElement__inner' }, this.span)
 
 }
 

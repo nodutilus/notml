@@ -201,21 +201,25 @@ function resolveTagName(tagName) {
  * @param {HTMLElement} instance
  */
 function applyOOMTemplate(instance) {
-  const staticTemplate = instance.constructor.template
   let template
 
-  // TODO: instance.template может быть и OOMAbstract
-  // тогда он предпочтительнее staticTemplate как OOMAbstract
-  // при присвоениее template = ... , в this... будут доступны другие свойства класса и this.constructor
+  // TODO: Асинхронные шаблоны
 
-  if (staticTemplate instanceof OOMAbstract) {
-    template = staticTemplate.clone().dom
-  } else if (typeof staticTemplate === 'function') {
-    template = instance.constructor.template(instance)
+  if (instance.template instanceof OOMAbstract) {
+    template = instance.template.dom
+  } else {
+    const staticTemplate = instance.constructor.template
+
+    if (staticTemplate instanceof OOMAbstract) {
+      template = staticTemplate.clone().dom
+    } else if (typeof staticTemplate === 'function') {
+      template = instance.constructor.template(instance)
+    }
+    if (typeof instance.template === 'function') {
+      template = instance.template(template) || template
+    }
   }
-  if (typeof instance.template === 'function') {
-    template = instance.template(template) || template
-  }
+
   if (template) {
     instance.innerHTML = ''
     instance.append(template instanceof OOMAbstract ? template.dom : template)
