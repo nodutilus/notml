@@ -215,18 +215,46 @@ export default class TestOOM extends Test {
       /***/
       constructor() {
         super()
-        cCount++
+        this.cCount = ++cCount
       }
 
     }
 
-    customElements.define('my-element', MyElement)
+    customElements.define('my-element1', MyElement)
 
-    const mye = oom('my-element')
-      .MyElement('test', { class: 'Test' })
+    const mye = oom('my-element1')
+      .MyElement1('test', { class: 'Test' })
 
     assert.equal(cCount, 2)
-    assert.equal(mye.html, '<my-element><my-element class="Test">test</my-element></my-element>')
+    assert.equal(mye.dom.cCount, 1)
+    assert.equal(mye.html, '<my-element1><my-element1 class="Test">test</my-element1></my-element1>')
+  }
+
+  /** Кастомизация содержания пользовательских элементов */
+  ['customElements - connectedCallback']() {
+    const { HTMLElement, customElements, document } = window
+
+
+    /** Test custom element */
+    class MyElement extends HTMLElement {
+
+      /***/
+      connectedCallback() {
+        this.classList.add('MyElement')
+        this.append(oom('span', 'test').dom)
+      }
+
+    }
+
+    customElements.define('my-element2', MyElement)
+
+    const mye = oom.MyElement2()
+
+    assert.equal(mye.html, '<my-element2></my-element2>')
+
+    document.body.append(mye.dom)
+    assert.equal(document.body.innerHTML, '<my-element2 class="MyElement"><span>test</span></my-element2>')
+    document.body.innerHTML = ''
   }
 
   /** Код из примера - Простая верстка */
