@@ -204,6 +204,10 @@ function applyOOMTemplate(instance) {
   const staticTemplate = instance.constructor.template
   let template
 
+  // TODO: instance.template может быть и OOMAbstract
+  // тогда он предпочтительнее staticTemplate как OOMAbstract
+  // при присвоениее template = ... , в this... будут доступны другие свойства класса и this.constructor
+
   if (staticTemplate instanceof OOMAbstract) {
     template = staticTemplate.clone().dom
   } else if (typeof staticTemplate === 'function') {
