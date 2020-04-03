@@ -1,6 +1,8 @@
 import { assert, Test } from '@nodutilus/test'
 import { oom } from '../src/oom.js'
 
+const { HTMLElement, DocumentFragment, customElements, document } = window
+
 
 /** Тесты источника данных заказа */
 export default class TestOOM extends Test {
@@ -78,7 +80,6 @@ export default class TestOOM extends Test {
 
   /** Пустой вызов oom и обращение к атрибутам oom создают фрагмент */
   ['create Fragment with oom']() {
-    const { DocumentFragment } = window
     const fr1 = oom().div1()
     const fr2 = oom.div2()
     const div1 = oom('div', fr1).dom.innerHTML
@@ -206,7 +207,6 @@ export default class TestOOM extends Test {
 
   /** Создание и регистрация пользовательских элементов */
   ['customElements - create']() {
-    const { HTMLElement, customElements } = window
     let cCount = 0
 
     /** Test custom element */
@@ -232,9 +232,6 @@ export default class TestOOM extends Test {
 
   /** Кастомизация содержания пользовательских элементов */
   ['customElements - connectedCallback']() {
-    const { HTMLElement, customElements, document } = window
-
-
     /** Test custom element */
     class MyElement extends HTMLElement {
 
@@ -257,9 +254,13 @@ export default class TestOOM extends Test {
     document.body.innerHTML = ''
   }
 
+  /** Регистрация новых элементов через oom.define */
+  ['customElements - oom.define']() {
+
+  }
+
   /** Код из примера - Простая верстка */
   ['example in readme - Example #1']() {
-    const { document } = window
     const oomDiv = oom('div')
       .div({ class: 'header' })
       .div({ class: 'test' }, oom
