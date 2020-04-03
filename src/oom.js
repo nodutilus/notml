@@ -201,11 +201,12 @@ function resolveTagName(tagName) {
  * @param {HTMLElement} instance
  */
 function applyOOMTemplate(instance) {
+  const staticTemplate = instance.constructor.template
   let template
 
-  if (instance.constructor.template instanceof OOMAbstract) {
-    template = instance.constructor.template.clone().dom
-  } else if (typeof template === 'function') {
+  if (staticTemplate instanceof OOMAbstract) {
+    template = staticTemplate.clone().dom
+  } else if (typeof staticTemplate === 'function') {
     template = instance.constructor.template(instance)
   }
   if (typeof instance.template === 'function') {
@@ -213,7 +214,7 @@ function applyOOMTemplate(instance) {
   }
   if (template) {
     instance.innerHTML = ''
-    instance.append(template)
+    instance.append(template instanceof OOMAbstract ? template.dom : template)
   }
 }
 
