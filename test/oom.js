@@ -255,8 +255,24 @@ export default class TestOOM extends Test {
   }
 
   /** Регистрация новых элементов через oom.define */
-  ['customElements - oom.define']() {
+  ['customElements - oom.define, static template']() {
+    /** Test custom element */
+    class MyElement3 extends HTMLElement {
 
+      static template = oom('span', 'test')
+
+      /***/
+      template() {
+        this.classList.add('MyElement')
+      }
+
+    }
+
+    const mye = oom.define(MyElement3).oom(MyElement3)
+
+    document.body.append(mye.dom)
+    assert.equal(document.body.innerHTML, '<my-element3 class="MyElement"><span>test</span></my-element3>')
+    document.body.innerHTML = ''
   }
 
   /** Код из примера - Простая верстка */

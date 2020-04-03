@@ -1,5 +1,6 @@
+const customElementsCache = new WeakMap()
 const isOOMInstance = Symbol('isOOMInstance')
-const { document, DocumentFragment, HTMLElement } = window
+const { document, DocumentFragment, HTMLElement, customElements } = window
 
 
 /** Базовый класс для oom-элементов */
@@ -29,6 +30,21 @@ class OOMAbstract {
     } else if (child) {
       this.dom.append(child)
     }
+
+    return this
+  }
+
+
+  /**
+   * Добавление дочернего элемента по параметрам OOM
+   *
+   * @param {...any} args
+   * @returns {OOMAbstract}
+   */
+  oom(...args) {
+    const child = oom(...args)
+
+    this.append(child)
 
     return this
   }
@@ -125,10 +141,10 @@ class OOMElement extends OOMAbstract {
     if (tagName instanceof HTMLElement) {
       this.dom = tagName
     } else {
-      if (tagName[0] === tagName[0].toUpperCase()) {
-        tagName = tagName
-          .replace((/^[A-Z]/), str => str.toLowerCase())
-          .replace((/[A-Z]/g), str => `-${str.toLowerCase()}`)
+      if (customElementsCache.has(tagName)) {
+        tagName = customElementsCache.get(tagName)
+      } else {
+        tagName = resolveTagName(tagName)
       }
       this.dom = document.createElement(tagName)
     }
@@ -156,6 +172,79 @@ class OOMElement extends OOMAbstract {
   }
 
 }
+
+
+/**
+ * Преобразование имени класса в имя тега
+ *
+ * @param {string} tagName
+ * @returns {string}
+ */
+function resolveTagName(tagName) {
+  let result
+
+  if (typeof tagName === 'string' && tagName[0] === tagName[0].toUpperCase()) {
+    result = tagName
+      .replace((/^[A-Z]/), str => str.toLowerCase())
+      .replace((/[A-Z]/g), str => `-${str.toLowerCase()}`)
+  } else {
+    result = tagName
+  }
+
+  return result
+}
+
+
+/**
+ * Применение OOM шаблонизации
+ *
+ * @param {HTMLElement} instance
+ */
+function applyOOMTemplate(instance) {
+  let template
+
+  if (instance.constructor.template instanceof OOMAbstract) {
+    template = instance.constructor.template.clone().dom
+  } else if (typeof template === 'function') {
+    template = instance.constructor.template(instance)
+  }
+  if (typeof instance.template === 'function') {
+    template = instance.template(template) || template
+  }
+  if (template) {
+    instance.innerHTML = ''
+    instance.append(template)
+  }
+}
+
+
+/**
+ * @typedef CustomElementsOptions
+ * @property {string} extends Имя встроенного элемента для расширения
+ */
+/**
+ * Регистрация пользовательского элемента с элементами OOM шаблонизатора
+ *
+ * @param {string} [name]
+ * @param {typeof HTMLElement} constructor
+ * @param {CustomElementsOptions} options
+ * @returns {Proxy<OOMAbstract>}
+ */
+function defineOOMCustomElements(name, constructor, options) {
+  if (Object.isPrototypeOf.call(HTMLElement, name)) {
+    [constructor, options] = [name, constructor]
+    name = resolveTagName(constructor.name)
+  }
+  constructor.prototype.connectedCallback = (connectedCallback => function __connectedCallback() {
+    applyOOMTemplate(this)
+    if (connectedCallback) connectedCallback.apply(this)
+  })(constructor.prototype.connectedCallback)
+  customElements.define(name, constructor, options)
+  customElementsCache.set(constructor, name)
+
+  return oom
+}
+
 
 const elementHandler = {
   get: (target, tagName, proxy) => {
@@ -189,12 +278,17 @@ const elementHandler = {
 const oomOrigin = Object.assign(Object.create(null), {
   append: (...args) => {
     return oom().append(...args)
+  },
+  define: defineOOMCustomElements,
+  oom: (...args) => {
+    return oom(...args)
   }
 })
 const oomHandler = {
   apply: (_, __, args) => {
-    const callback = typeof args[args.length - 1] === 'function' ? args.pop() : null
-    const element = new (typeof args[0] === 'string' ? OOMElement : OOMFragment)(...args)
+    const isTagName = typeof args[0] === 'string' || customElementsCache.has(args[0])
+    const callback = args.length > 1 && typeof args[args.length - 1] === 'function' ? args.pop() : null
+    const element = new (isTagName ? OOMElement : OOMFragment)(...args)
     const proxy = new Proxy(element, elementHandler)
 
     if (callback) callback(proxy)
