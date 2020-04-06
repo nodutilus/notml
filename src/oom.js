@@ -204,6 +204,7 @@ function applyOOMTemplate(instance) {
   let template
 
   // TODO: Асинхронные шаблоны
+  // TODO: Шаблоны возвращающие строки или DOM элементы
 
   if (instance.template instanceof OOMAbstract) {
     template = instance.template.clone()
