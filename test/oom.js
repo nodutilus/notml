@@ -281,7 +281,120 @@ export default class TestOOM extends Test {
     const mye = oom.define(MyElement3).oom(MyElement3)
 
     document.body.append(mye.dom)
+    assert.equal(mye.dom.constructor.template.dom.parentNode, null)
     assert.equal(document.body.innerHTML, '<my-element3 class="MyElement"><span>test</span></my-element3>')
+    document.body.innerHTML = ''
+  }
+
+  /** Статический метод шаблона */
+  ['customElements - oom.define, static template function']() {
+    /** Test custom element */
+    class MyElement3x1 extends HTMLElement {
+
+      static tmp = oom('div')
+
+      /** @returns {oom} */
+      static template = () => {
+        return this.tmp.clone().span('test')
+      }
+
+    }
+
+    const mye = oom.define(MyElement3x1).oom(MyElement3x1)
+
+    document.body.append(mye.dom)
+    assert.equal(mye.dom.constructor.tmp.dom.parentNode, null)
+    assert.equal(document.body.innerHTML, '<my-element3x1><div><span>test</span></div></my-element3x1>')
+    document.body.innerHTML = ''
+  }
+
+  /** Шаблоны на экземпляре тоже клонируются,
+   *   т.к. могут быть использованы в рамках жц */
+  ['customElements - oom.define, instance template']() {
+    /** Test custom element */
+    class MyElement4 extends HTMLElement {
+
+      template = oom('span', 'test')
+
+    }
+
+    const mye = oom.define(MyElement4).oom(MyElement4)
+
+    document.body.append(mye.dom)
+    assert.equal(mye.dom.template.dom.parentNode, null)
+    assert.equal(document.body.innerHTML, '<my-element4><span>test</span></my-element4>')
+    document.body.innerHTML = ''
+  }
+
+  /** Шаблон неподдерживаемого типа */
+  ['customElements - oom.define, instance template (bad)']() {
+    /** Test custom element */
+    class MyElement5 extends HTMLElement {
+
+      template = 123
+
+    }
+
+    const mye = oom.define(MyElement5).oom(MyElement5)
+
+    document.body.append(mye.dom)
+    assert.equal(document.body.innerHTML, '<my-element5></my-element5>')
+    document.body.innerHTML = ''
+  }
+
+  /** Метод шаблона на экземпляре принимает на вход статичный шаблон */
+  ['customElements - oom.define, instance template function']() {
+    /** Test custom element */
+    class MyElement6 extends HTMLElement {
+
+      static template = oom('div')
+
+      /** @param {oom} tmpl */
+      template(tmpl) {
+        tmpl.span('test')
+      }
+
+    }
+
+    const mye = oom.define(MyElement6).oom(MyElement6)
+
+    document.body.append(mye.dom)
+    assert.equal(mye.dom.constructor.template.dom.parentNode, null)
+    assert.equal(document.body.innerHTML, '<my-element6><div><span>test</span></div></my-element6>')
+    document.body.innerHTML = ''
+  }
+
+  /** По аналогии с customElements.define можно задать имя тега самому */
+  ['customElements - oom.define, указание имени тега']() {
+    /** Test custom element */
+    class MyElement6 extends HTMLElement { }
+
+    const mye = oom.define('my-e-6', MyElement6).oom(MyElement6)
+
+    document.body.append(mye.dom)
+
+    assert.equal(document.body.innerHTML, '<my-e-6></my-e-6>')
+    document.body.innerHTML = ''
+  }
+
+  /** Можно использовать пользовательский connectedCallback */
+  ['customElements - oom.define, connectedCallback']() {
+    /** Test custom element */
+    class MyElement7 extends HTMLElement {
+
+      /***/
+      connectedCallback() {
+        this.classList.add('MyElement')
+      }
+
+    }
+
+    const mye = oom.define(MyElement7).oom(MyElement7)
+
+    assert.equal(mye.html, '<my-element7></my-element7>')
+
+    document.body.append(mye.dom)
+    assert.equal(document.body.innerHTML, '<my-element7 class="MyElement"></my-element7>')
     document.body.innerHTML = ''
   }
 

@@ -206,12 +206,12 @@ function applyOOMTemplate(instance) {
   // TODO: Асинхронные шаблоны
 
   if (instance.template instanceof OOMAbstract) {
-    template = instance.template.dom
+    template = instance.template.clone()
   } else {
     const staticTemplate = instance.constructor.template
 
     if (staticTemplate instanceof OOMAbstract) {
-      template = staticTemplate.clone().dom
+      template = staticTemplate.clone()
     } else if (typeof staticTemplate === 'function') {
       template = instance.constructor.template(instance)
     }
