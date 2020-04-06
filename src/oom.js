@@ -244,10 +244,12 @@ function defineOOMCustomElements(name, constructor, options) {
     [constructor, options] = [name, constructor]
     name = resolveTagName(constructor.name)
   }
-  constructor.prototype.connectedCallback = (connectedCallback => function __connectedCallback() {
-    applyOOMTemplate(this)
-    if (connectedCallback) connectedCallback.apply(this)
-  })(constructor.prototype.connectedCallback)
+  constructor.prototype.connectedCallback = (connectedCallback =>
+    function __connectedCallback() {
+      applyOOMTemplate(this)
+      if (connectedCallback) connectedCallback.apply(this)
+    }
+  )(constructor.prototype.connectedCallback)
   customElements.define(name, constructor, options)
   customElementsCache.set(constructor, name)
 
