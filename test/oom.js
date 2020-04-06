@@ -78,6 +78,16 @@ export default class TestOOM extends Test {
     assert.equal(div, '<div class="test"><span></span></div>')
   }
 
+  /** Чейнинг конструктора элементов oom из самого элемента */
+  ['chaining - oom in OOMAbstract']() {
+    const div = oom('div')
+      .oom('span', 'test')
+      .oom('MyElm')
+      .html
+
+    assert.equal(div, '<div><span>test</span><my-elm></my-elm></div>')
+  }
+
   /** Пустой вызов oom и обращение к атрибутам oom создают фрагмент */
   ['create Fragment with oom']() {
     const fr1 = oom().div1()
