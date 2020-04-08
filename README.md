@@ -95,6 +95,41 @@ const block = oom
 </div>
 ```
 
+### Example #3
+
+Simple `template`
+
+> A `template` instance is cloned on `connectedCallback`. Handler implemented in `oom.define`.
+
+##### NotML
+
+```js
+class MyElementExp3 extends HTMLElement {
+
+  mySpan = oom.span('My element new text')
+
+  template = oom('div', { class: 'MyElement__inner' })
+    .append(this.mySpan.clone())
+    .append(oom('br'))
+    .append(this.mySpan)
+
+}
+
+const block = oom.define(MyElementExp3).MyElementExp3()
+```
+
+##### HTML
+
+```html
+<my-element-exp3>
+  <div class="MyElement__inner">
+    <span>My element new text</span>
+    <br>
+    <span>My element new text</span>
+  </div>
+</my-element-exp3>
+```
+
 [npmbadge]: https://img.shields.io/npm/v/@notml/core
 
 [npm]: https://www.npmjs.com/package/@notml/core

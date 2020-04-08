@@ -494,4 +494,35 @@ export default class TestOOM extends Test {
       '</div>')
   }
 
+  /** Код из примера - Простого шаблона */
+  ['example in readme - Example #3']() {
+    /** Test custom element */
+    class MyElementExp3 extends HTMLElement {
+
+      mySpan = oom.span('My element new text')
+
+      template = oom('div', { class: 'MyElement__inner' })
+        .append(this.mySpan.clone())
+        .append(oom('br'))
+        .append(this.mySpan)
+
+    }
+
+    const block = oom.define(MyElementExp3).MyElementExp3()
+
+    document.body.append(block.dom)
+
+
+    assert.equal(document.body.innerHTML,
+      '<my-element-exp3>' +
+      '<div class="MyElement__inner">' +
+      '<span>My element new text</span>' +
+      '<br>' +
+      '<span>My element new text</span>' +
+      '</div>' +
+      '</my-element-exp3>')
+
+    document.body.innerHTML = ''
+  }
+
 }
