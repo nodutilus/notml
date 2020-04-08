@@ -201,29 +201,32 @@ function resolveTagName(tagName) {
  * @param {HTMLElement} instance
  */
 function applyOOMTemplate(instance) {
-  let template
+  let { template } = instance
 
   // TODO: Асинхронные шаблоны
-  // TODO: Шаблоны возвращающие строки или DOM элементы
 
-  if (instance.template instanceof OOMAbstract) {
-    template = instance.template.clone()
-  } else {
-    const staticTemplate = instance.constructor.template
+  if (template instanceof OOMAbstract) {
+    template = template.clone()
+  } else if (typeof template !== 'string') {
+    let staticTemplate = instance.constructor.template
 
     if (staticTemplate instanceof OOMAbstract) {
-      template = staticTemplate.clone()
+      staticTemplate = staticTemplate.clone()
     } else if (typeof staticTemplate === 'function') {
-      template = instance.constructor.template(instance)
+      staticTemplate = instance.constructor.template(instance)
     }
-    if (typeof instance.template === 'function') {
-      template = instance.template(template) || template
+    if (typeof template === 'function') {
+      template = instance.template(staticTemplate) || staticTemplate
+    } else {
+      template = staticTemplate
     }
   }
 
-  if (template) {
+  if (template instanceof OOMAbstract) {
     instance.innerHTML = ''
-    instance.append(template instanceof OOMAbstract ? template.dom : template)
+    instance.append(template.dom)
+  } else if (typeof template === 'string') {
+    instance.innerHTML = template
   }
 }
 

@@ -72,25 +72,26 @@ assertEqual('Example #2-2', exp2.innerHTML,
 /** Test custom element */
 class MyElement extends HTMLElement {
 
-  span = oom.span('My element new text')
-  template = oom('div', { class: 'MyElement__inner' }, this.span)
+  mySpan = oom.span('My element new text')
+
+  template = oom('div', { class: 'MyElement__inner' })
+    .append(this.mySpan.clone())
+    .append(oom('br'))
+    .append(this.mySpan)
 
 }
 
 const exp3 = document.getElementById('exp3')
-const block3 = oom.define(MyElement)
-  .MyElement({ class: 'MyCustom' }, oom
-    .span('My custom'))
+const block3 = oom.define(MyElement).MyElement()
 const html3 = block3.html
 
 exp3.append(block3.dom)
-assertEqual('Example #3-1', html3,
-  '<my-element class="MyCustom">' +
-  '<span>My custom</span>' +
-  '</my-element>')
+assertEqual('Example #3-1', html3, '<my-element></my-element>')
 assertEqual('Example #3-2', exp3.innerHTML,
-  '<my-element class="MyCustom">' +
+  '<my-element>' +
   '<div class="MyElement__inner">' +
+  '<span>My element new text</span>' +
+  '<br>' +
   '<span>My element new text</span>' +
   '</div>' +
   '</my-element>')
