@@ -95,3 +95,72 @@ assertEqual('Example #3-2', exp3.innerHTML,
   '<span>My element new text</span>' +
   '</div>' +
   '</my-element-exp3>')
+
+
+// Example #4
+/** Test custom element */
+class MyElementExp4 extends HTMLElement {
+
+  static label = oom('span', { class: 'label' })
+  static field = oom('span', { class: 'field' })
+
+  /**
+   * @param {HTMLElement} instance
+   * @returns {oom}
+   */
+  static template(instance) {
+    const { dataset } = instance
+
+    return oom()
+      .append(this.label.clone()
+        .span({ class: 'text' }, dataset.label))
+      .append(this.field.clone()
+        .span({ class: 'text' }, dataset.field,
+          field => (instance._field = field.dom)))
+  }
+
+  /**
+   * @returns {[string]}
+   */
+  static get observedAttributes() {
+    return ['data-field']
+  }
+
+  /**
+   * @param {string} name
+   * @param {string} oldValue
+   * @param {string} newValue
+   */
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (this._field) {
+      this._field.textContent = newValue
+    }
+  }
+
+}
+
+const exp4 = document.getElementById('exp4')
+const block4 = oom.define(MyElementExp4).oom(MyElementExp4, {
+  'data-label': 'Name: ',
+  'data-field': 'Test 1'
+})
+const html4 = block4.html
+
+exp4.append(block4.dom)
+assertEqual('Example #4-1', html4,
+  '<my-element-exp4 ' +
+  'data-label="Name: " ' +
+  'data-field="Test 1"' +
+  '></my-element-exp4>')
+assertEqual('Example #4-2', exp4.innerHTML,
+  '<my-element-exp4 data-label="Name: " data-field="Test 1">' +
+  '<span class="label"><span class="text">Name: </span></span>' +
+  '<span class="field"><span class="text">Test 1</span></span>' +
+  '</my-element-exp4>')
+
+block4.dom.dataset.field = 'Test 2'
+assertEqual('Example #4-3', exp4.innerHTML,
+  '<my-element-exp4 data-label="Name: " data-field="Test 2">' +
+  '<span class="label"><span class="text">Name: </span></span>' +
+  '<span class="field"><span class="text">Test 2</span></span>' +
+  '</my-element-exp4>')

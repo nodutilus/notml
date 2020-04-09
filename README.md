@@ -130,6 +130,61 @@ const block = oom.define(MyElementExp3).MyElementExp3()
 </my-element-exp3>
 ```
 
+### Example #4
+
+...
+
+##### NotML
+
+```js
+class MyElementExp4 extends HTMLElement {
+
+  static label = oom('span', { class: 'label' })
+  static field = oom('span', { class: 'field' })
+
+  static template(instance) {
+    const { dataset } = instance
+
+    return oom()
+      .append(this.label.clone()
+        .span({ class: 'text' }, dataset.label))
+      .append(this.field.clone()
+        .span({ class: 'text' }, dataset.field,
+          field => (instance._field = field.dom)))
+  }
+
+  static get observedAttributes() {
+    return ['data-field']
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (this._field) {
+      this._field.textContent = newValue
+    }
+  }
+
+}
+
+const block = oom.define(MyElementExp4).oom(MyElementExp4, {
+  'data-label': 'Name: '
+})
+
+block4.dom.dataset.field = 'Test 2'
+```
+
+##### HTML
+
+```html
+<my-element-exp4 data-label="Name: " data-field="Test 2">
+  <span class="label">
+    <span class="text">Name: </span>
+  </span>
+  <span class="field">
+    <span class="text">Test 2</span>
+  </span>
+</my-element-exp4>
+```
+
 [npmbadge]: https://img.shields.io/npm/v/@notml/core
 
 [npm]: https://www.npmjs.com/package/@notml/core
