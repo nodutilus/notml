@@ -259,6 +259,7 @@ export default class TestOOM extends Test {
 
     assert.equal(mye.html, '<my-element2></my-element2>')
 
+    document.body.innerHTML = ''
     document.body.append(mye.dom)
     assert.equal(document.body.innerHTML, '<my-element2 class="MyElement"><span>test</span></my-element2>')
     document.body.innerHTML = ''
@@ -296,6 +297,7 @@ export default class TestOOM extends Test {
 
     const mye = oom.define(MyElement3).oom(MyElement3)
 
+    document.body.innerHTML = ''
     document.body.append(mye.dom)
     assert.equal(mye.dom.constructor.template.dom.parentNode, null)
     assert.equal(document.body.innerHTML, '<my-element3 class="MyElement"><span>test</span></my-element3>')
@@ -318,6 +320,7 @@ export default class TestOOM extends Test {
 
     const mye = oom.define(MyElement3x1).oom(MyElement3x1)
 
+    document.body.innerHTML = ''
     document.body.append(mye.dom)
     assert.equal(mye.dom.constructor.tmp.dom.parentNode, null)
     assert.equal(document.body.innerHTML, '<my-element3x1><div><span>test</span></div></my-element3x1>')
@@ -339,6 +342,7 @@ export default class TestOOM extends Test {
 
     const mye = oom.define(MyElement3x2).oom(MyElement3x2)
 
+    document.body.innerHTML = ''
     document.body.append(mye.dom)
     assert.equal(mye.dom.constructor.template, '<b>test1</b>')
     assert.equal(document.body.innerHTML, '<my-element3x2><b>test1</b><b>test2</b></my-element3x2>')
@@ -357,6 +361,7 @@ export default class TestOOM extends Test {
 
     const mye = oom.define(MyElement4).oom(MyElement4)
 
+    document.body.innerHTML = ''
     document.body.append(mye.dom)
     assert.equal(mye.dom.template.dom.parentNode, null)
     assert.equal(document.body.innerHTML, '<my-element4><span>test</span></my-element4>')
@@ -374,6 +379,7 @@ export default class TestOOM extends Test {
 
     const mye = oom.define(MyElement5).oom(MyElement5)
 
+    document.body.innerHTML = ''
     document.body.append(mye.dom)
     assert.equal(document.body.innerHTML, '<my-element5></my-element5>')
     document.body.innerHTML = ''
@@ -395,6 +401,7 @@ export default class TestOOM extends Test {
 
     const mye = oom.define(MyElement6).oom(MyElement6)
 
+    document.body.innerHTML = ''
     document.body.append(mye.dom)
     assert.equal(mye.dom.constructor.template.dom.parentNode, null)
     assert.equal(document.body.innerHTML, '<my-element6><div><span>test</span></div></my-element6>')
@@ -412,6 +419,7 @@ export default class TestOOM extends Test {
 
     const mye = oom.define(MyElement6x1).oom(MyElement6x1)
 
+    document.body.innerHTML = ''
     document.body.append(mye.dom)
     assert.equal(mye.dom.template, '<div>test</div>')
     assert.equal(document.body.innerHTML, '<my-element6x1><div>test</div></my-element6x1>')
@@ -434,8 +442,58 @@ export default class TestOOM extends Test {
 
     assert.equal(mye.html, '<my-element7></my-element7>')
 
+    document.body.innerHTML = ''
     document.body.append(mye.dom)
     assert.equal(document.body.innerHTML, '<my-element7 class="MyElement"></my-element7>')
+    document.body.innerHTML = ''
+  }
+
+  /** Отслеживание изменений атрибутов */
+  ['customElements - attributeChanged']() {
+    /** Test custom element */
+    class MyElement8x0 extends HTMLElement {
+
+      /**
+       * @param {string} oldValue
+       * @param {string} newValue
+       */
+      dataClassNameChanged(oldValue, newValue) {
+        this.classList.remove(oldValue)
+        this.classList.add(newValue)
+      }
+
+    }
+
+    /** Test custom element */
+    class MyElement8 extends MyElement8x0 {
+
+      /** @returns {oom} */
+      template() {
+        return oom('div', this.dataset.myText, div => (this._div = div.dom))
+      }
+
+      /**
+       * @param {string} oldValue
+       * @param {string} newValue
+       */
+      dataMyTextChanged(oldValue, newValue) {
+        this._div.textContent = newValue
+      }
+
+    }
+
+    const mye = oom.define(MyElement8).oom(MyElement8, {
+      'data-my-text': 'test1'
+    })
+
+    assert.equal(mye.html, '<my-element8 data-my-text="test1"></my-element8>')
+
+    document.body.innerHTML = ''
+    document.body.append(mye.dom)
+    assert.equal(document.body.innerHTML, '<my-element8 data-my-text="test1"><div>test1</div></my-element8>')
+
+    mye.dom.dataset.myText = 'test2'
+    assert.equal(document.body.innerHTML, '<my-element8 data-my-text="test2"><div>test2</div></my-element8>')
     document.body.innerHTML = ''
   }
 
@@ -510,8 +568,8 @@ export default class TestOOM extends Test {
 
     const block = oom.define(MyElementExp3).MyElementExp3()
 
+    document.body.innerHTML = ''
     document.body.append(block.dom)
-
 
     assert.equal(document.body.innerHTML,
       '<my-element-exp3>' +
