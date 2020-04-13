@@ -1,5 +1,6 @@
 const customElementsCache = new WeakMap()
-const isOOMInstance = Symbol('isOOMInstance')
+const observedAttributesSymbol = Symbol('observedAttributesSymbol')
+const isOOMInstanceSymbol = Symbol('isOOMInstanceSymbol')
 const { document, DocumentFragment, HTMLElement, customElements } = window
 
 
@@ -13,10 +14,10 @@ class OOMAbstract {
    * @returns {boolean}
    */
   static [Symbol.hasInstance](instance) {
-    return instance && instance[isOOMInstance]
+    return instance && instance[isOOMInstanceSymbol]
   }
 
-  [isOOMInstance] = true
+  [isOOMInstanceSymbol] = true
 
   /**
    * Добавление дочернего элемента
@@ -196,6 +197,38 @@ function resolveTagName(tagName) {
 
 
 /**
+ * @param {typeof HTMLElement} proto
+ * @param {Map} setters
+ * @returns {Map}
+ */
+function getObservedAttributes(proto, setters) {
+  const properties = Object.getOwnPropertyNames(proto)
+  const nestedProto = Reflect.getPrototypeOf(proto)
+
+  if (Object.isPrototypeOf.call(HTMLElement, nestedProto.constructor)) {
+    getObservedAttributes(nestedProto, setters)
+  }
+
+  for (const name of properties) {
+    const { value } = Reflect.getOwnPropertyDescriptor(proto, name)
+    const isFunction = typeof value === 'function'
+    const isChanged = name.endsWith('Changed')
+    const isValidName = (/^[a-z][a-zA-Z]+$/).test(name)
+
+    if (isFunction && isChanged && isValidName) {
+      const attributeName = name
+        .replace(/Changed$/, '')
+        .replace(/[A-Z]/g, str => `-${str.toLowerCase()}`)
+
+      setters.set(attributeName, name)
+    }
+  }
+
+  return setters
+}
+
+
+/**
  * Применение OOM шаблонизации
  *
  * @param {HTMLElement} instance
@@ -248,12 +281,20 @@ function defineOOMCustomElements(name, constructor, options) {
     [constructor, options] = [name, constructor]
     name = resolveTagName(constructor.name)
   }
+
+  const observedAttributes = getObservedAttributes(constructor.prototype, new Map())
+
+  if (observedAttributes.size > 0) {
+    constructor[observedAttributesSymbol] = [...observedAttributes.keys()]
+  }
+
   constructor.prototype.connectedCallback = (connectedCallback =>
     function __connectedCallback() {
       applyOOMTemplate(this)
       if (connectedCallback) connectedCallback.apply(this)
     }
   )(constructor.prototype.connectedCallback)
+
   customElements.define(name, constructor, options)
   customElementsCache.set(constructor, name)
 

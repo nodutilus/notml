@@ -557,6 +557,13 @@ export default class TestOOM extends Test {
     /** Test custom element */
     class MyElementExp3 extends HTMLElement {
 
+      /**
+       * @returns {[string]}
+       */
+      static get observedAttributes() {
+        return ['testAttr']
+      }
+
       mySpan = oom.span('My element new text')
 
       template = oom('div', { class: 'MyElement__inner' })
