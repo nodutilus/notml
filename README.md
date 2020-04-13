@@ -132,7 +132,7 @@ const block = oom.define(MyElementExp3).MyElementExp3()
 
 ### Example #4
 
-Reactive data-properties and attributes
+Reactive data-properties and attributes. (see more: `HTMLElement.dataset`)
 
 ##### NotML
 
