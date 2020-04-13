@@ -147,20 +147,20 @@ class MyElementExp4 extends HTMLElement {
 
     return oom()
       .append(this.label.clone()
-        .span({ class: 'text' }, dataset.label,
+        .span({ class: 'text' }, dataset.labelText,
           label => (instance._label = label)))
       .append(this.field.clone()
-        .span({ class: 'text' }, dataset.field,
+        .span({ class: 'text' }, dataset.fieldText,
           field => (instance._field = field)))
   }
 
-  /** on 'data-field' change */
-  dataFieldChanged(oldValue, newValue) {
+  /** on 'data-field-text' attribute change */
+  dataFieldTextChanged(oldValue, newValue) {
     this._field.textContent = newValue
   }
 
-  /** on 'data-label' change */
-  dataLabelChanged(oldValue, newValue) {
+  /** on 'data-label-text' attribute change */
+  dataLabelTextChanged(oldValue, newValue) {
     this._label.textContent = newValue
   }
 
@@ -172,14 +172,14 @@ const block = document.createElement('my-element-exp4')
 
 document.body.append(block)
 
-block.dataset.label = 'Name: '
-block.dataset.field = 'Test'
+block.dataset.labelText = 'Name: '
+block.dataset.fieldText = 'Test'
 ```
 
 ##### HTML
 
 ```html
-<my-element-exp4 data-label="Name: " data-field="Test">
+<my-element-exp4 data-label-text="Name: " data-field-text="Test">
   <span class="label">
     <span class="text">Name: </span>
   </span>

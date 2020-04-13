@@ -113,26 +113,30 @@ class MyElementExp4 extends HTMLElement {
 
     return oom()
       .append(this.label.clone()
-        .span({ class: 'text' }, dataset.label,
+        .span({ class: 'text' }, dataset.labelText,
           label => (instance._label = label)))
       .append(this.field.clone()
-        .span({ class: 'text' }, dataset.field,
+        .span({ class: 'text' }, dataset.fieldText,
           field => (instance._field = field)))
   }
 
   /**
+   * on 'data-field-text' attribute change
+   *
    * @param {string} oldValue
    * @param {string} newValue
    */
-  dataFieldChanged(oldValue, newValue) {
+  dataFieldTextChanged(oldValue, newValue) {
     this._field.textContent = newValue
   }
 
   /**
+   * on 'data-label-text' attribute change
+   *
    * @param {string} oldValue
    * @param {string} newValue
    */
-  dataLabelChanged(oldValue, newValue) {
+  dataLabelTextChanged(oldValue, newValue) {
     this._label.textContent = newValue
   }
 
@@ -152,10 +156,10 @@ assertEqual('Example #4-2', exp4.innerHTML,
   '<span class="field"><span class="text"></span></span>' +
   '</my-element-exp4>')
 
-block4.dataset.label = 'Name: '
-block4.dataset.field = 'Test'
+block4.dataset.labelText = 'Name: '
+block4.dataset.fieldText = 'Test'
 assertEqual('Example #4-3', exp4.innerHTML,
-  '<my-element-exp4 data-label="Name: " data-field="Test">' +
+  '<my-element-exp4 data-label-text="Name: " data-field-text="Test">' +
   '<span class="label"><span class="text">Name: </span></span>' +
   '<span class="field"><span class="text">Test</span></span>' +
   '</my-element-exp4>')
