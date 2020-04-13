@@ -334,7 +334,9 @@ const elementHandler = {
 
         target.append(element)
 
-        if (callback) callback(new Proxy(element, elementHandler))
+        if (callback) {
+          callback(element.dom)
+        }
 
         return proxy
       }
@@ -358,7 +360,9 @@ const oomHandler = {
     const element = new (isTagName ? OOMElement : OOMFragment)(...args)
     const proxy = new Proxy(element, elementHandler)
 
-    if (callback) callback(proxy)
+    if (callback) {
+      callback(element.dom)
+    }
 
     return proxy
   },
@@ -369,7 +373,9 @@ const oomHandler = {
       const fragment = new OOMFragment(element)
       const proxy = new Proxy(fragment, elementHandler)
 
-      if (callback) callback(new Proxy(element, elementHandler))
+      if (callback) {
+        callback(element.dom)
+      }
 
       return proxy
     })

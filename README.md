@@ -132,7 +132,7 @@ const block = oom.define(MyElementExp3).MyElementExp3()
 
 ### Example #4
 
-...
+Reactive data-properties and attributes
 
 ##### NotML
 
@@ -147,40 +147,44 @@ class MyElementExp4 extends HTMLElement {
 
     return oom()
       .append(this.label.clone()
-        .span({ class: 'text' }, dataset.label))
+        .span({ class: 'text' }, dataset.label,
+          label => (instance._label = label)))
       .append(this.field.clone()
         .span({ class: 'text' }, dataset.field,
-          field => (instance._field = field.dom)))
+          field => (instance._field = field)))
   }
 
-  static get observedAttributes() {
-    return ['data-field']
+  /** on 'data-field' change */
+  dataFieldChanged(oldValue, newValue) {
+    this._field.textContent = newValue
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (this._field) {
-      this._field.textContent = newValue
-    }
+  /** on 'data-label' change */
+  dataLabelChanged(oldValue, newValue) {
+    this._label.textContent = newValue
   }
 
 }
 
-const block = oom.define(MyElementExp4).oom(MyElementExp4, {
-  'data-label': 'Name: '
-})
+oom.define(MyElementExp4)
 
-block4.dom.dataset.field = 'Test 2'
+const block = document.createElement('my-element-exp4')
+
+document.body.append(block)
+
+block.dataset.label = 'Name: '
+block.dataset.field = 'Test'
 ```
 
 ##### HTML
 
 ```html
-<my-element-exp4 data-label="Name: " data-field="Test 2">
+<my-element-exp4 data-label="Name: " data-field="Test">
   <span class="label">
     <span class="text">Name: </span>
   </span>
   <span class="field">
-    <span class="text">Test 2</span>
+    <span class="text">Test</span>
   </span>
 </my-element-exp4>
 ```

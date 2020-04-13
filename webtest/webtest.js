@@ -114,10 +114,10 @@ class MyElementExp4 extends HTMLElement {
     return oom()
       .append(this.label.clone()
         .span({ class: 'text' }, dataset.label,
-          label => (instance._label = label.dom)))
+          label => (instance._label = label)))
       .append(this.field.clone()
         .span({ class: 'text' }, dataset.field,
-          field => (instance._field = field.dom)))
+          field => (instance._field = field)))
   }
 
   /**
@@ -138,29 +138,24 @@ class MyElementExp4 extends HTMLElement {
 
 }
 
-const exp4 = document.getElementById('exp4')
-const block4 = oom.define(MyElementExp4).oom(MyElementExp4, {
-  'data-label': 'Name: ',
-  'data-field': 'Test 1'
-})
-const html4 = block4.html
+oom.define(MyElementExp4)
 
-exp4.append(block4.dom)
-assertEqual('Example #4-1', html4,
-  '<my-element-exp4 ' +
-  'data-label="Name: " ' +
-  'data-field="Test 1"' +
-  '></my-element-exp4>')
+const exp4 = document.getElementById('exp4')
+const block4 = document.createElement('my-element-exp4')
+const html4 = block4.outerHTML
+
+exp4.append(block4)
+assertEqual('Example #4-1', html4, '<my-element-exp4></my-element-exp4>')
 assertEqual('Example #4-2', exp4.innerHTML,
-  '<my-element-exp4 data-label="Name: " data-field="Test 1">' +
-  '<span class="label"><span class="text">Name: </span></span>' +
-  '<span class="field"><span class="text">Test 1</span></span>' +
+  '<my-element-exp4>' +
+  '<span class="label"><span class="text"></span></span>' +
+  '<span class="field"><span class="text"></span></span>' +
   '</my-element-exp4>')
 
-block4.dom.dataset.label = 'Name 2: '
-block4.dom.dataset.field = 'Test 2'
+block4.dataset.label = 'Name: '
+block4.dataset.field = 'Test'
 assertEqual('Example #4-3', exp4.innerHTML,
-  '<my-element-exp4 data-label="Name 2: " data-field="Test 2">' +
-  '<span class="label"><span class="text">Name 2: </span></span>' +
-  '<span class="field"><span class="text">Test 2</span></span>' +
+  '<my-element-exp4 data-label="Name: " data-field="Test">' +
+  '<span class="label"><span class="text">Name: </span></span>' +
+  '<span class="field"><span class="text">Test</span></span>' +
   '</my-element-exp4>')

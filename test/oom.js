@@ -38,36 +38,6 @@ export default class TestOOM extends Test {
     assert.equal(html, '<html><body><div>test</div></body></html>')
   }
 
-  /** callback для чейнинга и модификаций вложенных элементов */
-  ['chaining - with callback']() {
-    const form1 = oom('form', oom
-      .span('test', span => {
-        span = span.dom
-        span.textContent += '-ok'
-        span.classList.add('test')
-      }))
-      .html
-    const form2 = oom('form')
-      .span('test', span => {
-        span = span.dom
-        span.textContent += '-ok'
-        span.classList.add('test')
-      })
-      .html
-    const form3 = oom('form', form => form
-      .span('test', span => {
-        span = span.dom
-        span.textContent += '-ok'
-        span.classList.add('test')
-      }))
-      .html
-    const testForm = '<form><span class="test">test-ok</span></form>'
-
-    assert.equal(form1, testForm)
-    assert.equal(form2, testForm)
-    assert.equal(form3, testForm)
-  }
-
   /** Чейнинг методов OOMAbstract/OOMFragment/OOMElement */
   ['chaining - oom methods']() {
     const div = oom('div')
@@ -86,6 +56,34 @@ export default class TestOOM extends Test {
       .html
 
     assert.equal(div, '<div><span>test</span><my-elm></my-elm></div>')
+  }
+
+  /** Модификация вложенных элементов, ссылка на DOM созданного элемента */
+  ['oom callback, DOM instance']() {
+    const form1 = oom('form', oom
+      .span('test', span => {
+        span.textContent += '-ok'
+        span.classList.add('test')
+      }))
+      .html
+    const form2 = oom('form')
+      .span('test', span => {
+        span.textContent += '-ok'
+        span.classList.add('test')
+      })
+      .html
+    const form3 = oom('form', form => {
+      form.append(oom.span('test', span => {
+        span.textContent += '-ok'
+        span.classList.add('test')
+      }).dom)
+    })
+      .html
+    const testForm = '<form><span class="test">test-ok</span></form>'
+
+    assert.equal(form1, testForm)
+    assert.equal(form2, testForm)
+    assert.equal(form3, testForm)
   }
 
   /** Пустой вызов oom и обращение к атрибутам oom создают фрагмент */
@@ -469,7 +467,7 @@ export default class TestOOM extends Test {
 
       /** @returns {oom} */
       template() {
-        return oom('div', this.dataset.myText, div => (this._div = div.dom))
+        return oom('div', this.dataset.myText, div => (this._div = div))
       }
 
       /**
@@ -516,7 +514,7 @@ export default class TestOOM extends Test {
 
       /** @returns {oom} */
       template() {
-        return oom('div', this.dataset.myText, div => (this._div = div.dom))
+        return oom('div', this.dataset.myText, div => (this._div = div))
       }
 
       /**
@@ -619,7 +617,7 @@ export default class TestOOM extends Test {
       '</div>')
   }
 
-  /** Код из примера - Простого шаблона */
+  /** Код из примера - Простой шаблон */
   ['example in readme - Example #3']() {
     /** Test custom element */
     class MyElementExp3 extends HTMLElement {
@@ -648,6 +646,72 @@ export default class TestOOM extends Test {
       '</my-element-exp3>')
 
     document.body.innerHTML = ''
+  }
+
+  /** Код из примера - Реактивные свойства */
+  ['example in readme - Example #4']() {
+    /** Test custom element */
+    class MyElementExp4 extends HTMLElement {
+
+      static label = oom('span', { class: 'label' })
+      static field = oom('span', { class: 'field' })
+
+      /**
+       * @param {HTMLElement} instance
+       * @returns {oom}
+       */
+      static template(instance) {
+        const { dataset } = instance
+
+        return oom()
+          .append(this.label.clone()
+            .span({ class: 'text' }, dataset.label,
+              label => (instance._label = label)))
+          .append(this.field.clone()
+            .span({ class: 'text' }, dataset.field,
+              field => (instance._field = field)))
+      }
+
+      /**
+       * @param {string} oldValue
+       * @param {string} newValue
+       */
+      dataFieldChanged(oldValue, newValue) {
+        this._field.textContent = newValue
+      }
+
+      /**
+       * @param {string} oldValue
+       * @param {string} newValue
+       */
+      dataLabelChanged(oldValue, newValue) {
+        this._label.textContent = newValue
+      }
+
+    }
+
+    oom.define(MyElementExp4)
+
+    const block = document.createElement('my-element-exp4')
+    const html = block.outerHTML
+
+    document.body.innerHTML = ''
+    document.body.append(block)
+
+    assert.equal(html, '<my-element-exp4></my-element-exp4>')
+    assert.equal(document.body.innerHTML,
+      '<my-element-exp4>' +
+      '<span class="label"><span class="text"></span></span>' +
+      '<span class="field"><span class="text"></span></span>' +
+      '</my-element-exp4>')
+
+    block.dataset.label = 'Name: '
+    block.dataset.field = 'Test'
+    assert.equal(document.body.innerHTML,
+      '<my-element-exp4 data-label="Name: " data-field="Test">' +
+      '<span class="label"><span class="text">Name: </span></span>' +
+      '<span class="field"><span class="text">Test</span></span>' +
+      '</my-element-exp4>')
   }
 
 }
