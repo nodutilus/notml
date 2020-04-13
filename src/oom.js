@@ -214,7 +214,7 @@ function getObservedAttributes(proto, setters) {
     const { value } = Reflect.getOwnPropertyDescriptor(proto, name)
     const isFunction = typeof value === 'function'
     const isChanged = name.endsWith('Changed')
-    const isValidName = (/^[a-z][a-zA-Z]+$/).test(name)
+    const isValidName = (/^[a-z][\w]+$/).test(name)
 
     if (isFunction && isChanged && isValidName) {
       const attributeName = name

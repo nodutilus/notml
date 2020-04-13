@@ -502,6 +502,44 @@ export default class TestOOM extends Test {
     document.body.innerHTML = ''
   }
 
+  /** Отслеживание изменений атрибутов * 2, кэш внутри */
+  ['customElements - attributeChanged * 2, new Set']() {
+    /** Test custom element */
+    class MyElement8x1 extends HTMLElement {
+
+      /**
+       * @param {string} oldValue
+       * @param {string} newValue
+       */
+      dataMyText1Changed(oldValue, newValue) {
+        this.textContent += newValue
+      }
+
+      /**
+       * @param {string} oldValue
+       * @param {string} newValue
+       */
+      dataMyText2Changed(oldValue, newValue) {
+        this.textContent += newValue
+      }
+
+    }
+
+    const mye = oom.define(MyElement8x1).oom(MyElement8x1, {
+      'data-my-text1': 'test1',
+      'data-my-text2': 'test2'
+    })
+
+    assert.equal(mye.html, '<my-element8x1 data-my-text1="test1" data-my-text2="test2"></my-element8x1>')
+
+    document.body.innerHTML = ''
+    document.body.append(mye.dom)
+    assert.equal(document.body.innerHTML, '<my-element8x1 data-my-text1="test1" data-my-text2="test2">' +
+      'test1test2</my-element8x1>')
+
+    document.body.innerHTML = ''
+  }
+
   /** Отслеживание изменений атрибутов с пользовательским обработчиком */
   ['customElements - attributeChanged + observedAttributes']() {
     const changed = []
