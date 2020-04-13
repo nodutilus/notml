@@ -494,6 +494,73 @@ export default class TestOOM extends Test {
 
     mye.dom.dataset.myText = 'test2'
     assert.equal(document.body.innerHTML, '<my-element8 data-my-text="test2"><div>test2</div></my-element8>')
+
+    mye.dom.dataset.className = 'CLS'
+    assert.equal(document.body.innerHTML, '<my-element8 data-my-text="test2" ' +
+      'data-class-name="CLS" class="CLS"><div>test2</div></my-element8>')
+
+    document.body.innerHTML = ''
+  }
+
+  /** Отслеживание изменений атрибутов с пользовательским обработчиком */
+  ['customElements - attributeChanged + observedAttributes']() {
+    const changed = []
+
+    /** Test custom element */
+    class MyElement9 extends HTMLElement {
+
+      /** @returns {[string]} */
+      static get observedAttributes() {
+        return ['test']
+      }
+
+      /** @returns {oom} */
+      template() {
+        return oom('div', this.dataset.myText, div => (this._div = div.dom))
+      }
+
+      /**
+       * @param {string} oldValue
+       * @param {string} newValue
+       */
+      dataMyTextChanged(oldValue, newValue) {
+        this._div.textContent = newValue
+      }
+
+      /**
+       * @param {string} name
+       * @param {string} oldValue
+       * @param {string} newValue
+       */
+      attributeChangedCallback(name, oldValue, newValue) {
+        changed.push([name, oldValue, newValue])
+      }
+
+    }
+
+    const mye = oom.define(MyElement9).oom(MyElement9, {
+      'data-my-text': 'test1',
+      'test': 'test2'
+    })
+
+    assert.equal(mye.html, '<my-element9 data-my-text="test1" test="test2"></my-element9>')
+
+    document.body.innerHTML = ''
+    document.body.append(mye.dom)
+    assert.equal(document.body.innerHTML, '<my-element9 data-my-text="test1" test="test2">' +
+      '<div>test1</div></my-element9>')
+
+    mye.dom.dataset.myText = 'test3'
+    mye.dom.setAttribute('test', 'test4')
+    assert.equal(document.body.innerHTML, '<my-element9 data-my-text="test3" test="test4">' +
+      '<div>test3</div></my-element9>')
+
+    assert.deepEqual(changed, [
+      ['data-my-text', null, 'test1'],
+      ['test', null, 'test2'],
+      ['data-my-text', 'test1', 'test3'],
+      ['test', 'test2', 'test4']
+    ])
     document.body.innerHTML = ''
   }
 
@@ -556,13 +623,6 @@ export default class TestOOM extends Test {
   ['example in readme - Example #3']() {
     /** Test custom element */
     class MyElementExp3 extends HTMLElement {
-
-      /**
-       * @returns {[string]}
-       */
-      static get observedAttributes() {
-        return ['testAttr']
-      }
 
       mySpan = oom.span('My element new text')
 

@@ -1,6 +1,6 @@
 const customElementsCache = new WeakMap()
-const observedAttributesSymbol = Symbol('observedAttributesSymbol')
-const isOOMInstanceSymbol = Symbol('isOOMInstanceSymbol')
+const observedAttributesSymbol = Symbol('observedAttributes')
+const isOOMInstanceSymbol = Symbol('isOOMInstance')
 const { document, DocumentFragment, HTMLElement, customElements } = window
 
 
@@ -285,7 +285,18 @@ function defineOOMCustomElements(name, constructor, options) {
   const observedAttributes = getObservedAttributes(constructor.prototype, new Map())
 
   if (observedAttributes.size > 0) {
-    constructor[observedAttributesSymbol] = [...observedAttributes.keys()]
+    constructor[observedAttributesSymbol] = observedAttributes
+    Object.defineProperty(constructor, 'observedAttributes', {
+      value: [...observedAttributes.keys(), ...(constructor.observedAttributes || [])]
+    })
+    constructor.prototype.attributeChangedCallback = (attributeChangedCallback =>
+      function __attributeChangedCallback(name, oldValue, newValue) {
+        if (this.isConnected && this.constructor[observedAttributesSymbol].has(name)) {
+          this[this.constructor[observedAttributesSymbol].get(name)](oldValue, newValue)
+        }
+        if (attributeChangedCallback) attributeChangedCallback.call(this, name, oldValue, newValue)
+      }
+    )(constructor.prototype.attributeChangedCallback)
   }
 
   constructor.prototype.connectedCallback = (connectedCallback =>
