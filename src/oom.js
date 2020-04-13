@@ -1,5 +1,6 @@
 const customElementsCache = new WeakMap()
 const observedAttributesSymbol = Symbol('observedAttributes')
+const attributeChangedCacheSymbol = Symbol('attributeChangedCache')
 const isOOMInstanceSymbol = Symbol('isOOMInstance')
 const { document, DocumentFragment, HTMLElement, customElements } = window
 
@@ -229,11 +230,40 @@ function getObservedAttributes(proto, setters) {
 
 
 /**
+ * Вызов обработчиков изменения атрибутов,
+ *  и кэширование изменений до вставки элемента в DOM
+ *
+ * @param {HTMLElement} instance
+ * @param {string} name
+ * @param {string} oldValue
+ * @param {string} newValue
+ */
+function applyAttributeChangedCallback(instance, name, oldValue, newValue) {
+  const observed = instance.constructor[observedAttributesSymbol]
+
+  if (observed.has(name)) {
+    if (instance.isConnected) {
+      instance[observed.get(name)](oldValue, newValue)
+    } else {
+      if (!(attributeChangedCacheSymbol in instance)) {
+        instance[attributeChangedCacheSymbol] = new Set()
+      }
+      instance[attributeChangedCacheSymbol].add({
+        name: observed.get(name),
+        args: [oldValue, newValue]
+      })
+    }
+  }
+}
+
+
+/**
  * Применение OOM шаблонизации
  *
  * @param {HTMLElement} instance
  */
 function applyOOMTemplate(instance) {
+  const attributeChanged = instance[attributeChangedCacheSymbol]
   let { template } = instance
 
   // TODO: Асинхронные шаблоны
@@ -260,6 +290,14 @@ function applyOOMTemplate(instance) {
     instance.append(template.dom)
   } else if (typeof template === 'string') {
     instance.innerHTML = template
+  }
+
+  if (attributeChanged instanceof Set) {
+    for (const changed of attributeChanged) {
+      instance[changed.name](...changed.args)
+      attributeChanged.delete(changed)
+    }
+    delete instance[attributeChangedCacheSymbol]
   }
 }
 
@@ -291,9 +329,7 @@ function defineOOMCustomElements(name, constructor, options) {
     })
     constructor.prototype.attributeChangedCallback = (attributeChangedCallback =>
       function __attributeChangedCallback(name, oldValue, newValue) {
-        if (this.isConnected && this.constructor[observedAttributesSymbol].has(name)) {
-          this[this.constructor[observedAttributesSymbol].get(name)](oldValue, newValue)
-        }
+        applyAttributeChangedCallback(this, name, oldValue, newValue)
         if (attributeChangedCallback) attributeChangedCallback.call(this, name, oldValue, newValue)
       }
     )(constructor.prototype.attributeChangedCallback)

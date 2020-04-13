@@ -143,15 +143,11 @@ class MyElementExp4 extends HTMLElement {
   static field = oom('span', { class: 'field' })
 
   static template(instance) {
-    const { dataset } = instance
-
     return oom()
       .append(this.label.clone()
-        .span({ class: 'text' }, dataset.labelText,
-          label => (instance._label = label)))
+        .span({ class: 'text' }, label => (instance._label = label)))
       .append(this.field.clone()
-        .span({ class: 'text' }, dataset.fieldText,
-          field => (instance._field = field)))
+        .span({ class: 'text' }, field => (instance._field = field)))
   }
 
   /** on 'data-field-text' attribute change */
@@ -170,10 +166,10 @@ oom.define(MyElementExp4)
 
 const block = document.createElement('my-element-exp4')
 
-document.body.append(block)
-
 block.dataset.labelText = 'Name: '
 block.dataset.fieldText = 'Test'
+
+document.body.append(block)
 ```
 
 ##### HTML

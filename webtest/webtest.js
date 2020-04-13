@@ -109,15 +109,11 @@ class MyElementExp4 extends HTMLElement {
    * @returns {oom}
    */
   static template(instance) {
-    const { dataset } = instance
-
     return oom()
       .append(this.label.clone()
-        .span({ class: 'text' }, dataset.labelText,
-          label => (instance._label = label)))
+        .span({ class: 'text' }, label => (instance._label = label)))
       .append(this.field.clone()
-        .span({ class: 'text' }, dataset.fieldText,
-          field => (instance._field = field)))
+        .span({ class: 'text' }, field => (instance._field = field)))
   }
 
   /**
@@ -148,16 +144,13 @@ const exp4 = document.getElementById('exp4')
 const block4 = document.createElement('my-element-exp4')
 const html4 = block4.outerHTML
 
-exp4.append(block4)
-assertEqual('Example #4-1', html4, '<my-element-exp4></my-element-exp4>')
-assertEqual('Example #4-2', exp4.innerHTML,
-  '<my-element-exp4>' +
-  '<span class="label"><span class="text"></span></span>' +
-  '<span class="field"><span class="text"></span></span>' +
-  '</my-element-exp4>')
-
 block4.dataset.labelText = 'Name: '
 block4.dataset.fieldText = 'Test'
+
+exp4.append(block4)
+
+assertEqual('Example #4-1', html4, '<my-element-exp4></my-element-exp4>')
+
 assertEqual('Example #4-3', exp4.innerHTML,
   '<my-element-exp4 data-label-text="Name: " data-field-text="Test">' +
   '<span class="label"><span class="text">Name: </span></span>' +

@@ -475,7 +475,9 @@ export default class TestOOM extends Test {
        * @param {string} newValue
        */
       dataMyTextChanged(oldValue, newValue) {
-        this._div.textContent = newValue
+        if (this._div.textContent !== newValue) {
+          this._div.textContent = newValue
+        }
       }
 
     }
@@ -514,7 +516,7 @@ export default class TestOOM extends Test {
 
       /** @returns {oom} */
       template() {
-        return oom('div', this.dataset.myText, div => (this._div = div))
+        return oom('div', div => (this._div = div))
       }
 
       /**
@@ -661,15 +663,11 @@ export default class TestOOM extends Test {
        * @returns {oom}
        */
       static template(instance) {
-        const { dataset } = instance
-
         return oom()
           .append(this.label.clone()
-            .span({ class: 'text' }, dataset.labelText,
-              label => (instance._label = label)))
+            .span({ class: 'text' }, label => (instance._label = label)))
           .append(this.field.clone()
-            .span({ class: 'text' }, dataset.fieldText,
-              field => (instance._field = field)))
+            .span({ class: 'text' }, field => (instance._field = field)))
       }
 
       /**
@@ -699,18 +697,13 @@ export default class TestOOM extends Test {
     const block = document.createElement('my-element-exp4')
     const html = block.outerHTML
 
+    block.dataset.labelText = 'Name: '
+    block.dataset.fieldText = 'Test'
+
     document.body.innerHTML = ''
     document.body.append(block)
 
     assert.equal(html, '<my-element-exp4></my-element-exp4>')
-    assert.equal(document.body.innerHTML,
-      '<my-element-exp4>' +
-      '<span class="label"><span class="text"></span></span>' +
-      '<span class="field"><span class="text"></span></span>' +
-      '</my-element-exp4>')
-
-    block.dataset.labelText = 'Name: '
-    block.dataset.fieldText = 'Test'
     assert.equal(document.body.innerHTML,
       '<my-element-exp4 data-label-text="Name: " data-field-text="Test">' +
       '<span class="label"><span class="text">Name: </span></span>' +
