@@ -5,7 +5,10 @@
   "license": "Unlicense",
   "repository": "github:notml/core",
   "type": "module",
-  "files": [],
+  "files": [
+    "notml.js",
+    "notml.min.js"
+  ],
   "browser": "./notml.min.js",
   "exports": {
     ".": "./notml.js"
