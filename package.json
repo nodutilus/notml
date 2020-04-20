@@ -6,10 +6,9 @@
   "repository": "github:notml/core",
   "type": "module",
   "files": [
-    "notml.js",
-    "notml.min.js"
+    "notml.js"
   ],
-  "browser": "./notml.min.js",
+  "browser": "./notml.js",
   "exports": {
     ".": "./notml.js"
   },
@@ -24,7 +23,6 @@
     "rollup": "latest",
     "rollup-plugin-babel": "latest",
     "rollup-plugin-cleanup": "latest",
-    "rollup-plugin-terser": "latest",
     "jsdom": "latest",
     "fastify": "latest",
     "fastify-static": "latest"

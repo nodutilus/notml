@@ -2,7 +2,6 @@
 build/
 # Готовые библиотеки
 notml.js
-notml.min.js
 
 # Logs
 logs
