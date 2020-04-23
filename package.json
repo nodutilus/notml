@@ -5,6 +5,9 @@
   "license": "Unlicense",
   "repository": "github:notml/core",
   "type": "module",
+  "engines": {
+    "node": ">=14"
+  },
   "files": [
     "notml.js"
   ],
