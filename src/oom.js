@@ -236,6 +236,9 @@ function applyAttributeChangedCallback(instance, name, oldValue, newValue) {
   const observed = instance.constructor[observedAttributesSymbol]
 
   if (observed.has(name)) {
+    if (newValue.startsWith('json::')) {
+      newValue = JSON.parse(newValue.replace('json::', ''))
+    }
     if (instance.isConnected) {
       instance[observed.get(name)](oldValue, newValue)
     } else {
@@ -267,6 +270,7 @@ function setAttribute(instance, attrName, attrValue) {
   // если функция присваиваем в инст
   // если объект 'json::'+JSON.stringify()
   // иначе instance.setAttribute
+  // TODO: Переименование дата атрибутов dataText в data-text
   if (attrType === 'function') {
     instance[attrName] = attrValue
   } if (attrType === 'object') {

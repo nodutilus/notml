@@ -131,6 +131,14 @@ export default class TestOOM extends Test {
     assert.equal(div.outerHTML, '<div class="test2"></div>')
   }
 
+  /** Установка объекта в качесвте атрибута */
+  ['oom - setAttributes object=>json']() {
+    const div = oom('div').dom
+
+    oom.setAttributes(div, { test: [] })
+    assert.equal(div.outerHTML, '<div test="json::[]"></div>')
+  }
+
   /** Метод append от оом аналогичен методу от OOMAbstract */
   ['oom - append']() {
     const div11 = oom().div().append(oom('span'))
@@ -610,6 +618,35 @@ export default class TestOOM extends Test {
       ['data-my-text', 'test1', 'test3'],
       ['test', 'test2', 'test4']
     ])
+    document.body.innerHTML = ''
+  }
+
+  /** JSON объекты в качестве атрибута парсятся в объект */
+  ['customElements - attributeChanged + json::*']() {
+    let result
+
+    /** Test custom element */
+    class MyElement10 extends HTMLElement {
+
+      /**
+       * @param {string} oldValue
+       * @param {string} newValue
+       */
+      testChanged(oldValue, newValue) {
+        result = newValue
+      }
+
+    }
+
+    const mye = oom.define(MyElement10).oom(MyElement10, { test: { a: 1 } })
+
+    assert.equal(mye.html, '<my-element10 test="json::{&quot;a&quot;:1}"></my-element10>')
+
+    document.body.innerHTML = ''
+    document.body.append(mye.dom)
+    assert.equal(document.body.innerHTML, '<my-element10 test="json::{&quot;a&quot;:1}"></my-element10>')
+    assert.deepEqual(result, { a: 1 })
+
     document.body.innerHTML = ''
   }
 
