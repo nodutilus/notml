@@ -120,6 +120,17 @@ export default class TestOOM extends Test {
     assert.equal(counter, 1)
   }
 
+  /** Установка атрибутов через oom.setAttributes */
+  ['oom - setAttributes']() {
+    const div = oom('div').dom
+
+    oom.setAttributes(div, { class: 'test1' })
+    assert.equal(div.outerHTML, '<div class="test1"></div>')
+
+    oom.setAttributes(div, 'class', 'test2')
+    assert.equal(div.outerHTML, '<div class="test2"></div>')
+  }
+
   /** Метод append от оом аналогичен методу от OOMAbstract */
   ['oom - append']() {
     const div11 = oom().div().append(oom('span'))

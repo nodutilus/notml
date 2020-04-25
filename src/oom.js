@@ -161,14 +161,8 @@ class OOMElement extends OOMAbstract {
    * @param {Object<string, string>} [attributes]
    * @returns {OOMAbstract}
    */
-  setAttributes(attributes = {}) {
-    for (const [attrName, attrValue] of Object.entries(attributes)) {
-      if (typeof attrValue === 'function') {
-        this.dom[attrName] = attrValue
-      } else {
-        this.dom.setAttribute(attrName, attrValue)
-      }
-    }
+  setAttributes(attributes) {
+    setAttributes(this.dom, attributes)
 
     return this
   }
@@ -252,6 +246,51 @@ function applyAttributeChangedCallback(instance, name, oldValue, newValue) {
         name: observed.get(name),
         args: [oldValue, newValue]
       })
+    }
+  }
+}
+
+
+/**
+ * Установка атрибута элемента.
+ * Позволяет задавать методы, объекты в виде JSON, стили в виде объекта, и строковые атрибуты.
+ *
+ * @param {HTMLElement} instance
+ * @param {string} attrName
+ * @param {*} attrValue
+ */
+function setAttribute(instance, attrName, attrValue) {
+  const attrType = typeof attrValue
+
+  // TODO:
+  // если имя style - генератор object->css
+  // если функция присваиваем в инст
+  // если объект 'json::'+JSON.stringify()
+  // иначе instance.setAttribute
+  if (attrType === 'function') {
+    instance[attrName] = attrValue
+  } if (attrType === 'object') {
+    instance.setAttribute(attrName, `json::${JSON.stringify(attrValue)}`)
+  } else {
+    instance.setAttribute(attrName, attrValue)
+  }
+}
+
+
+/**
+ * Установка атрибутов элемента.
+ *
+ *
+ * @param {HTMLElement} instance
+ * @param {string|Object<string,string>} attributes
+ * @param {*} attrValue
+ */
+function setAttributes(instance, attributes = {}, attrValue) {
+  if (typeof attributes === 'string') {
+    setAttribute(instance, attributes, attrValue)
+  } else {
+    for (const [attrName, attrValue] of Object.entries(attributes)) {
+      setAttribute(instance, attrName, attrValue)
     }
   }
 }
@@ -383,6 +422,11 @@ const elementHandler = {
 const oomOrigin = Object.assign(Object.create(null), {
   append: (...args) => {
     return oom().append(...args)
+  },
+  setAttributes: (...args) => {
+    setAttributes(...args)
+
+    return oom
   },
   define: defineOOMCustomElements,
   oom: (...args) => {
