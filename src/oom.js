@@ -264,11 +264,7 @@ function applyAttributeChangedCallback(instance, name, oldValue, newValue) {
 function setAttribute(instance, attrName, attrValue) {
   const attrType = typeof attrValue
 
-  // TODO:
-  // если имя style - генератор object->css
-  // если функция присваиваем в инст
-  // если объект 'json::'+JSON.stringify()
-  // иначе instance.setAttribute
+  // TODO: если имя style - генератор object->css
   // TODO: Переименование дата атрибутов dataText в data-text
   if (attrType === 'function') {
     instance[attrName] = attrValue
