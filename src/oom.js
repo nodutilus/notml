@@ -36,7 +36,6 @@ class OOMAbstract {
     return this
   }
 
-
   /**
    * Добавление дочернего элемента по параметрам OOM
    *
@@ -282,6 +281,19 @@ function setAttribute(instance, attrName, attrValue) {
 
 
 /**
+ * Получение атрибута элемента.
+ * Работает аналогично установке атрибутов в setAttribute
+ *
+ * @param {HTMLElement} instance
+ * @param {string} attrName
+ * @returns {*}
+ */
+function getAttribute(instance, attrName) {
+
+}
+
+
+/**
  * Установка атрибутов элемента.
  *
  *
@@ -398,13 +410,10 @@ function defineOOMCustomElements(name, constructor, options) {
   return oom
 }
 
-const attributesHandler = {
-  get: (target, attrName) => {
 
-  },
-  set: (target, attrName, value) => {
-    oom.setAttributes(attrName, value)
-  }
+const attributesHandler = {
+  get: getAttribute,
+  set: setAttribute
 }
 const elementHandler = {
   get: (target, tagName, proxy) => {

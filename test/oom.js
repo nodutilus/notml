@@ -652,29 +652,27 @@ export default class TestOOM extends Test {
 
   /**  */
   ['customElements - template + proxyAttributes']() {
-    let result
-
     /** Test custom element */
-    class MyElement10 extends HTMLElement {
+    class MyElement11 extends HTMLElement {
 
-      /**
-       * @param {string} oldValue
-       * @param {string} newValue
-       */
-      testChanged(oldValue, newValue) {
-        result = newValue
+      static template = (_, attributes) => {
+        return oom('div', attributes.test1.test2)
       }
 
     }
 
-    const mye = oom.define(MyElement10).oom(MyElement10, { test: { a: 1 } })
+    const mye = oom.define(MyElement11).oom(MyElement11, {
+      test1: {
+        test2: 'test3'
+      }
+    })
 
-    assert.equal(mye.html, '<my-element10 test="json::{&quot;a&quot;:1}"></my-element10>')
+    assert.equal(mye.html, '<my-element11 ' +
+      'test1="json::{&quot;test2&quot;:&quot;test3&quot;}"></my-element11>')
 
     document.body.innerHTML = ''
     document.body.append(mye.dom)
-    assert.equal(document.body.innerHTML, '<my-element10 test="json::{&quot;a&quot;:1}"></my-element10>')
-    assert.deepEqual(result, { a: 1 })
+    assert.equal(document.body.innerHTML, '')
 
     document.body.innerHTML = ''
   }
