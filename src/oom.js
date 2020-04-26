@@ -272,7 +272,7 @@ function setAttribute(instance, attrName, attrValue) {
   // TODO: Переименование дата атрибутов dataText в data-text
   if (attrType === 'function') {
     instance[attrName] = attrValue
-  } if (attrType === 'object') {
+  } else if (attrType === 'object') {
     instance.setAttribute(attrName, `json::${JSON.stringify(attrValue)}`)
   } else {
     instance.setAttribute(attrName, attrValue)
@@ -289,7 +289,19 @@ function setAttribute(instance, attrName, attrValue) {
  * @returns {*}
  */
 function getAttribute(instance, attrName) {
+  const ownValue = instance[attrName]
+  let attrValue
 
+  if (typeof ownValue === 'function') {
+    attrValue = ownValue
+  } else {
+    attrValue = instance.getAttribute(attrName)
+    if (attrValue.startsWith('json::')) {
+      attrValue = JSON.parse(attrValue.replace('json::', ''))
+    }
+  }
+
+  return attrValue
 }
 
 

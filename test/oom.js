@@ -650,13 +650,25 @@ export default class TestOOM extends Test {
     document.body.innerHTML = ''
   }
 
-  /**  */
+  /** Работа с атрибутами в шаблоне */
   ['customElements - template + proxyAttributes']() {
+    let result
+
     /** Test custom element */
     class MyElement11 extends HTMLElement {
 
-      static template = (_, attributes) => {
-        return oom('div', attributes.test1.test2)
+      static template = oom('div')
+
+      /**
+       * @param {oom} template
+       * @param {Proxy} attributes
+       * @returns {oom}
+       */
+      template = (template, attributes) => {
+        attributes.onclick()
+
+        return template
+          .span(attributes.test1.test2)
       }
 
     }
@@ -664,7 +676,8 @@ export default class TestOOM extends Test {
     const mye = oom.define(MyElement11).oom(MyElement11, {
       test1: {
         test2: 'test3'
-      }
+      },
+      onclick: () => (result = 1)
     })
 
     assert.equal(mye.html, '<my-element11 ' +
@@ -672,7 +685,59 @@ export default class TestOOM extends Test {
 
     document.body.innerHTML = ''
     document.body.append(mye.dom)
-    assert.equal(document.body.innerHTML, '')
+    assert.equal(result, 1)
+    assert.equal(document.body.innerHTML, '<my-element11 ' +
+      'test1="json::{&quot;test2&quot;:&quot;test3&quot;}"><div><span>test3</span></div></my-element11>')
+
+    document.body.innerHTML = ''
+  }
+
+  /** Работа с атрибутами в статическом шаблоне */
+  ['customElements - static template + proxyAttributes']() {
+    let result
+
+    /** Test custom element */
+    class MyElement12 extends HTMLElement {
+
+      /**
+       * @param {HTMLElement} instance
+       * @param {Proxy} attributes
+       * @returns {oom}
+       */
+      static template = (instance, attributes) => {
+        attributes.onclick()
+
+        return oom('div')
+          .span(attributes.test1.test2)
+      }
+
+      /**
+       * @param {oom} template
+       * @param {Proxy} attributes
+       * @returns {oom}
+       */
+      template = (template, attributes) => template
+        .span(attributes.test4)
+
+    }
+
+    const mye = oom.define(MyElement12).oom(MyElement12, {
+      test1: {
+        test2: 'test3'
+      },
+      test4: 'test5',
+      onclick: () => (result = 1)
+    })
+
+    assert.equal(mye.html, '<my-element12 ' +
+      'test1="json::{&quot;test2&quot;:&quot;test3&quot;}" test4="test5"></my-element12>')
+
+    document.body.innerHTML = ''
+    document.body.append(mye.dom)
+    assert.equal(result, 1)
+    assert.equal(document.body.innerHTML, '<my-element12 ' +
+      'test1="json::{&quot;test2&quot;:&quot;test3&quot;}" test4="test5"><div>' +
+      '<span>test3</span><span>test5</span></div></my-element12>')
 
     document.body.innerHTML = ''
   }
