@@ -348,6 +348,7 @@ function applyOOMTemplate(instance) {
   // TODO: Асинхронные шаблоны
   // TODO: Мониторинг атрибутов, при изменении которых нужно вызвать пересоздание по шаблону.
   //        observedAttributes вместо attributes в опциях, из которого читать значения.
+  // TODO: Сделать Proxy из templateOptions, чтобы создания опций происходило только если они используются.
 
   if (templateOptions) {
     templateOptions = {
