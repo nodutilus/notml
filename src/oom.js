@@ -265,13 +265,18 @@ function setAttribute(instance, attrName, attrValue) {
   const attrType = typeof attrValue
 
   // TODO: если имя style - генератор object->css
-  // TODO: Переименование дата атрибутов dataText в data-text
+
   if (attrType === 'function') {
     instance[attrName] = attrValue
-  } else if (attrType === 'object') {
-    instance.setAttribute(attrName, `json::${JSON.stringify(attrValue)}`)
   } else {
-    instance.setAttribute(attrName, attrValue)
+    if ((/[A-Z]/).test(attrName)) {
+      attrName = attrName.replace(/[A-Z]/g, str => `-${str.toLowerCase()}`)
+    }
+    if (attrType === 'object') {
+      instance.setAttribute(attrName, `json::${JSON.stringify(attrValue)}`)
+    } else {
+      instance.setAttribute(attrName, attrValue)
+    }
   }
 }
 
@@ -291,6 +296,9 @@ function getAttribute(instance, attrName) {
   if (typeof ownValue === 'function') {
     attrValue = ownValue
   } else {
+    if ((/[A-Z]/).test(attrName)) {
+      attrName = attrName.replace(/[A-Z]/g, str => `-${str.toLowerCase()}`)
+    }
     attrValue = instance.getAttribute(attrName)
     if (attrValue.startsWith('json::')) {
       attrValue = JSON.parse(attrValue.replace('json::', ''))

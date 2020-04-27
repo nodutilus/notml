@@ -120,6 +120,20 @@ export default class TestOOM extends Test {
     assert.equal(counter, 1)
   }
 
+  /** Установка объекта в качесвте атрибута */
+  ['setAttributes - object=>json']() {
+    const div = oom('div', { test: [] }).dom
+
+    assert.equal(div.outerHTML, '<div test="json::[]"></div>')
+  }
+
+  /** Установка атрибута в верхнем регистре работает по аналогии dataset */
+  ['setAttributes - UpperCase']() {
+    const div = oom('div', { dataTest: 'test' }).dom
+
+    assert.equal(div.outerHTML, '<div data-test="test"></div>')
+  }
+
   /** Установка атрибутов через oom.setAttributes */
   ['oom - setAttributes']() {
     const div = oom('div').dom
@@ -129,14 +143,6 @@ export default class TestOOM extends Test {
 
     oom.setAttributes(div, 'class', 'test2')
     assert.equal(div.outerHTML, '<div class="test2"></div>')
-  }
-
-  /** Установка объекта в качесвте атрибута */
-  ['oom - setAttributes object=>json']() {
-    const div = oom('div').dom
-
-    oom.setAttributes(div, { test: [] })
-    assert.equal(div.outerHTML, '<div test="json::[]"></div>')
   }
 
   /** Метод append от оом аналогичен методу от OOMAbstract */
@@ -735,6 +741,46 @@ export default class TestOOM extends Test {
     assert.equal(document.body.innerHTML, '<my-element12 ' +
       'test1="json::{&quot;test2&quot;:&quot;test3&quot;}" test4="test5"><div>' +
       '<span>test3</span><span>test5</span></div></my-element12>')
+
+    document.body.innerHTML = ''
+  }
+
+  /** Работа с атрибутами в верхнем регистре как с dataset */
+  ['customElements - proxyAttributes + UpperCase']() {
+    /** Test custom element */
+    class MyElement13 extends HTMLElement {
+
+      /**
+       * @param {{attributes:Proxy}} options
+       * @returns {oom}
+       */
+      template = ({ attributes }) => oom
+        .div(attributes.dataTestAttr, div => (this._div = div))
+
+      /**
+       * @param {string} oldValue
+       * @param {string} newValue
+       */
+      dataTestAttrChanged(oldValue, newValue) {
+        this._div.textContent += newValue
+      }
+
+    }
+
+    const mye = oom.define(MyElement13).oom(MyElement13, {
+      dataTestAttr: 'test1'
+    })
+
+    assert.equal(mye.html, '<my-element13 data-test-attr="test1"></my-element13>')
+
+    document.body.innerHTML = ''
+    document.body.append(mye.dom)
+    assert.equal(document.body.innerHTML, '<my-element13 data-test-attr="test1">' +
+      '<div>test1test1</div></my-element13>')
+
+    mye.dom.dataset.testAttr = 'test2'
+    assert.equal(document.body.innerHTML, '<my-element13 data-test-attr="test2">' +
+      '<div>test1test1test2</div></my-element13>')
 
     document.body.innerHTML = ''
   }
