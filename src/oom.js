@@ -260,6 +260,7 @@ function applyAttributeChangedCallback(instance, name, oldValue, newValue) {
  * @param {HTMLElement} instance
  * @param {string} attrName
  * @param {*} attrValue
+ * @returns {*}
  */
 function setAttribute(instance, attrName, attrValue) {
   const attrType = typeof attrValue
@@ -278,6 +279,8 @@ function setAttribute(instance, attrName, attrValue) {
       instance.setAttribute(attrName, attrValue)
     }
   }
+
+  return attrValue
 }
 
 
