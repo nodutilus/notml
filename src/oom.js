@@ -346,6 +346,7 @@ function applyOOMTemplate(instance) {
     null
 
   // TODO: Асинхронные шаблоны
+  // TODO: Метод на экземпляре applyTemplate
 
   if (templateOptions) {
     templateOptions = {
