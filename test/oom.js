@@ -112,12 +112,16 @@ export default class TestOOM extends Test {
     const div = oom('div', {
       onclick: () => {
         counter++
+      },
+      test: () => {
+        counter++
       }
     }).dom
 
     div.click()
+    div.test()
 
-    assert.equal(counter, 1)
+    assert.equal(counter, 2)
   }
 
   /** Установка объекта в качесвте атрибута */
