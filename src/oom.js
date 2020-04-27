@@ -346,6 +346,7 @@ function applyOOMTemplate(instance) {
     null
 
   // TODO: Асинхронные шаблоны
+  // TODO: Мониторинг атрибутов, при изменении которых нужно вызвать пересоздание по шаблону
 
   if (templateOptions) {
     templateOptions = {
