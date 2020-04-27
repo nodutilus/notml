@@ -351,9 +351,9 @@ export default class TestOOM extends Test {
 
       static template = '<b>test1</b>'
 
-      /** @param {string} template
+      /** @param {{template:string}} options
        *  @returns {string} */
-      template = template => template + '<b>test2</b>'
+      template = ({ template }) => template + '<b>test2</b>'
 
     }
 
@@ -409,9 +409,9 @@ export default class TestOOM extends Test {
 
       static template = oom('div')
 
-      /** @param {oom} tmpl */
-      template(tmpl) {
-        tmpl.span('test')
+      /** @param {{template:oom}} options */
+      template({ template }) {
+        template.span('test')
       }
 
     }
@@ -660,11 +660,10 @@ export default class TestOOM extends Test {
       static template = oom('div')
 
       /**
-       * @param {oom} template
-       * @param {Proxy} attributes
+       * @param {{template:oom, attributes:Proxy}} options
        * @returns {oom}
        */
-      template = (template, attributes) => {
+      template = ({ template, attributes }) => {
         attributes.onclick()
 
         return template
@@ -700,11 +699,10 @@ export default class TestOOM extends Test {
     class MyElement12 extends HTMLElement {
 
       /**
-       * @param {HTMLElement} instance
-       * @param {Proxy} attributes
+       * @param {{attributes:Proxy}} options
        * @returns {oom}
        */
-      static template = (instance, attributes) => {
+      static template = ({ attributes }) => {
         attributes.onclick()
 
         return oom('div')
@@ -712,11 +710,10 @@ export default class TestOOM extends Test {
       }
 
       /**
-       * @param {oom} template
-       * @param {Proxy} attributes
+       * @param {{template:oom, attributes:Proxy}} options
        * @returns {oom}
        */
-      template = (template, attributes) => template
+      template = ({ template, attributes }) => template
         .span(attributes.test4)
 
     }
@@ -837,15 +834,15 @@ export default class TestOOM extends Test {
       static field = oom('span', { class: 'field' })
 
       /**
-       * @param {HTMLElement} instance
+       * @param {{element:HTMLElement}} options
        * @returns {oom}
        */
-      static template(instance) {
+      static template({ element }) {
         return oom()
           .append(this.label.clone()
-            .span({ class: 'text' }, label => (instance._label = label)))
+            .span({ class: 'text' }, label => (element._label = label)))
           .append(this.field.clone()
-            .span({ class: 'text' }, field => (instance._field = field)))
+            .span({ class: 'text' }, field => (element._field = field)))
       }
 
       /**

@@ -327,29 +327,35 @@ function setAttributes(instance, attributes = {}, attrValue) {
  */
 function applyOOMTemplate(instance) {
   const attributeChanged = instance[attributeChangedCacheSymbol]
+  let staticTemplate = instance.constructor.template
   let { template } = instance
-  let proxyAttributes
+  let templateOptions =
+    (typeof staticTemplate === 'function' && staticTemplate.length > 0) ||
+    (typeof template === 'function' && template.length > 0) ||
+    null
 
   // TODO: Асинхронные шаблоны
+
+  if (templateOptions) {
+    templateOptions = {
+      element: instance,
+      attributes: new Proxy(instance, attributesHandler)
+    }
+  }
 
   if (template instanceof OOMAbstract) {
     template = template.clone()
   } else if (typeof template !== 'string') {
-    let staticTemplate = instance.constructor.template
-
     if (staticTemplate instanceof OOMAbstract) {
       staticTemplate = staticTemplate.clone()
     } else if (typeof staticTemplate === 'function') {
-      if (staticTemplate.length > 1) {
-        proxyAttributes = new Proxy(instance, attributesHandler)
-      }
-      staticTemplate = instance.constructor.template(instance, proxyAttributes)
+      staticTemplate = instance.constructor.template(templateOptions)
     }
     if (typeof template === 'function') {
-      if (template.length > 1 && !proxyAttributes) {
-        proxyAttributes = new Proxy(instance, attributesHandler)
+      if (templateOptions) {
+        templateOptions.template = staticTemplate
       }
-      template = instance.template(staticTemplate, proxyAttributes) || staticTemplate
+      template = instance.template(templateOptions) || staticTemplate
     } else {
       template = staticTemplate
     }
