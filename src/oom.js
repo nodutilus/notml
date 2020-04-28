@@ -267,7 +267,7 @@ function setAttribute(instance, attrName, attrValue) {
 
   // TODO: если имя style - генератор object->css
 
-  if (attrType === 'function') {
+  if (attrType === 'function' || attrName === 'options') {
     instance[attrName] = attrValue
   } else {
     if ((/[A-Z]/).test(attrName)) {
@@ -296,7 +296,7 @@ function getAttribute(instance, attrName) {
   const ownValue = instance[attrName]
   let attrValue
 
-  if (typeof ownValue === 'function') {
+  if (typeof ownValue === 'function' || attrName === 'options') {
     attrValue = ownValue
   } else {
     if ((/[A-Z]/).test(attrName)) {
@@ -351,6 +351,7 @@ function applyOOMTemplate(instance) {
   if (templateOptions) {
     templateOptions = {
       element: instance,
+      options: instance.options || {},
       attributes: new Proxy(instance, attributesHandler)
     }
   }

@@ -789,6 +789,41 @@ export default class TestOOM extends Test {
     document.body.innerHTML = ''
   }
 
+  /** Особый атрибут options позволяет сохранить данные на экземпляре,
+   *    но при этом его изменение не отслеживается.
+   *  Концептуально опции изменяться не должны. */
+  ['customElements - options']() {
+    /** Test custom element */
+    class MyElement14 extends HTMLElement {
+
+      /**
+       * @param {{element:HTMLElement, attributes:Proxy, options:Object}} options
+       * @returns {oom}
+       */
+      template = ({ element, attributes, options }) => oom
+        .div([
+          attributes.options === options,
+          element.options === options,
+          options.test()
+        ].join('-'))
+
+    }
+
+    const mye = oom.define(MyElement14).oom(MyElement14, {
+      options: {
+        test: () => 'test-ok'
+      }
+    })
+
+    assert.equal(mye.html, '<my-element14></my-element14>')
+
+    document.body.innerHTML = ''
+    document.body.append(mye.dom)
+    assert.equal(document.body.innerHTML, '<my-element14><div>true-true-test-ok</div></my-element14>')
+
+    document.body.innerHTML = ''
+  }
+
   /** Код из примера - Простая верстка */
   ['example in readme - Example #1']() {
     const oomDiv = oom('div')
