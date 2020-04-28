@@ -1,4 +1,5 @@
 const customElementsCache = new WeakMap()
+const customElementsOptionsCache = new WeakMap()
 const observedAttributesSymbol = Symbol('observedAttributes')
 const attributeChangedCacheSymbol = Symbol('attributeChangedCache')
 const isOOMInstanceSymbol = Symbol('isOOMInstance')
@@ -267,8 +268,11 @@ function setAttribute(instance, attrName, attrValue) {
 
   // TODO: если имя style - генератор object->css
 
-  if (attrType === 'function' || attrName === 'options') {
+  if (attrType === 'function') {
     instance[attrName] = attrValue
+  } else if (attrName === 'options') {
+    instance[attrName] = attrValue
+    customElementsOptionsCache.set(instance, attrValue)
   } else {
     if ((/[A-Z]/).test(attrName)) {
       attrName = attrName.replace(/[A-Z]/g, str => `-${str.toLowerCase()}`)
@@ -351,7 +355,7 @@ function applyOOMTemplate(instance) {
   if (templateOptions) {
     templateOptions = {
       element: instance,
-      options: instance.options || {},
+      options: customElementsOptionsCache.get(instance) || {},
       attributes: new Proxy(instance, attributesHandler)
     }
   }
