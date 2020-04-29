@@ -353,11 +353,10 @@ function applyOOMTemplate(instance) {
   // TODO: Метод на экземпляре applyTemplate
 
   if (templateOptions) {
-    templateOptions = {
+    templateOptions = Object.assign({}, customElementsOptionsCache.get(instance), {
       element: instance,
-      options: customElementsOptionsCache.get(instance) || {},
       attributes: new Proxy(instance, attributesHandler)
-    }
+    })
   }
 
   if (template instanceof OOMAbstract) {

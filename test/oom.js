@@ -797,14 +797,14 @@ export default class TestOOM extends Test {
     class MyElement14 extends HTMLElement {
 
       /**
-       * @param {{element:HTMLElement, attributes:Proxy, options:Object}} options
+       * @param {{element:HTMLElement, attributes:Proxy, test:function}} options
        * @returns {oom}
        */
-      template = ({ element, attributes, options }) => oom
+      template = ({ element, attributes, test }) => oom
         .div([
-          attributes.options === options,
-          element.options === options,
-          options.test()
+          element.options === attributes.options,
+          element.options.test === test,
+          test()
         ].join('-'))
 
     }
