@@ -126,9 +126,15 @@ export default class TestOOM extends Test {
 
   /** Установка объекта в качесвте атрибута */
   ['setAttributes - object=>json']() {
-    const div = oom('div', { test: [] }).dom
+    const div = oom('div', { dataTest: [] }).dom
 
-    assert.equal(div.outerHTML, '<div test="json::[]"></div>')
+    assert.equal(div.outerHTML, '<div data-test="json::[]"></div>')
+
+    div.dataset.test = ''
+    assert.equal(div.outerHTML, '<div data-test=""></div>')
+
+    delete div.dataset.test
+    assert.equal(div.outerHTML, '<div></div>')
   }
 
   /** Установка атрибута в верхнем регистре работает по аналогии dataset */
@@ -656,6 +662,12 @@ export default class TestOOM extends Test {
     document.body.append(mye.dom)
     assert.equal(document.body.innerHTML, '<my-element10 test="json::{&quot;a&quot;:1}"></my-element10>')
     assert.deepEqual(result, { a: 1 })
+
+    mye.dom.setAttribute('test', '')
+    assert.equal(document.body.innerHTML, '<my-element10 test=""></my-element10>')
+
+    mye.dom.removeAttribute('test')
+    assert.equal(document.body.innerHTML, '<my-element10></my-element10>')
 
     document.body.innerHTML = ''
   }

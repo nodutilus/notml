@@ -236,7 +236,7 @@ function applyAttributeChangedCallback(instance, name, oldValue, newValue) {
   const observed = instance.constructor[observedAttributesSymbol]
 
   if (observed.has(name)) {
-    if (newValue.startsWith('json::')) {
+    if (newValue && newValue.startsWith('json::')) {
       newValue = JSON.parse(newValue.replace('json::', ''))
     }
     if (instance.isConnected) {
