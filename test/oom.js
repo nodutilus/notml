@@ -1,5 +1,5 @@
 import { assert, Test } from '@nodutilus/test'
-import { oom } from '../src/oom.js'
+import { oom } from '../src/core.js'
 
 const { HTMLElement, DocumentFragment, customElements, document } = window
 

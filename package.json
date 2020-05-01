@@ -9,11 +9,11 @@
     "node": ">=14"
   },
   "files": [
-    "notml.js"
+    "core.js"
   ],
-  "browser": "./notml.js",
+  "browser": "./core.js",
   "exports": {
-    ".": "./notml.js"
+    ".": "./core.js"
   },
   "dependencies": {},
   "devDependencies": {

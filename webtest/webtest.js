@@ -1,4 +1,4 @@
-import { oom } from './notml.js'
+import { oom } from './core.js'
 
 const { document } = window
 
