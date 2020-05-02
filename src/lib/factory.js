@@ -1,6 +1,6 @@
-import { customTagNames, customOptions } from './shared-const.js'
+import { customTagNames, customElementTagName, customClasses, customOptions } from './shared-const.js'
 
-const { document, DocumentFragment, HTMLElement } = window
+const { document, customElements, DocumentFragment, HTMLElement } = window
 const isOOMAbstractSymbol = Symbol('isOOMAbstract')
 
 
@@ -46,7 +46,7 @@ class OOMAbstract {
    */
   static create(constructor, ...args) {
     const lastArg = args[args.length - 1]
-    const isCallback = typeof lastArg === 'function' && !(customTagNames.has(lastArg))
+    const isCallback = typeof lastArg === 'function' && !(customElementTagName.has(lastArg))
     const callback = isCallback ? args.pop() : null
     const element = new constructor(...args)
 
@@ -63,7 +63,7 @@ class OOMAbstract {
    * @returns {OOMAbstract}
    */
   static factory(tagName, ...args) {
-    const isTagName = typeof tagName === 'string' || customTagNames.has(tagName)
+    const isTagName = typeof tagName === 'string' || customElementTagName.has(tagName)
     const element = OOMAbstract.create(isTagName ? OOMElement : OOMFragment, tagName, ...args)
 
     return element
@@ -200,8 +200,7 @@ class OOMElement extends OOMAbstract {
   static setAttribute(instance, attrName, attrValue) {
     // TODO: если имя style - генератор object->css
 
-    if (attrName === 'options') {
-      instance[attrName] = attrValue
+    if (attrName === 'options' && customClasses.has(instance.constructor)) {
       customOptions.set(instance, attrValue)
     } else {
       const attrType = typeof attrValue
@@ -234,7 +233,7 @@ class OOMElement extends OOMAbstract {
   static getAttribute(instance, attrName) {
     let attrValue
 
-    if (attrName === 'options') {
+    if (attrName === 'options' && customClasses.has(instance.constructor)) {
       attrValue = customOptions.get(instance, attrValue)
     } else {
       const ownValue = instance[attrName]
@@ -307,18 +306,22 @@ class OOMElement extends OOMAbstract {
    * @param {OOMChild} child
    */
   constructor(tagName, attributes, child) {
+    [attributes, child] = OOMElement.resolveArgs(attributes, child)
     super()
     if (tagName instanceof HTMLElement) {
       this.dom = tagName
     } else {
-      if (customTagNames.has(tagName)) {
-        tagName = customTagNames.get(tagName)
+      if (customElementTagName.has(tagName)) {
+        tagName = customElementTagName.get(tagName)
+        customElements.get(tagName).options = attributes ? attributes.options : undefined
       } else {
         tagName = OOMElement.resolveTagName(tagName)
+        if (customTagNames.has(tagName)) {
+          customElements.get(tagName).options = attributes ? attributes.options : undefined
+        }
       }
       this.dom = document.createElement(tagName)
     }
-    [attributes, child] = OOMElement.resolveArgs(attributes, child)
     this.setAttributes(attributes)
     this.append(child)
   }

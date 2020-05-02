@@ -1,4 +1,4 @@
-import { customTagNames, customOptions } from './shared-const.js'
+import { customTagNames, customElementTagName, customClasses, customOptions } from './shared-const.js'
 import { OOMAbstract, OOMElement } from './factory.js'
 
 const { HTMLElement, customElements } = window
@@ -8,9 +8,12 @@ const attributesHandler = { get: OOMElement.getAttribute, set: OOMElement.setAtt
 
 
 /**
+ * Подготовка списка атрибутов, изменения которых отслеживаются
+ *  при помощи методов класса, содержащих 'Changed' на конце имени
+ *
  * @param {typeof HTMLElement} proto
  * @param {Map} setters
- * @returns {Map}
+ * @returns {Map|null}
  */
 function getObservedAttributes(proto, setters) {
   const properties = Object.getOwnPropertyNames(proto)
@@ -35,13 +38,13 @@ function getObservedAttributes(proto, setters) {
     }
   }
 
-  return setters
+  return setters.size > 0 ? setters : null
 }
 
 
 /**
  * Вызов обработчиков изменения атрибутов,
- *  и кэширование изменений до вставки элемента в DOM
+ *  с кэшированием изменений до вставки элемента в DOM
  *
  * @param {HTMLElement} instance
  * @param {string} name
@@ -51,7 +54,7 @@ function getObservedAttributes(proto, setters) {
 function applyAttributeChangedCallback(instance, name, oldValue, newValue) {
   const observed = instance.constructor[observedAttributesSymbol]
 
-  if (observed.has(name)) {
+  if (observed && observed.has(name)) {
     if (newValue && newValue.startsWith('json::')) {
       newValue = JSON.parse(newValue.replace('json::', ''))
     }
@@ -71,7 +74,7 @@ function applyAttributeChangedCallback(instance, name, oldValue, newValue) {
 
 
 /**
- * Применение OOM шаблонизации
+ * Применение OOM шаблона пользовательского элемента
  *
  * @param {HTMLElement} instance
  */
@@ -130,6 +133,63 @@ function applyOOMTemplate(instance) {
 
 
 /**
+ * @param {typeof HTMLElement} constructor
+ * @returns {typeof HTMLElement}
+ */
+function customClassFactory(constructor) {
+  /**
+   * Динамический класс пользовательского элемента, реализующий:
+   *  - Использование шаблонов для верстки (template, static template)
+   *  - Опции для шаблона (oom(..., { options:{} }))
+   *  - Методы-обработчики изменения атрибутов (endsWith('Changed'))
+   *  - JSON атрибуты с преобразованием в объект (json::)
+   */
+  class OOMCustomElement extends constructor {
+
+    static [observedAttributesSymbol] = getObservedAttributes(constructor.prototype, new Map())
+
+    /** @returns {[string]} */
+    static get observedAttributes() {
+      return this[observedAttributesSymbol]
+        ? [...this[observedAttributesSymbol].keys(), ...(super.observedAttributes || [])]
+        : super.observedAttributes
+    }
+
+    /** Передача опций элемента в пользовательский конструктор */
+    constructor() {
+      super(OOMCustomElement.options || {})
+      delete OOMCustomElement.options
+    }
+
+    /**
+     * Вызов методов класса отслеживающих изменения атрибутов
+     *
+     * @param {string} name
+     * @param {string} [oldValue]
+     * @param {string} [newValue]
+     */
+    attributeChangedCallback(name, oldValue, newValue) {
+      applyAttributeChangedCallback(this, name, oldValue, newValue)
+      if (super.attributeChangedCallback) {
+        super.attributeChangedCallback(name, oldValue, newValue)
+      }
+    }
+
+    /** Создание элемента по шаблону при вставке в DOM */
+    connectedCallback() {
+      applyOOMTemplate(this)
+      if (super.connectedCallback) {
+        super.connectedCallback()
+      }
+    }
+
+  }
+
+  return OOMCustomElement
+}
+
+
+/**
  * @typedef CustomElementsOptions
  * @property {string} extends Имя встроенного элемента для расширения
  */
@@ -146,28 +206,10 @@ export function defineCustomElement(name, constructor, options) {
     name = OOMElement.resolveTagName(constructor.name)
   }
 
-  const observedAttributes = getObservedAttributes(constructor.prototype, new Map())
+  const customClass = customClasses.get(constructor) || customClassFactory(constructor)
 
-  if (observedAttributes.size > 0) {
-    constructor[observedAttributesSymbol] = observedAttributes
-    Object.defineProperty(constructor, 'observedAttributes', {
-      value: [...observedAttributes.keys(), ...(constructor.observedAttributes || [])]
-    })
-    constructor.prototype.attributeChangedCallback = (attributeChangedCallback =>
-      function __attributeChangedCallback(name, oldValue, newValue) {
-        applyAttributeChangedCallback(this, name, oldValue, newValue)
-        if (attributeChangedCallback) attributeChangedCallback.call(this, name, oldValue, newValue)
-      }
-    )(constructor.prototype.attributeChangedCallback)
-  }
-
-  constructor.prototype.connectedCallback = (connectedCallback =>
-    function __connectedCallback() {
-      applyOOMTemplate(this)
-      if (connectedCallback) connectedCallback.apply(this)
-    }
-  )(constructor.prototype.connectedCallback)
-
-  customElements.define(name, constructor, options)
-  customTagNames.set(constructor, name)
+  customElements.define(name, customClass, options)
+  customClasses.set(customClass, constructor)
+  customElementTagName.set(constructor, name)
+  customTagNames.add(name)
 }

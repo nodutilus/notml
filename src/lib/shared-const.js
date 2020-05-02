@@ -1,9 +1,21 @@
 /**
- * Хранилище для имен тегов зарегистрированных пользовательских элементов
+ * Список все тегов зарегистрированных пользовательских элементов
  *
- * @type {WeakMap<HTMLElement,string>}
+ * @type {Set<string>}
  */
-export const customTagNames = new WeakMap()
+export const customTagNames = new Set()
+/**
+ * Сопоставление класса пользовательского элемента и его тега
+ *
+ * @type {Map<HTMLElement,string>}
+ */
+export const customElementTagName = new Map()
+/**
+ * Связь динамических классов пользовательских элементов с классами определенными пользователем
+ *
+ * @type {Map<HTMLElement,HTMLElement>}
+ */
+export const customClasses = new Map()
 /**
  * Хранилище опций для пользовательских компонентов
  *

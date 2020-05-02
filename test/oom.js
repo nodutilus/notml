@@ -144,6 +144,13 @@ export default class TestOOM extends Test {
     assert.equal(div.outerHTML, '<div data-test="test"></div>')
   }
 
+  /** Установка атрибута опций в обычный элемент записывает их в формате JSON */
+  ['setAttributes - options']() {
+    const div = oom('div', { options: { a: 'b' } }).dom
+
+    assert.equal(div.outerHTML, '<div options="json::{&quot;a&quot;:&quot;b&quot;}"></div>')
+  }
+
   /** Установка атрибутов через oom.setAttributes */
   ['oom - setAttributes']() {
     const div = oom('div').dom
@@ -310,8 +317,8 @@ export default class TestOOM extends Test {
     oom.define(MyElementDefine1)
     oom.define('m-e-d', MyElementDefine2)
 
-    assert.equal(customElements.get('my-element-define1'), MyElementDefine1)
-    assert.equal(customElements.get('m-e-d'), MyElementDefine2)
+    assert.equal(oom.getDefined('my-element-define1'), MyElementDefine1)
+    assert.equal(oom.getDefined('m-e-d'), MyElementDefine2)
   }
 
   /** Регистрация новых элементов через oom.define */
@@ -808,20 +815,26 @@ export default class TestOOM extends Test {
     /** Test custom element */
     class MyElement14 extends HTMLElement {
 
+      /** @param {{}} options */
+      constructor(options) {
+        super()
+        this._options = options
+      }
+
       /**
        * @param {{element:HTMLElement, attributes:Proxy, test:function}} options
        * @returns {oom}
        */
       template = ({ element, attributes, test }) => oom
         .div([
-          element.options === attributes.options,
-          element.options.test === test,
+          element._options === attributes.options,
+          element._options.test === test,
           test()
         ].join('-'))
 
     }
 
-    const mye = oom.define(MyElement14).oom(MyElement14, {
+    const mye = oom.define(MyElement14).oom('my-element14', {
       options: {
         test: () => 'test-ok'
       }
