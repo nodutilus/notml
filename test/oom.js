@@ -849,6 +849,20 @@ export default class TestOOM extends Test {
     document.body.innerHTML = ''
   }
 
+  /** Имя тега нового элемента можно задать через статическое свойство tagName */
+  ['customElements - tagName']() {
+    /** Test custom element */
+    class MyElement15 extends HTMLElement {
+
+      static tagName = 'my-element15-custom'
+
+    }
+
+    const mye = oom.define(MyElement15).oom(MyElement15)
+
+    assert.equal(mye.html, '<my-element15-custom></my-element15-custom>')
+  }
+
   /** Код из примера - Простая верстка */
   ['example in readme - Example #1']() {
     const oomDiv = oom('div')

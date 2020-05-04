@@ -203,7 +203,7 @@ function customClassFactory(constructor) {
 export function defineCustomElement(name, constructor, options) {
   if (Object.isPrototypeOf.call(HTMLElement, name)) {
     [constructor, options] = [name, constructor]
-    name = OOMElement.resolveTagName(constructor.name)
+    name = constructor.tagName || OOMElement.resolveTagName(constructor.name)
   }
 
   const customClass = customClasses.get(constructor) || customClassFactory(constructor)
