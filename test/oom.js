@@ -775,34 +775,40 @@ export default class TestOOM extends Test {
 
       /**
        * @param {{attributes:Proxy}} options
+       */
+      static template = ({ attributes }) => { attributes.dataTestAttr2 = 0 }
+
+      /**
+       * @param {{attributes:Proxy}} options
        * @returns {oom}
        */
       template = ({ attributes }) => oom
-        .div(attributes.dataTestAttr, div => (this._div = div))
+        .div(attributes.dataTestAttr1, div => (this._div = div))
 
       /**
        * @param {string} oldValue
        * @param {string} newValue
        */
-      dataTestAttrChanged(oldValue, newValue) {
+      dataTestAttr1Changed(oldValue, newValue) {
         this._div.textContent += newValue
       }
 
     }
 
     const mye = oom.define(MyElement13).oom(MyElement13, {
-      dataTestAttr: 'test1'
+      dataTestAttr1: 'test1',
+      dataTestAttr2: 1
     })
 
-    assert.equal(mye.html, '<my-element13 data-test-attr="test1"></my-element13>')
+    assert.equal(mye.html, '<my-element13 data-test-attr1="test1" data-test-attr2="1"></my-element13>')
 
     document.body.innerHTML = ''
     document.body.append(mye.dom)
-    assert.equal(document.body.innerHTML, '<my-element13 data-test-attr="test1">' +
+    assert.equal(document.body.innerHTML, '<my-element13 data-test-attr1="test1" data-test-attr2="0">' +
       '<div>test1test1</div></my-element13>')
 
-    mye.dom.dataset.testAttr = 'test2'
-    assert.equal(document.body.innerHTML, '<my-element13 data-test-attr="test2">' +
+    mye.dom.dataset.testAttr1 = 'test2'
+    assert.equal(document.body.innerHTML, '<my-element13 data-test-attr1="test2" data-test-attr2="0">' +
       '<div>test1test1test2</div></my-element13>')
 
     document.body.innerHTML = ''

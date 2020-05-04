@@ -195,7 +195,6 @@ class OOMElement extends OOMAbstract {
    * @param {HTMLElement} instance
    * @param {string} attrName
    * @param {*} attrValue
-   * @returns {*}
    */
   static setAttribute(instance, attrName, attrValue) {
     // TODO: если имя style - генератор object->css
@@ -218,8 +217,6 @@ class OOMElement extends OOMAbstract {
         }
       }
     }
-
-    return attrValue
   }
 
   /**

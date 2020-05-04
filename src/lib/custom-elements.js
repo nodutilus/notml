@@ -4,7 +4,14 @@ import { OOMAbstract, OOMElement } from './factory.js'
 const { HTMLElement, customElements } = window
 const observedAttributesSymbol = Symbol('observedAttributes')
 const attributeChangedCacheSymbol = Symbol('attributeChangedCache')
-const attributesHandler = { get: OOMElement.getAttribute, set: OOMElement.setAttribute }
+const attributesHandler = {
+  get: OOMElement.getAttribute,
+  set: (...args) => {
+    OOMElement.setAttribute(...args)
+
+    return true
+  }
+}
 
 
 /**
