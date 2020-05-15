@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compatible NotML Core</title>
+  <script src="/compatible.js"></script>
+</head>
+
+<body>
+</body>
+
+<script>
+
+  var compatible = $notml.compatible()
+
+  if (compatible.success) {
+    document.body.innerHTML = 'notml is compatible'
+  } else {
+    document.body.innerHTML = '<pre>' + compatible.message + '</pre>'
+  }
+
+</script>
+
+</html>

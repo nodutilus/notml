@@ -3,13 +3,15 @@ import FastifyStatic from 'fastify-static'
 import { resolve } from 'path'
 
 const fastify = Fastify({ logger: true })
+const dir = resolve('webtest')
 
 
 fastify
   .register(FastifyStatic, { root: resolve('.'), prefix: '/' })
-  .get('/', (req, reply) => reply.sendFile('webtest.html', resolve('webtest')))
-  .get('/webtest.js', (req, reply) => reply.sendFile('webtest.js', resolve('webtest')))
-  .listen(3000, (err, address) => {
+  .get('/', (req, reply) => reply.sendFile('webtest.html', dir))
+  .get('/compatible', (req, reply) => reply.sendFile('compatible.html', dir))
+  .get('/webtest.js', (req, reply) => reply.sendFile('webtest.js', dir))
+  .listen({ host: '0.0.0.0', port: 3000 }, (err, address) => {
     if (err) {
       fastify.log.error(err)
       process.exit(1)

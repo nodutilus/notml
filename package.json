@@ -9,6 +9,7 @@
     "node": ">=14"
   },
   "files": [
+    "check-compatible.js",
     "core.js"
   ],
   "browser": "./core.js",
