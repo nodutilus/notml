@@ -689,11 +689,12 @@ export default class TestOOM extends Test {
       static template = oom('div')
 
       /**
-       * @param {{template:oom, attributes:Proxy}} options
+       * @param {{element:HTMLElement, template:oom, attributes:Proxy}} options
        * @returns {oom}
        */
-      template = ({ template, attributes }) => {
+      template = ({ element, template, attributes }) => {
         attributes.onclick()
+        element._test3 = attributes.test3
 
         return template
           .span(attributes.test1.test2)
@@ -716,6 +717,7 @@ export default class TestOOM extends Test {
     assert.equal(result, 1)
     assert.equal(document.body.innerHTML, '<my-element11 ' +
       'test1="json::{&quot;test2&quot;:&quot;test3&quot;}"><div><span>test3</span></div></my-element11>')
+    assert.equal(mye.dom._test3, null)
 
     document.body.innerHTML = ''
   }

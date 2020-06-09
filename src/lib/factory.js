@@ -242,7 +242,7 @@ class OOMElement extends OOMAbstract {
           attrName = attrName.replace(/[A-Z]/g, str => `-${str.toLowerCase()}`)
         }
         attrValue = instance.getAttribute(attrName)
-        if (attrValue.startsWith('json::')) {
+        if (attrValue && attrValue.startsWith('json::')) {
           attrValue = JSON.parse(attrValue.replace('json::', ''))
         }
       }
