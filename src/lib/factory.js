@@ -37,8 +37,6 @@ class OOMAbstract {
     }
   }
 
-  static proxyHandler = { get: this.proxyGetter, set: () => false }
-
   /**
    * @param {typeof OOMAbstract} constructor
    * @param  {...any} args
@@ -129,6 +127,8 @@ class OOMAbstract {
   }
 
 }
+
+OOMAbstract.proxyHandler = { get: OOMAbstract.proxyGetter, set: () => false }
 
 
 /** Фрагмент - набор элементов без общего родителя */

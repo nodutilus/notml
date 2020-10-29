@@ -153,8 +153,6 @@ function customClassFactory(constructor) {
    */
   class OOMCustomElement extends constructor {
 
-    static [observedAttributesSymbol] = getObservedAttributes(constructor.prototype, new Map())
-
     /** @returns {[string]} */
     static get observedAttributes() {
       return this[observedAttributesSymbol]
@@ -191,6 +189,8 @@ function customClassFactory(constructor) {
     }
 
   }
+
+  OOMCustomElement[observedAttributesSymbol] = getObservedAttributes(constructor.prototype, new Map())
 
   return OOMCustomElement
 }
