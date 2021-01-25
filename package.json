@@ -1,6 +1,6 @@
 {
   "name": "@notml/core",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Not a HTML - is object-oriented modeling of HTML",
   "license": "Unlicense",
   "repository": "github:notml/core",
@@ -10,6 +10,7 @@
   },
   "files": [
     "check-compatible.js",
+    "core-global.js",
     "core.js"
   ],
   "browser": "./core.js",
