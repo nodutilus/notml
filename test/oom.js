@@ -137,6 +137,17 @@ export default class TestOOM extends Test {
     assert.equal(div.outerHTML, '<div></div>')
   }
 
+  /** Установка стилей через style в виде объекта и строки */
+  ['setAttributes - style']() {
+    const div1 = oom('div', { style: { borderBottom: '1px solid' } }).dom
+    const div2 = oom('div', { style: 'border-bottom: 1px solid;' }).dom
+    const div3 = oom('div', { style: { 'border-bottom': '1px solid' } }).dom
+
+    assert.equal(div1.outerHTML, '<div style="border-bottom: 1px solid;"></div>')
+    assert.equal(div2.outerHTML, div1.outerHTML)
+    assert.equal(div3.outerHTML, div1.outerHTML)
+  }
+
   /** Установка атрибута в верхнем регистре работает по аналогии dataset */
   ['setAttributes - UpperCase']() {
     const div = oom('div', { dataTest: 'test' }).dom
@@ -875,29 +886,29 @@ export default class TestOOM extends Test {
   ['example in readme - Example #1']() {
     const oomDiv = oom('div')
       .div({ class: 'header' })
-      .div({ class: 'test' }, oom
+      .div({ style: { borderBottom: '1px solid' } }, oom
         .span('Name: ', { class: 'test-label' })
         .span('Test', { class: 'test-name' }))
       .div({ class: 'footer' })
     const divHeader = document.createElement('div')
     const spanName = document.createElement('span')
     const spanTest = document.createElement('span')
-    const divTest = document.createElement('div')
+    const divBorder = document.createElement('div')
     const divFooter = document.createElement('div')
     const domDiv = document.createElement('div')
 
     divHeader.setAttribute('class', 'header')
     spanName.setAttribute('class', 'test-label')
     spanTest.setAttribute('class', 'test-name')
-    divTest.setAttribute('class', 'test')
+    divBorder.style.borderBottom = '1px solid'
     divFooter.setAttribute('class', 'footer')
     spanName.textContent = 'Name: '
     spanTest.textContent = 'Test'
 
     domDiv.append(divHeader)
-    divTest.append(spanName)
-    divTest.append(spanTest)
-    domDiv.append(divTest)
+    divBorder.append(spanName)
+    divBorder.append(spanTest)
+    domDiv.append(divBorder)
     domDiv.append(divFooter)
 
     assert.equal(oomDiv.html, domDiv.outerHTML)

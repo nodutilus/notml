@@ -197,13 +197,15 @@ class OOMElement extends OOMAbstract {
    * @param {*} attrValue
    */
   static setAttribute(instance, attrName, attrValue) {
-    // TODO: если имя style - генератор object->css
+    const attrType = typeof attrValue
 
     if (attrName === 'options' && customClasses.has(instance.constructor)) {
       customOptions.set(instance, attrValue)
+    } else if (attrName === 'style' && attrType === 'object') {
+      for (const name in attrValue) {
+        instance.style[name] = attrValue[name]
+      }
     } else {
-      const attrType = typeof attrValue
-
       if (attrType === 'function') {
         instance[attrName] = attrValue
       } else {
