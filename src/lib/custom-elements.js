@@ -105,11 +105,7 @@ function applyOOMTemplate(instance) {
     })
   }
 
-  if (template instanceof OOMAbstract) {
-    // TODO: Переделать на клонирование только статичных шаблонов,
-    //  т.к. свойства класса создаются для каждого instance
-    template = template.clone()
-  } else if (typeof template !== 'string') {
+  if (!(template instanceof OOMAbstract) && typeof template !== 'string') {
     if (staticTemplate instanceof OOMAbstract) {
       staticTemplate = staticTemplate.clone()
     } else if (typeof staticTemplate === 'function') {

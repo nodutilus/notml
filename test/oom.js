@@ -350,6 +350,7 @@ export default class TestOOM extends Test {
 
     document.body.innerHTML = ''
     document.body.append(mye.dom)
+    // Статические шаблоны клонируются для переиспользования
     assert.equal(mye.dom.constructor.template.dom.parentNode, null)
     assert.equal(document.body.innerHTML, '<my-element3 class="MyElement"><span>test</span></my-element3>')
     document.body.innerHTML = ''
@@ -400,8 +401,8 @@ export default class TestOOM extends Test {
     document.body.innerHTML = ''
   }
 
-  /** Шаблоны на экземпляре тоже клонируются,
-   *   т.к. могут быть использованы в рамках жц */
+  /** Шаблоны на экземпляре не клонируются,
+   *   т.к. для каждого создается отдельный экземпляр шаблона */
   ['customElements - instance template']() {
     /** Test custom element */
     class MyElement4 extends HTMLElement {
@@ -411,10 +412,12 @@ export default class TestOOM extends Test {
     }
 
     const mye = oom.define(MyElement4).oom(MyElement4)
+    const mye2 = oom(MyElement4)
 
     document.body.innerHTML = ''
     document.body.append(mye.dom)
-    assert.equal(mye.dom.template.dom.parentNode, null)
+    assert.ok(mye.dom.template !== mye2.dom.template)
+    assert.ok(mye.dom.template.dom.parentNode === mye.dom)
     assert.equal(document.body.innerHTML, '<my-element4><span>test</span></my-element4>')
     document.body.innerHTML = ''
   }
