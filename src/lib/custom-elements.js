@@ -88,7 +88,8 @@ function applyAttributeChangedCallback(instance, name, oldValue, newValue) {
 function applyOOMTemplate(instance) {
   const attributeChanged = instance[attributeChangedCacheSymbol]
   let staticTemplate = instance.constructor.template
-  let { template } = instance
+  let { shadowRootInit, template } = instance
+  let root = instance
   let templateOptions =
     (typeof staticTemplate === 'function' && staticTemplate.length > 0) ||
     (typeof template === 'function' && template.length > 0) ||
@@ -105,6 +106,8 @@ function applyOOMTemplate(instance) {
   }
 
   if (template instanceof OOMAbstract) {
+    // TODO: Переделать на клонирование только статичных шаблонов,
+    //  т.к. свойства класса создаются для каждого instance
     template = template.clone()
   } else if (typeof template !== 'string') {
     if (staticTemplate instanceof OOMAbstract) {
@@ -122,11 +125,15 @@ function applyOOMTemplate(instance) {
     }
   }
 
+  if (shadowRootInit) {
+    root = instance.attachShadow(shadowRootInit)
+  }
+
   if (template instanceof OOMAbstract) {
-    instance.innerHTML = ''
-    instance.append(template.dom)
+    root.innerHTML = ''
+    root.append(template.dom)
   } else if (typeof template === 'string') {
-    instance.innerHTML = template
+    root.innerHTML = template
   }
 
   if (attributeChanged instanceof Set) {

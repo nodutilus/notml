@@ -13,6 +13,7 @@ node_modules/
 *.tgz
 
 # Generate output
+/coverage
 /build
 /core.js
 /core-global.js

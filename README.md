@@ -2,6 +2,8 @@
 
 Not a HTML - is object-oriented modeling of HTML
 
+## Simple HTML-based
+
 ### Example #1
 
 Simple layout. Comparison with HTML.
@@ -94,6 +96,8 @@ const block = oom
   <div>div 2</div>
 </div>
 ```
+
+## Based on Custom Elements
 
 ### Example #3
 

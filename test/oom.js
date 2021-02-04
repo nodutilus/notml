@@ -882,6 +882,56 @@ export default class TestOOM extends Test {
     assert.equal(mye.html, '<my-element15-custom></my-element15-custom>')
   }
 
+  /** Инициализация теневого DOM */
+  ['customElements - shadowRoot init']() {
+    /** Test custom element */
+    class MyElement16 extends HTMLElement {
+
+      shadowRootInit = { mode: 'open' }
+
+      template = oom.test('ok')
+
+    }
+
+    const mye = oom.define(MyElement16).oom(MyElement16)
+
+    document.body.innerHTML = ''
+    document.body.append(mye.dom)
+    assert.equal(document.body.innerHTML, '<my-element16></my-element16>')
+    assert.equal(mye.dom.shadowRoot.innerHTML, '<test>ok</test>')
+
+    document.body.innerHTML = ''
+  }
+
+  /** изменения внутренних элементов теневого DOM по ссылкам */
+  ['customElements - shadowRoot modify by link']() {
+    /** Test custom element */
+    class MyElement17 extends HTMLElement {
+
+      mySpan = oom('span', 'test')
+
+      shadowRootInit = { mode: 'open' }
+
+      /**
+       * @returns {oom}
+       */
+      template = () => oom.test(this.mySpan)
+
+    }
+
+    const mye = oom.define(MyElement17).oom(MyElement17)
+
+    document.body.innerHTML = ''
+    document.body.append(mye.dom)
+    assert.equal(document.body.innerHTML, '<my-element17></my-element17>')
+    assert.equal(mye.dom.shadowRoot.innerHTML, '<test><span>test</span></test>')
+
+    mye.dom.mySpan.dom.textContent = 'ok'
+    assert.equal(mye.dom.shadowRoot.innerHTML, '<test><span>ok</span></test>')
+
+    document.body.innerHTML = ''
+  }
+
   /** Код из примера - Простая верстка */
   ['example in readme - Example #1']() {
     const oomDiv = oom('div')
