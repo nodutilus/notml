@@ -35,7 +35,7 @@ export const oom = new Proxy(OOMAbstract, {
   },
   get: (_, tagName) => {
     return oomOrigin[tagName] || ((...args) => {
-      const element = OOMAbstract.create(OOMElement, tagName, ...args)
+      const element = new OOMElement(tagName, ...args)
       const fragment = new OOMFragment(element)
       const proxy = new Proxy(fragment, OOMAbstract.proxyHandler)
 

@@ -30,29 +30,11 @@ class OOMAbstract {
       }
     } else {
       return (...args) => {
-        instance.append(OOMAbstract.create(OOMElement, tagName, ...args))
+        instance.append(new OOMElement(tagName, ...args))
 
         return proxy
       }
     }
-  }
-
-  /**
-   * @param {typeof OOMAbstract} constructor
-   * @param  {...any} args
-   * @returns {OOMAbstract}
-   */
-  static create(constructor, ...args) {
-    const lastArg = args[args.length - 1]
-    const isCallback = typeof lastArg === 'function' && !(customElementTagName.has(lastArg))
-    const callback = isCallback ? args.pop() : null
-    const element = new constructor(...args)
-
-    if (callback) {
-      callback(element.dom)
-    }
-
-    return element
   }
 
   /**
@@ -62,7 +44,7 @@ class OOMAbstract {
    */
   static factory(tagName, ...args) {
     const isTagName = typeof tagName === 'string' || customElementTagName.has(tagName)
-    const element = OOMAbstract.create(isTagName ? OOMElement : OOMFragment, tagName, ...args)
+    const element = new (isTagName ? OOMElement : OOMFragment)(tagName, ...args)
 
     return element
   }
