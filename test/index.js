@@ -1,12 +1,15 @@
 import './emulateDOM.js'
 import { Test } from '@nodutilus/test'
-import TestOOM from './oom.js'
+import BasicBehavior from './1.basic-behavior.js'
+// import TestOOM from './oom.js'
 
 
 /** Общий тестовый класс */
 class TestNotMLCore extends Test {
 
-  static TestOOM = TestOOM
+  static ['Базовое поведение'] = BasicBehavior
+
+  // static TestOOM = TestOOM
 
 }
 

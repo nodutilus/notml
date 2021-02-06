@@ -38,18 +38,6 @@ class OOMAbstract {
   }
 
   /**
-   * @param {HTMLElement|string} tagName
-   * @param  {...any} args
-   * @returns {OOMAbstract}
-   */
-  static factory(tagName, ...args) {
-    const isTagName = typeof tagName === 'string' || customElementTagName.has(tagName)
-    const element = new (isTagName ? OOMElement : OOMFragment)(tagName, ...args)
-
-    return element
-  }
-
-  /**
    * Проверка на экземпляр OOMAbstract, в т.ч. обернутый в Proxy
    *
    * @param {OOMAbstract|Proxy<OOMAbstract>} instance
@@ -88,9 +76,7 @@ class OOMAbstract {
    * @returns {OOMAbstract}
    */
   oom(...args) {
-    const child = OOMAbstract.factory(...args)
-
-    this.append(child)
+    this.append(new OOMElement(...args))
 
     return this
   }
@@ -301,7 +287,7 @@ class OOMElement extends OOMAbstract {
           customElements.get(tagName).options = attributes ? attributes.options : undefined
         }
       }
-      this.dom = document.createElement(tagName)
+      this.dom = tagName ? document.createElement(tagName) : document.createElement()
     }
     this.setAttributes(attributes)
     this.append(child)

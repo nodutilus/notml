@@ -30,10 +30,10 @@ export default class TestOOM extends Test {
 
   /** Базовый чейнинг для создания верстки */
   ['chaining - base']() {
-    const { html } = oom('html')
-      .body(oom
-        .div('test')
-      )
+    const { html } = oom
+      .html(oom
+        .body(oom
+          .div('test')))
 
     assert.equal(html, '<html><body><div>test</div></body></html>')
   }
