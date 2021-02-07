@@ -23,4 +23,20 @@ export default class BasicBehavior extends Test {
     assert.equal(div3.html, '<div></div>')
   }
 
+  /** Вставка выполняется вызовом как функции ранее созданного элемента.
+   *  Символы "()" создают создают эффект проваливания ниже на уровень. */
+  ['Вложенные DOM элементы']() {
+    const div1 = oom.div()
+    const div2 = oom('div')
+    const div3 = oom.oom('div')
+
+    div1(oom.oom('a'))
+    div2(oom.a())
+    div3(oom('a'))
+
+    assert.equal(div1.html, '<div><a></a></div>')
+    assert.equal(div2.html, '<div><a></a></div>')
+    assert.equal(div3.html, '<div><a></a></div>')
+  }
+
 }
