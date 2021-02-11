@@ -1,5 +1,5 @@
 import { customClasses } from './lib/shared-const.js'
-import { OOMAbstract, OOMElement } from './lib/factory.js'
+import { OOMElement } from './lib/factory.js'
 import { defineCustomElement } from './lib/custom-elements.js'
 
 const { customElements } = window
@@ -20,12 +20,9 @@ const oomOrigin = Object.assign(Object.create(null), {
 })
 
 
-export const oom = oomOrigin.oom = new Proxy(OOMAbstract, {
+export const oom = oomOrigin.oom = new Proxy(OOMElement, {
   apply: (_, __, args) => {
-    const element = new OOMElement(...args)
-    const proxy = new Proxy(element, OOMAbstract.proxyHandler)
-
-    return proxy
+    return OOMElement.createProxy(args)
   },
   get: (_, tagName, proxy) => {
     return oomOrigin[tagName] || ((...args) => proxy(tagName, ...args))

@@ -11,13 +11,52 @@ const isOOMAbstractSymbol = Symbol('isOOMAbstract')
 /** Базовый класс для oom-элементов */
 class OOMAbstract {
 
+  /** Создание внешнего Proxy для работы с oom-элементом
+   *
+   * @param {*} args Аргументы для конструктора OOMElement
+   * @returns {Proxy<OOMElement>} Обертка для OOMElement
+   */
+  static createProxy(args) {
+    const wrapper = /* c8 ignore next */ () => { }
+
+    wrapper.instance = new OOMElement(...args)
+
+    return new Proxy(wrapper, OOMAbstract.proxyHandler)
+  }
+
+  /** Обновление атрибутов или вложенных элементов для OOMElement,
+   *    через перехват apply внешнего Proxy.
+   *  Поведение выбирается в зависимости от переданного типа аргументов
+   *
+   * @param {{instance:OOMAbstract}} wrapper Обертка для OOMElement, и сам элемент в instance
+   * @param {*} _ thisArg (контекст this)
+   * @param {Array<OOMAttributes|OOMChild>} args Аргументы вызова - объекты с атрибутами элемента,
+   *  или вложенные элементы. Типы аргументов можно комбинировать в 1-ом вызове
+   */
+  static proxyApply({ instance }, _, args) {
+    for (const arg of args) {
+      const isChild =
+        arg instanceof OOMAbstract ||
+        arg instanceof HTMLElement ||
+        arg instanceof DocumentFragment ||
+        typeof arg !== 'object' || !arg ||
+        arg.constructor !== Object
+
+      if (isChild) {
+        instance.append(arg)
+      } else {
+        instance.setAttribute(arg)
+      }
+    }
+  }
+
   /**
-   * @param {OOMAbstract} instance
+   * @param {{instance:OOMAbstract}} wrapper Обертка для OOMElement, и сам элемент в instance
    * @param {string} tagName
    * @param {Proxy<OOMAbstract>} proxy
    * @returns {*}
    */
-  static proxyGetter(instance, tagName, proxy) {
+  static proxyGetter({ instance }, tagName, proxy) {
     if (tagName in instance) {
       if (typeof instance[tagName] === 'function') {
         return (...args) => {
@@ -96,7 +135,11 @@ class OOMAbstract {
 
 }
 
-OOMAbstract.proxyHandler = { get: OOMAbstract.proxyGetter, set: () => false }
+OOMAbstract.proxyHandler = {
+  apply: OOMAbstract.proxyApply,
+  get: OOMAbstract.proxyGetter,
+  set: () => false
+}
 
 
 /** Фрагмент - набор элементов без общего родителя */
