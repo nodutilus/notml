@@ -45,7 +45,7 @@ class OOMAbstract {
       if (isChild) {
         instance.append(arg)
       } else {
-        instance.setAttribute(arg)
+        OOMElement.setAttributes(instance.dom, arg)
       }
     }
   }
@@ -101,7 +101,7 @@ class OOMAbstract {
   append(child) {
     if (child instanceof OOMAbstract) {
       this.dom.append(child.dom)
-    } else if (child) {
+    } else if (typeof child !== 'undefined') {
       this.dom.append(child)
     }
 

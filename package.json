@@ -19,17 +19,17 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@nodutilus/ci-cd": "latest",
     "@nodutilus/eslint-config": "latest",
     "@nodutilus/nyc-config": "latest",
-    "@nodutilus/ci-cd": "latest",
     "@nodutilus/test": "latest",
     "@rollup/plugin-node-resolve": "latest",
-    "rollup": "latest",
-    "rollup-plugin-cleanup": "latest",
-    "jsdom": "latest",
+    "c8": "latest",
     "fastify": "latest",
     "fastify-static": "latest",
-    "c8": "latest"
+    "jsdom": "latest",
+    "rollup": "latest",
+    "rollup-plugin-cleanup": "latest"
   },
   "scripts": {
     "build": "npx rollup --config",
