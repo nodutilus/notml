@@ -1,5 +1,5 @@
 {
-  "extends": "@nodutilus/eslint-config",
+  "extends": "@nodutilus",
   "env": {
     "browser": true,
     "node": false

@@ -1,0 +1,8 @@
+{
+  "extends": "@nodutilus/project-config/nyc",
+  "include": [
+    "src",
+    "test"
+  ],
+  "exclude": []
+}
