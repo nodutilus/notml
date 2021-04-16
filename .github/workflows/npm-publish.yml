@@ -1,85 +1,54 @@
-name: Checks & Publish
+name: Checks & Tests
 
 on:
   pull_request:
     branches:
-      - master
+      - main
   push:
     branches:
-      - master
+      - main
 
 jobs:
   checks:
     name: Checks with Linters
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-node@master
-        with:
-          node-version: ">=14"
-      - name: Install dependencies
-        run: npm install
-      - name: ESLint checks
-        run: npx nodutilus-eslint
+      - uses: actions/checkout@main
+      - uses: nodutilus/project-config/actions/setup-node-latest@main
+      - uses: nodutilus/project-config/actions/setup-npm@main
+      - uses: nodutilus/project-config/actions/eslint@main
+      - uses: nodutilus/project-config/actions/eslintcc@main
 
   tests:
-    name: Test, ${{ matrix.os }}
+    name: Test on ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-node@master
-        with:
-          node-version: ">=14"
-      - name: Install dependencies
-        run: npm install
-      - name: Run tests
-        run: node test
+      - uses: actions/checkout@main
+      - uses: nodutilus/project-config/actions/setup-node-latest@main
+      - uses: nodutilus/project-config/actions/setup-npm@main
+      - uses: nodutilus/project-config/actions/test@main
 
   coverage:
     name: Check Coverage
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-node@master
-        with:
-          node-version: ">=14"
-      - name: Install dependencies
-        run: npm install
-      - name: Check coverage
-        run: npx nodutilus-nyc
+      - uses: actions/checkout@main
+      - uses: nodutilus/project-config/actions/setup-node-latest@main
+      - uses: nodutilus/project-config/actions/setup-npm@main
+      - uses: nodutilus/project-config/actions/c8@main
 
-  test-build:
-    name: Test Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-node@master
-        with:
-          node-version: ">=14"
-      - name: Install dependencies
-        run: npm install
-      - name: Create package
-        run: npm pack
-
-  # Для изменений в мастере - публикуем
   build-and-publish:
     name: Build & Publish
-    needs: [checks, tests, coverage, test-build]
+    needs: [checks, tests, coverage]
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-node@master
+      - uses: actions/checkout@main
+      - uses: nodutilus/project-config/actions/setup-node-latest@main
+      - uses: nodutilus/project-config/actions/setup-npm@main
+      - uses: nodutilus/project-config/actions/npm-publish@main
         with:
-          node-version: ">=14"
-          scope: "@notml"
-          registry-url: "https://registry.npmjs.org"
-      - name: Install dependencies
-        run: npm install
-      - name: Publish packages (NPM)
-        run: npx nodutilus-ci-cd publish-package
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPMJS_TOKEN}}
+          token: ${{ secrets.NPM_TOKEN }}

@@ -6,7 +6,7 @@
   "repository": "github:notml/core",
   "type": "module",
   "engines": {
-    "node": ">=14"
+    "node": ">=15"
   },
   "files": [
     "check-compatible.js",
@@ -17,14 +17,10 @@
   "exports": {
     ".": "./core.js"
   },
-  "dependencies": {},
   "devDependencies": {
-    "@nodutilus/ci-cd": "latest",
-    "@nodutilus/eslint-config": "latest",
-    "@nodutilus/nyc-config": "latest",
+    "@nodutilus/project-config": "latest",
     "@nodutilus/test": "latest",
     "@rollup/plugin-node-resolve": "latest",
-    "c8": "latest",
     "fastify": "latest",
     "fastify-static": "latest",
     "jsdom": "latest",
