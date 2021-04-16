@@ -1,4 +1,4 @@
-name: Checks ➜ Tests ➔ Publish ➤ x → y ➧ z » f › s › s
+name: Checks ➜ Tests ➜ Publish
 
 on:
   pull_request:
