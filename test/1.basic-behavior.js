@@ -23,6 +23,15 @@ export default class BasicBehavior extends Test {
     assert.equal(div3.html, '<div></div>')
   }
 
+  /** Создание экземпляра OOM по готовому DOM элементу */
+  ['Использование готового DOM элемента в oom']() {
+    const div = oom(document.createElement('div'))
+
+    assert.ok(div.dom instanceof HTMLDivElement)
+
+    assert.equal(div.html, '<div></div>')
+  }
+
   /** Вставка выполняется вызовом как функции ранее созданного элемента.
    *  Символы "()" создают создают эффект проваливания ниже на уровень */
   ['Вложение элемента, как экземпляра oom']() {
