@@ -56,15 +56,15 @@ export default class BasicBehavior extends Test {
   ['Вложение элемента, как базового элемента DOM']() {
     const div1 = oom.div()
     const a2 = oom('a')
-    const ragment1 = document.createDocumentFragment()
+    const fragment1 = document.createDocumentFragment()
 
-    ragment1.append(
+    fragment1.append(
       document.createElement('p'),
       document.createElement('b')
     )
 
     div1(document.createElement('a'))
-    a2(ragment1)
+    a2(fragment1)
 
     assert.equal(div1.html, '<div><a></a></div>')
     assert.equal(a2.html, '<a><p></p><b></b></a>')
