@@ -193,6 +193,6 @@ document.body.append(block)
 
 [npm]: https://www.npmjs.com/package/@notml/core
 
-[badge]: https://github.com/@notml/core/workflows/Checks%20%26%20Publish/badge.svg
+[badge]: https://github.com/nodutilus/notml/actions/workflows/main.yml/badge.svg
 
-[actions]: https://github.com/@notml/core/actions
+[actions]: https://github.com/nodutilus/notml/actions

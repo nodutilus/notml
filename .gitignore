@@ -15,5 +15,5 @@ node_modules/
 # Generate output
 /coverage
 /build
-/core.js
-/core-global.js
+/@notml/web/core.js
+/@notml/web/core-global.js

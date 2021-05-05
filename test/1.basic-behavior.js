@@ -1,5 +1,5 @@
 import { assert, Test } from '@nodutilus/test'
-import { oom } from '../src/core.js'
+import { oom } from '@notml/core'
 
 const { document, HTMLDivElement } = window
 

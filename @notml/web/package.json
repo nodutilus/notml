@@ -1,0 +1,24 @@
+{
+  "name": "@notml/web",
+  "version": "0.0.1",
+  "description": "Not a HTML - is object-oriented modeling of HTML",
+  "license": "Unlicense",
+  "repository": "github:nodutilus/notml",
+  "type": "module",
+  "engines": {
+    "node": ">=15"
+  },
+  "files": [
+    "check-compatible.js",
+    "core-global.js",
+    "core.js"
+  ],
+  "browser": "./core.js",
+  "scripts": {
+    "build": "npx rollup --config",
+    "prepack": "npx rollup --config"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

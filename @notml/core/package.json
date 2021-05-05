@@ -1,0 +1,21 @@
+{
+  "name": "@notml/core",
+  "version": "0.1.0",
+  "description": "Not a HTML - is object-oriented modeling of HTML",
+  "license": "Unlicense",
+  "repository": "github:nodutilus/notml",
+  "type": "module",
+  "engines": {
+    "node": ">=15"
+  },
+  "files": [
+    "lib",
+    "core.js"
+  ],
+  "exports": {
+    ".": "./core.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

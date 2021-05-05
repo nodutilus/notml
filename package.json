@@ -1,22 +1,7 @@
 {
-  "name": "@notml/core",
-  "version": "0.1.0",
-  "description": "Not a HTML - is object-oriented modeling of HTML",
+  "repository": "github:nodutilus/notml",
   "license": "Unlicense",
-  "repository": "github:notml/core",
   "type": "module",
-  "engines": {
-    "node": ">=15"
-  },
-  "files": [
-    "check-compatible.js",
-    "core-global.js",
-    "core.js"
-  ],
-  "browser": "./core.js",
-  "exports": {
-    ".": "./core.js"
-  },
   "devDependencies": {
     "@nodutilus/project-config": "latest",
     "@nodutilus/test": "latest",
@@ -28,10 +13,6 @@
     "rollup-plugin-cleanup": "latest"
   },
   "scripts": {
-    "build": "npx rollup --config",
-    "prepack": "npx rollup --config"
-  },
-  "publishConfig": {
-    "access": "public"
+    "pre-test": "node test/pre-test"
   }
 }
