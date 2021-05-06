@@ -38,17 +38,14 @@ export default class BasicBehavior extends Test {
     const div1 = oom.div()
     const a2 = oom('a')
     const p3 = oom.oom('p')
-    const u4 = oom.u()
 
     div1(oom.oom('p'))
     a2(oom.i())
     p3(oom('div'))
-    u4(div1, a2)
 
     assert.equal(div1.html, '<div><p></p></div>')
     assert.equal(a2.html, '<a><i></i></a>')
     assert.equal(p3.html, '<p><div></div></p>')
-    assert.equal(u4.html, '<u><div><p></p></div><a><i></i></a></u>')
   }
 
   /** Вставка дочерних элементов, через вызов функции,
@@ -119,6 +116,33 @@ export default class BasicBehavior extends Test {
     assert.equal(div1.html, '<div class="test4"></div>')
     assert.equal(div2.html, '<div class="test5"></div>')
     assert.equal(div3.html, '<div class=""></div>')
+  }
+
+  /** Все аргументы вызова как функции созданного элемента последовательно обрабатываются,
+   *    и выполняется вставка дочерних элементов и обновление атрибутов */
+  ['Вложение нескольких элементов / обновление атрибутов за 1 вызов']() {
+    const div1 = oom.div()
+    const a2 = oom('a')
+    const p3 = oom.oom('p')
+
+    div1(a2, p3, { class: 'test' }, { test: 'class', class: 'test2' })
+
+    assert.equal(div1.html, '<div class="test2" test="class"><a></a><p></p></div>')
+  }
+
+  /** При создании элемента все аргументы используются аналогично аргументам при вызове элемента как функции,
+   *    за исключением аргумента с названием тега.
+   *  А в коде используется общий метод для обновления созданного элемента */
+  ['Вложение нескольких элементов / обновление атрибутов при создании экземпляра oom']() {
+    const a1 = oom('a')
+    const p1 = oom.oom('p')
+    const a2 = oom('a')
+    const p2 = oom.oom('p')
+    const div1 = oom.div(a1, p1, { class: 'test' }, { test: 'class', class: 'test2' })
+    const div2 = oom('div', a2, p2, { class: 'test' }, { test: 'class', class: 'test2' })
+
+    assert.equal(div1.html, '<div class="test2" test="class"><a></a><p></p></div>')
+    assert.equal(div2.html, '<div class="test2" test="class"><a></a><p></p></div>')
   }
 
 }

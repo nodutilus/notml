@@ -24,7 +24,7 @@ class OOMAbstract {
     return new Proxy(wrapper, OOMAbstract.proxyHandler)
   }
 
-  /** Обновление атрибутов или вложенных элементов для OOMElement,
+  /** Обновление атрибутов или добавление вложенных элементов для OOMElement,
    *    через перехват apply внешнего Proxy.
    *  Поведение выбирается в зависимости от переданного типа аргументов
    *
@@ -282,26 +282,6 @@ class OOMElement extends OOMAbstract {
   }
 
   /**
-   * Определение правильного порядка аргументов
-   *
-   * @param {OOMAttributes} attributes
-   * @param {OOMChild} child
-   * @returns {[OOMAttributes, OOMChild]}
-   */
-  static resolveArgs(attributes, child) {
-    if (
-      typeof attributes === 'string' ||
-      attributes instanceof OOMAbstract ||
-      attributes instanceof DocumentFragment ||
-      attributes instanceof HTMLElement
-    ) {
-      return [child, attributes]
-    } else {
-      return [attributes, child]
-    }
-  }
-
-  /**
    * HTML элемента
    *
    * @returns {string}
@@ -311,12 +291,12 @@ class OOMElement extends OOMAbstract {
   }
 
   /**
-   * @param {HTMLElement|string} tagName
-   * @param {OOMAttributes} attributes
-   * @param {OOMChild} child
+   * @param {HTMLElement|string} tagName Имя тега DOM элемента для создания или сам DOM элемент,
+   *  на основе которого будет создан OOM элемент
+   * @param {Array<OOMAttributes|OOMChild>} args Аргументы вызова - объекты с атрибутами элемента,
+   *  или вложенные элементы. Типы аргументов можно комбинировать в 1-ом вызове
    */
-  constructor(tagName, attributes, child) {
-    [attributes, child] = OOMElement.resolveArgs(attributes, child)
+  constructor(tagName, ...args) {
     super()
     if (tagName instanceof HTMLElement) {
       this.dom = tagName
@@ -332,8 +312,7 @@ class OOMElement extends OOMAbstract {
       }
       this.dom = tagName ? document.createElement(tagName) : document.createElement()
     }
-    this.setAttributes(attributes)
-    this.append(child)
+    OOMAbstract.proxyApply({ instance: this }, null, args)
   }
 
   /**
