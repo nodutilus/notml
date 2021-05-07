@@ -145,4 +145,26 @@ export default class BasicBehavior extends Test {
     assert.equal(div2.html, '<div class="test2" test="class"><a></a><p></p></div>')
   }
 
+  /** Создание составных компонентов можно выполнять без использования промежуточных переменных,
+   *    чтобы приблизить вид к верстке через HTML. */
+  ['Базовая верстка составного компонента через аргументы']() {
+    const component1 = oom('div', { class: 'link' },
+      oom.span({ class: 'title' }, 'Link: '),
+      oom.a({ href: 'https://test.ok' }, 'test.ok')
+    )
+    const component2 = oom.div({ class: 'link' },
+      oom.span({ class: 'title' }, 'Link: '),
+      oom.a({ href: 'https://test.ok' }, 'test.ok')
+    )
+    const componentText = `
+      <div class="link">
+        <span class="title">Link: </span>
+        <a href="https://test.ok">test.ok</a>
+      </div>
+    `.replace(/\s*\n+\s+/g, '')
+
+    assert.equal(component1.html, componentText)
+    assert.equal(component2.html, componentText)
+  }
+
 }
