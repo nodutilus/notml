@@ -1,7 +1,7 @@
 import { assert, Test } from '@nodutilus/test'
 import { oom } from '@notml/core'
 
-const { document, HTMLDivElement } = window
+const { document, HTMLDivElement, DocumentFragment } = window
 
 
 /** Проверка базового поведения создания верстки */
@@ -32,14 +32,14 @@ export default class BasicBehavior extends Test {
     assert.equal(div.html, '<div></div>')
   }
 
-  /** Создание OOM элемента без указания tagName или DOM элемента завершается ошибкой */
-  ['Ошибка при вызове без tagName или DOM элемента']() {
+  /** Создание OOM элемента с некорректным tagName завершается ошибкой */
+  ['Ошибка при вызове с некорректным tagName']() {
     let div
 
     try {
-      div = oom()
+      div = oom(0)
     } catch (error) {
-      assert.ok(error.message.startsWith("Failed to execute 'createElement'"))
+      assert.ok(error.message.startsWith('"0" did not match the Name production'))
     }
     try {
       div = oom({})
@@ -165,7 +165,7 @@ export default class BasicBehavior extends Test {
 
   /** Создание составных компонентов можно выполнять без использования промежуточных переменных,
    *    чтобы приблизить вид к верстке через HTML. */
-  ['Базовая верстка составного компонента через аргументы']() {
+  ['Верстка составного компонента через аргументы']() {
     const component1 = oom('div', { class: 'link' },
       oom.span({ class: 'title' }, 'Link: '),
       oom.a({ href: 'https://test.ok' }, 'test.ok')
@@ -180,6 +180,72 @@ export default class BasicBehavior extends Test {
         <a href="https://test.ok">test.ok</a>
       </div>
     `.replace(/\s*\n+\s+/g, '')
+
+    assert.equal(component1.html, componentText)
+    assert.equal(component2.html, componentText)
+  }
+
+  /** Чтобы создать несколько элементов без вложенности на одном уровне,
+   *    а затем поместить в другой элемент, в качестве контейнера используется DocumentFragment */
+  ['Создание OOM элемента с DocumentFragment']() {
+    const fragment1 = oom()
+    const fragment2 = oom(document.createDocumentFragment())
+
+    fragment1(oom.div())
+    fragment2(oom.div(), oom.div())
+
+    assert.ok(fragment1.dom instanceof DocumentFragment)
+    assert.ok(fragment2.dom instanceof DocumentFragment)
+
+    assert.equal(fragment1.html, '<div></div>')
+    assert.equal(fragment2.html, '<div></div><div></div>')
+  }
+
+  /** При попытке обновления атрибутов для DocumentFragment
+   *    кидается стандартная ошибка об отсутствии метода */
+  ['Ошибка обновления атрибутов для DocumentFragment']() {
+    const fragment = oom()
+
+    try {
+      fragment({ class: 'test' })
+    } catch (error) {
+      assert.equal(error.message, 'instance.setAttribute is not a function')
+    }
+
+    assert.equal(fragment.html, '')
+  }
+
+  /** Использование чейнинга на элементе создает DocumentFragment,
+   *    помещая элементы последовательно */
+  ['Создание последовательных элементов через чейнинг']() {
+    const fragment1 = oom
+      .div('test1')
+      .div('test2')
+      .div('test3')
+    const fragment2 = oom()
+
+    fragment2.div('test1')
+    fragment2(oom('div', 'test2'))
+    fragment2.div('test3')
+
+    assert.equal(fragment1.html, '<div>test1</div><div>test2</div><div>test3</div>')
+    assert.equal(fragment2.html, '<div>test1</div><div>test2</div><div>test3</div>')
+  }
+
+  /** Что бы уменьшить кол-во кода создание составных компонентов можно выполнять с использованием чейнинга */
+  ['Верстка составного компонента через чейнинг']() {
+    const component1 = oom('div', { class: 'link' }, oom
+      .span({ class: 'title' }, 'Link: ')
+      .a({ href: 'https://test.ok' }, 'test.ok'))
+    const component2 = oom.div({ class: 'link' }, oom
+      .span({ class: 'title' }, 'Link: ')
+      .a({ href: 'https://test.ok' }, 'test.ok'))
+    const componentText = `
+    <div class="link">
+      <span class="title">Link: </span>
+      <a href="https://test.ok">test.ok</a>
+    </div>
+  `.replace(/\s*\n+\s+/g, '')
 
     assert.equal(component1.html, componentText)
     assert.equal(component2.html, componentText)

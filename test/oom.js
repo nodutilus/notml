@@ -38,7 +38,7 @@ export default class TestOOM extends Test {
     assert.equal(html, '<html><body><div>test</div></body></html>')
   }
 
-  /** Чейнинг методов OOMAbstract/OOMFragment/OOMElement */
+  /** Чейнинг методов OOMElement */
   ['chaining - oom methods']() {
     const div = oom('div')
       .append(oom('span'))
@@ -49,7 +49,7 @@ export default class TestOOM extends Test {
   }
 
   /** Чейнинг конструктора элементов oom из самого элемента */
-  ['chaining - oom in OOMAbstract']() {
+  ['chaining - oom in OOMElement']() {
     const div = oom('div')
       .oom('span', 'test')
       .oom('MyElm')
@@ -173,7 +173,7 @@ export default class TestOOM extends Test {
     assert.equal(div.outerHTML, '<div class="test2"></div>')
   }
 
-  /** Метод append от оом аналогичен методу от OOMAbstract */
+  /** Метод append от оом аналогичен методу от OOMElement */
   ['oom - append']() {
     const div11 = oom().div().append(oom('span'))
     const div12 = oom.append(oom('div')).span()

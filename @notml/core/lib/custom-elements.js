@@ -1,5 +1,5 @@
 import { customTagNames, customElementTagName, customClasses, customOptions } from './shared-const.js'
-import { OOMAbstract, OOMElement } from './factory.js'
+import { OOMElement } from './factory.js'
 
 const { HTMLElement, customElements } = window
 const observedAttributesSymbol = Symbol('observedAttributes')
@@ -105,8 +105,8 @@ function applyOOMTemplate(instance) {
     })
   }
 
-  if (!(template instanceof OOMAbstract) && typeof template !== 'string') {
-    if (staticTemplate instanceof OOMAbstract) {
+  if (!(template instanceof OOMElement) && typeof template !== 'string') {
+    if (staticTemplate instanceof OOMElement) {
       staticTemplate = staticTemplate.clone()
     } else if (typeof staticTemplate === 'function') {
       staticTemplate = instance.constructor.template(templateOptions)
@@ -125,7 +125,7 @@ function applyOOMTemplate(instance) {
     root = instance.attachShadow(shadowRootInit)
   }
 
-  if (template instanceof OOMAbstract) {
+  if (template instanceof OOMElement) {
     root.innerHTML = ''
     root.append(template.dom)
   } else if (typeof template === 'string') {

@@ -1,17 +1,17 @@
 import { customTagNames, customElementTagName, customClasses, customOptions } from './shared-const.js'
 
 const { document, customElements, DocumentFragment, HTMLElement } = window
-const isOOMAbstractSymbol = Symbol('isOOMAbstract')
+const isOOMElementSymbol = Symbol('isOOMElement')
 
 
-/** @typedef {DocumentFragment|HTMLElement|OOMAbstract|Proxy<OOMAbstract>} OOMChild */
+/** @typedef {DocumentFragment|HTMLElement|OOMElement|Proxy<OOMElement>} OOMChild */
 /** @typedef {Object<string,*>} OOMAttributes */
 
 
-/** Базовый класс для oom-элементов */
-class OOMAbstract {
+/** Базовый класс для OOM элементов */
+class OOMElement {
 
-  /** Создание внешнего Proxy для работы с oom-элементом
+  /** Создание внешнего Proxy для работы с OOM элементом
    *
    * @param {*} args Аргументы для конструктора OOMElement
    * @returns {Proxy<OOMElement>} Обертка для OOMElement
@@ -21,14 +21,14 @@ class OOMAbstract {
 
     wrapper.instance = new OOMElement(...args)
 
-    return new Proxy(wrapper, OOMAbstract.proxyHandler)
+    return new Proxy(wrapper, OOMElement.proxyHandler)
   }
 
   /** Обновление атрибутов или добавление вложенных элементов для OOMElement,
    *    через перехват apply внешнего Proxy.
    *  Поведение выбирается в зависимости от переданного типа аргументов
    *
-   * @param {{instance:OOMAbstract}} wrapper Обертка для OOMElement, и сам элемент в instance
+   * @param {{instance:OOMElement}} wrapper Обертка для OOMElement, и сам элемент в instance
    * @param {*} _ thisArg (контекст this)
    * @param {Array<OOMAttributes|OOMChild>} args Аргументы вызова - объекты с атрибутами элемента,
    *  или вложенные элементы. Типы аргументов можно комбинировать в 1-ом вызове
@@ -36,7 +36,7 @@ class OOMAbstract {
   static proxyApply({ instance }, _, args) {
     for (const arg of args) {
       const isChild =
-        arg instanceof OOMAbstract ||
+        arg instanceof OOMElement ||
         arg instanceof HTMLElement ||
         arg instanceof DocumentFragment ||
         typeof arg !== 'object' || !arg ||
@@ -50,11 +50,16 @@ class OOMAbstract {
     }
   }
 
-  /**
-   * @param {{instance:OOMAbstract}} wrapper Обертка для OOMElement, и сам элемент в instance
-   * @param {string} tagName
-   * @param {Proxy<OOMAbstract>} proxy
-   * @returns {*}
+  /** Перехват обращений к свойствам OOM элемента.
+   *  Методы и свойства объявленные в HTMLElement обеспечивают API взаимодействия с элементом.
+   *  Остальные обращения, используя цепочки вызовов,
+   *    создают OOM элементы на одном уровне используя DocumentFragment
+   *
+   * @param {{instance:OOMElement}} wrapper Обертка для OOMElement, и сам элемент в instance
+   * @param {HTMLElement|string} tagName Имя тега DOM элемента для создания или сам DOM элемент,
+   *  на основе которого будет создан OOM элемент
+   * @param {Proxy<OOMElement>} proxy Внешний Proxy для работы с OOM элементом
+   * @returns {*} Метод или свойство из OOM элемента или фабрика для генерации DocumentFragment
    */
   static proxyGetter({ instance }, tagName, proxy) {
     if (tagName in instance) {
@@ -69,7 +74,15 @@ class OOMAbstract {
       }
     } else {
       return (...args) => {
-        instance.append(new OOMElement(tagName, ...args))
+        if (instance.dom instanceof DocumentFragment) {
+          instance.append(new OOMElement(tagName, ...args))
+        } else {
+          proxy = OOMElement.createProxy([
+            document.createDocumentFragment(),
+            proxy.dom,
+            new OOMElement(tagName, ...args)
+          ])
+        }
 
         return proxy
       }
@@ -77,107 +90,14 @@ class OOMAbstract {
   }
 
   /**
-   * Проверка на экземпляр OOMAbstract, в т.ч. обернутый в Proxy
+   * Проверка на экземпляр OOMElement, в т.ч. обернутый в Proxy
    *
-   * @param {OOMAbstract|Proxy<OOMAbstract>} instance
+   * @param {OOMElement|Proxy<OOMElement>} instance
    * @returns {boolean}
    */
   static [Symbol.hasInstance](instance) {
-    return instance && instance[isOOMAbstractSymbol]
+    return instance && instance[isOOMElementSymbol]
   }
-
-  /** @type {boolean} */
-  [isOOMAbstractSymbol] = true
-
-  /** @type {DocumentFragment|HTMLElement} */
-  dom
-
-  /**
-   * Добавление дочернего элемента
-   *
-   * @param {OOMChild} child
-   * @returns {OOMAbstract}
-   */
-  append(child) {
-    if (child instanceof OOMAbstract) {
-      this.dom.append(child.dom)
-    } else if (typeof child !== 'undefined') {
-      this.dom.append(child)
-    }
-
-    return this
-  }
-
-  /**
-   * Добавление дочернего элемента по параметрам OOM
-   *
-   * @param {...any} args
-   * @returns {OOMAbstract}
-   */
-  oom(...args) {
-    this.append(new OOMElement(...args))
-
-    return this
-  }
-
-  /**
-   * Клонирование элемента
-   *
-   * @returns {Proxy<OOMAbstract>}
-   */
-  clone() {
-    const dom = document.importNode(this.dom, true)
-    const element = new this.constructor(dom)
-    const proxy = new Proxy(element, OOMAbstract.proxyHandler)
-
-    return proxy
-  }
-
-}
-
-OOMAbstract.proxyHandler = {
-  apply: OOMAbstract.proxyApply,
-  get: OOMAbstract.proxyGetter,
-  set: () => false
-}
-
-
-/** Фрагмент - набор элементов без общего родителя */
-class OOMFragment extends OOMAbstract {
-
-  /**
-   * HTML элемента
-   *
-   * @returns {string}
-   */
-  get html() {
-    let html = ''
-
-    for (const item of this.dom.children) {
-      html += item.outerHTML
-    }
-
-    return html
-  }
-
-  /**
-   * @param {OOMChild} child
-   */
-  constructor(child) {
-    super()
-    if (child instanceof DocumentFragment) {
-      this.dom = child
-    } else {
-      this.dom = document.createDocumentFragment()
-      this.append(child)
-    }
-  }
-
-}
-
-
-/** Элемент объектной модели документа */
-class OOMElement extends OOMAbstract {
 
   /**
    * Преобразование имени класса пользовательского элемента в имя тега
@@ -281,24 +201,40 @@ class OOMElement extends OOMAbstract {
     }
   }
 
+  /** @type {boolean} */
+  [isOOMElementSymbol] = true
+
+  /** @type {DocumentFragment|HTMLElement} */
+  dom
+
   /**
    * HTML элемента
    *
    * @returns {string}
    */
   get html() {
-    return this.dom.outerHTML
+    const { dom } = this
+    let html = ''
+
+    if (dom instanceof DocumentFragment) {
+      for (const item of dom.children) {
+        html += item.outerHTML
+      }
+    } else {
+      html = dom.outerHTML
+    }
+
+    return html
   }
 
   /**
    * @param {HTMLElement|string} tagName Имя тега DOM элемента для создания или сам DOM элемент,
    *  на основе которого будет создан OOM элемент
-   * @param {Array<OOMAttributes|OOMChild>} args Аргументы вызова - объекты с атрибутами элемента,
+   * @param {Array<OOMAttributes|OOMChild>} [args] Аргументы вызова - объекты с атрибутами элемента,
    *  или вложенные элементы. Типы аргументов можно комбинировать в 1-ом вызове
    */
   constructor(tagName, ...args) {
-    super()
-    if (tagName instanceof HTMLElement) {
+    if (tagName instanceof HTMLElement || tagName instanceof DocumentFragment) {
       this.dom = tagName
     } else {
       if (customElementTagName.has(tagName)) {
@@ -310,16 +246,18 @@ class OOMElement extends OOMAbstract {
           customElements.get(tagName).options = attributes ? attributes.options : undefined
         }
       }
-      this.dom = tagName ? document.createElement(tagName) : document.createElement()
+      this.dom = typeof tagName === 'undefined'
+        ? document.createDocumentFragment()
+        : document.createElement(tagName)
     }
-    OOMAbstract.proxyApply({ instance: this }, null, args)
+    OOMElement.proxyApply({ instance: this }, null, args)
   }
 
   /**
    * Установка атрибутов элемента
    *
    * @param {OOMAttributes} [attributes]
-   * @returns {OOMAbstract}
+   * @returns {OOMElement}
    */
   setAttributes(attributes) {
     OOMElement.setAttributes(this.dom, attributes)
@@ -327,11 +265,53 @@ class OOMElement extends OOMAbstract {
     return this
   }
 
+  /**
+   * Добавление дочернего элемента
+   *
+   * @param {OOMChild} child
+   * @returns {OOMElement}
+   */
+  append(child) {
+    if (child instanceof OOMElement) {
+      this.dom.append(child.dom)
+    } else if (typeof child !== 'undefined') {
+      this.dom.append(child)
+    }
+
+    return this
+  }
+
+  /**
+   * Добавление дочернего элемента по параметрам OOM
+   *
+   * @param {...any} args
+   * @returns {OOMElement}
+   */
+  oom(...args) {
+    this.append(new OOMElement(...args))
+
+    return this
+  }
+
+  /**
+   * Клонирование элемента
+   *
+   * @returns {Proxy<OOMElement>}
+   */
+  clone() {
+    const dom = document.importNode(this.dom, true)
+    const element = new this.constructor(dom)
+    const proxy = new Proxy(element, OOMElement.proxyHandler)
+
+    return proxy
+  }
+
 }
 
-
-export {
-  OOMAbstract,
-  OOMFragment,
-  OOMElement
+OOMElement.proxyHandler = {
+  apply: OOMElement.proxyApply,
+  get: OOMElement.proxyGetter,
+  set: () => false
 }
+
+export { OOMElement }
