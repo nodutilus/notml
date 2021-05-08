@@ -32,6 +32,24 @@ export default class BasicBehavior extends Test {
     assert.equal(div.html, '<div></div>')
   }
 
+  /** Создание OOM элемента без указания tagName или DOM элемента завершается ошибкой */
+  ['Ошибка при вызове без tagName или DOM элемента']() {
+    let div
+
+    try {
+      div = oom()
+    } catch (error) {
+      assert.ok(error.message.startsWith("Failed to execute 'createElement'"))
+    }
+    try {
+      div = oom({})
+    } catch (error) {
+      assert.ok(error.message.startsWith('"[object Object]" did not match the Name production'))
+    }
+
+    assert.equal(div, undefined)
+  }
+
   /** Вставка выполняется вызовом как функции ранее созданного элемента.
    *  Символы "()" создают создают эффект проваливания ниже на уровень */
   ['Вложение элемента, как экземпляра oom']() {
