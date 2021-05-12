@@ -1,5 +1,5 @@
 import { assert, Test } from '@nodutilus/test'
-import { oom } from '../src/core.js'
+import { oom } from '@notml/core'
 
 const { HTMLElement, DocumentFragment, customElements, document } = window
 
@@ -96,7 +96,7 @@ export default class TestOOM extends Test {
     assert.equal(div1, '<div1></div1>')
     assert.equal(div2, '<div2></div2>')
     assert.ok(fr1.dom instanceof DocumentFragment)
-    assert.ok(fr2.dom instanceof DocumentFragment)
+    assert.ok(fr2.dom instanceof HTMLElement)
   }
 
   /** Простая запись атрибутов */
@@ -169,7 +169,7 @@ export default class TestOOM extends Test {
     oom.setAttributes(div, { class: 'test1' })
     assert.equal(div.outerHTML, '<div class="test1"></div>')
 
-    oom.setAttributes(div, 'class', 'test2')
+    oom.setAttribute(div, 'class', 'test2')
     assert.equal(div.outerHTML, '<div class="test2"></div>')
   }
 
