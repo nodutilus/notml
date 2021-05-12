@@ -7,27 +7,6 @@ const { HTMLElement, DocumentFragment, customElements, document } = window
 /** Тесты источника данных заказа */
 export default class TestOOM extends Test {
 
-  /** Защита от случайного переопределения полей для Proxy */
-  ['disable oom setter']() {
-    const div = oom('div')
-    let trows = 0
-
-    try {
-      oom.div = null
-    } catch (error) {
-      trows++
-    }
-    try {
-      div.div = null
-    } catch (error) {
-      trows++
-    }
-
-    assert(typeof oom.div, 'function')
-    assert(typeof div.div, 'function')
-    assert(trows, 2)
-  }
-
   /** Базовый чейнинг для создания верстки */
   ['chaining - base']() {
     const { html } = oom

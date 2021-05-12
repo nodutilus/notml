@@ -7,6 +7,27 @@ const { document, HTMLDivElement, DocumentFragment } = window
 /** Проверка базового поведения создания верстки */
 export default class BasicBehavior extends Test {
 
+  /** Защита от случайного переопределения полей для Proxy */
+  ['Отключение setter`а у Proxy OOM элемента']() {
+    const div = oom('div')
+    let trows = 0
+
+    try {
+      oom.div = null
+    } catch (error) {
+      trows++
+    }
+    try {
+      div.div = null
+    } catch (error) {
+      trows++
+    }
+
+    assert(typeof oom.div, 'function')
+    assert(typeof div.div, 'function')
+    assert(trows, 2)
+  }
+
   /** Создание всегда начинается с единичного элемента,
    *    это делает API однозначным */
   ['Создание DOM элемента через oom']() {
