@@ -34,7 +34,7 @@
   ],
   "ignorePatterns": [
     "/build/",
-    "/core.js",
-    "/core-global.js"
+    "/@notml/web/core.js",
+    "/@notml/web/core-global.js"
   ]
 }

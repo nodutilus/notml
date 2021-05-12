@@ -5,7 +5,9 @@ const isOOMElementSymbol = Symbol('isOOMElement')
 
 
 /** @typedef {DocumentFragment|HTMLElement|OOMElement|Proxy<OOMElement>} OOMChild */
-/** @typedef {Object<string,*>} OOMAttributes */
+/** @typedef {Object<string,string>} DOMElementStyle */
+/** @typedef {string|Function|DOMElementStyle} OOMAttributeValue */
+/** @typedef {Object<string,OOMAttributeValue>} OOMAttributes */
 
 
 /** Базовый класс для OOM элементов */
@@ -92,18 +94,19 @@ class OOMElement {
   /**
    * Проверка на экземпляр OOMElement, в т.ч. обернутый в Proxy
    *
-   * @param {OOMElement|Proxy<OOMElement>} instance
-   * @returns {boolean}
+   * @param {OOMElement|Proxy<OOMElement>} instance Экземпляр класса для проверки на соответствие OOMElement
+   * @returns {boolean} Признак соответствия OOMElement
    */
   static [Symbol.hasInstance](instance) {
     return instance && instance[isOOMElementSymbol]
   }
 
   /**
-   * Преобразование имени класса пользовательского элемента в имя тега
+   * Преобразование имени класса пользовательского элемента в имя html-тега.
+   * Заглавные буквы класса заменяются на нижний регистр, с разделением частей имени через "-"
    *
-   * @param {string} tagName
-   * @returns {string}
+   * @param {string} tagName Исходное имя для html-тега
+   * @returns {string} Нормализованное имя html-тега
    */
   static resolveTagName(tagName) {
     let result
@@ -123,9 +126,9 @@ class OOMElement {
    * Установка атрибута элемента.
    * Позволяет задавать методы, объекты в виде JSON, стили в виде объекта, и строковые атрибуты.
    *
-   * @param {HTMLElement} instance
-   * @param {string} attrName
-   * @param {*} attrValue
+   * @param {HTMLElement} instance Элемент DOM
+   * @param {string} attrName Имя атрибута DOM элемента
+   * @param {OOMAttributeValue} attrValue Значения атрибута
    */
   static setAttribute(instance, attrName, attrValue) {
     const attrType = typeof attrValue
@@ -156,9 +159,9 @@ class OOMElement {
    * Получение атрибута элемента.
    * Работает аналогично установке атрибутов в setAttribute
    *
-   * @param {HTMLElement} instance
-   * @param {string} attrName
-   * @returns {*}
+   * @param {HTMLElement} instance Элемент DOM
+   * @param {string} attrName Имя атрибута DOM элемента
+   * @returns {OOMAttributeValue} Значения атрибута
    */
   static getAttribute(instance, attrName) {
     let attrValue
@@ -186,31 +189,34 @@ class OOMElement {
 
   /**
    * Установка атрибутов элемента.
+   * Работает аналогично setAttribute, но обновляет сразу несколько атрибутов
    *
-   * @param {HTMLElement} instance
-   * @param {string|OOMAttributes} attributes
-   * @param {*} attrValue
+   * @param {HTMLElement} instance Элемент DOM
+   * @param {OOMAttributes} attributes Объект с обновляемыми атрибутами
    */
-  static setAttributes(instance, attributes = {}, attrValue) {
-    if (typeof attributes === 'string') {
-      OOMElement.setAttribute(instance, attributes, attrValue)
-    } else {
-      for (const [attrName, attrValue] of Object.entries(attributes)) {
-        OOMElement.setAttribute(instance, attrName, attrValue)
-      }
+  static setAttributes(instance, attributes = {}) {
+    for (const [attrName, attrValue] of Object.entries(attributes)) {
+      OOMElement.setAttribute(instance, attrName, attrValue)
     }
   }
 
-  /** @type {boolean} */
+  /**
+   * Свойство экземпляра для проверки на соответствие классу OOMElement,
+   *  позволяющее выполнить instanceof для Proxy-объекта через метод класса Symbol.hasInstance
+   *
+   * @type {boolean}
+   */
   [isOOMElementSymbol] = true
 
-  /** @type {DocumentFragment|HTMLElement} */
+  /**
+   * Экземпляр DOM элемента, которым управляет OOM элемент
+   *
+   * @type {DocumentFragment|HTMLElement}
+   */
   dom
 
   /**
-   * HTML элемента
-   *
-   * @returns {string}
+   * @returns {string} HTML код элемента
    */
   get html() {
     const { dom } = this
@@ -254,10 +260,25 @@ class OOMElement {
   }
 
   /**
-   * Установка атрибутов элемента
+   * Установка атрибута элемента.
+   * Позволяет задавать методы, объекты в виде JSON, стили в виде объекта, и строковые атрибуты.
    *
-   * @param {OOMAttributes} [attributes]
-   * @returns {OOMElement}
+   * @param {string} attrName Имя атрибута DOM элемента
+   * @param {OOMAttributeValue} attrValue Значения атрибута
+   * @returns {OOMElement} Замыкание на самого себя для использования чейнинга
+   */
+  setAttribute(attrName, attrValue) {
+    OOMElement.setAttribute(this.dom, attrName, attrValue)
+
+    return this
+  }
+
+  /**
+   * Установка атрибутов элемента.
+   * Работает аналогично setAttribute, но обновляет сразу несколько атрибутов
+   *
+   * @param {OOMAttributes} attributes Объект с обновляемыми атрибутами
+   * @returns {OOMElement} Замыкание на самого себя для использования чейнинга
    */
   setAttributes(attributes) {
     OOMElement.setAttributes(this.dom, attributes)
@@ -266,10 +287,10 @@ class OOMElement {
   }
 
   /**
-   * Добавление дочернего элемента
+   * Добавление дочернего элемента для OOMElement в конец списка элементов
    *
-   * @param {OOMChild} child
-   * @returns {OOMElement}
+   * @param {OOMChild} child Экземпляр элемента для вставки
+   * @returns {OOMElement} Замыкание на самого себя для использования чейнинга
    */
   append(child) {
     if (child instanceof OOMElement) {
@@ -282,10 +303,10 @@ class OOMElement {
   }
 
   /**
-   * Добавление дочернего элемента по параметрам OOM
+   * Добавление дочернего элемента с аргументами вызова OOM
    *
-   * @param {...any} args
-   * @returns {OOMElement}
+   * @param {...any} args Аргументы конструктора класса OOMElement
+   * @returns {OOMElement} Замыкание на самого себя для использования чейнинга
    */
   oom(...args) {
     this.append(new OOMElement(...args))
@@ -294,9 +315,9 @@ class OOMElement {
   }
 
   /**
-   * Клонирование элемента
+   * Клонирование OOM элемента
    *
-   * @returns {Proxy<OOMElement>}
+   * @returns {Proxy<OOMElement>} Новый экземпляр обертки и OOM элемента
    */
   clone() {
     const dom = document.importNode(this.dom, true)
