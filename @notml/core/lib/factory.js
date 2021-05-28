@@ -1,5 +1,3 @@
-import { customTagNames, customElementTagName, customClasses, customOptions } from './shared-const.js'
-
 const { document, customElements, DocumentFragment, HTMLElement } = window
 const isOOMElementSymbol = Symbol('isOOMElement')
 
@@ -61,7 +59,7 @@ class OOMElement {
    *  создают OOM элементы на одном уровне используя DocumentFragment
    *
    * @param {{instance:OOMElement}} wrapper Обертка для OOMElement, и сам элемент в instance
-   * @param {HTMLElement|string} tagName Имя тега DOM элемента для создания или сам DOM элемент,
+   * @param {string} tagName Имя тега DOM элемента для создания,
    *  на основе которого будет создан OOM элемент
    * @param {Proxy<OOMElement>} proxy Внешний Proxy для работы с OOM элементом
    * @returns {*} Метод или свойство из OOM элемента или фабрика для генерации DocumentFragment
@@ -136,9 +134,7 @@ class OOMElement {
   static setAttribute(instance, attrName, attrValue) {
     const attrType = typeof attrValue
 
-    if (attrName === 'options' && customClasses.has(instance.constructor)) {
-      customOptions.set(instance, attrValue)
-    } else if (attrName === 'style' && attrType === 'object') {
+    if (attrName === 'style' && attrType === 'object') {
       for (const name in attrValue) {
         instance.style[name] = attrValue[name]
       }
@@ -169,21 +165,15 @@ class OOMElement {
   static getAttribute(instance, attrName) {
     let attrValue
 
-    if (attrName === 'options' && customClasses.has(instance.constructor)) {
-      attrValue = customOptions.get(instance, attrValue)
+    if (typeof instance[attrName] === 'function') {
+      attrValue = instance[attrName]
     } else {
-      const ownValue = instance[attrName]
-
-      if (typeof ownValue === 'function') {
-        attrValue = ownValue
-      } else {
-        if ((/[A-Z]/).test(attrName)) {
-          attrName = attrName.replace(/[A-Z]/g, str => `-${str.toLowerCase()}`)
-        }
-        attrValue = instance.getAttribute(attrName)
-        if (attrValue && attrValue.startsWith('json::')) {
-          attrValue = JSON.parse(attrValue.replace('json::', ''))
-        }
+      if ((/[A-Z]/).test(attrName)) {
+        attrName = attrName.replace(/[A-Z]/g, str => `-${str.toLowerCase()}`)
+      }
+      attrValue = instance.getAttribute(attrName)
+      if (attrValue && attrValue.startsWith('json::')) {
+        attrValue = JSON.parse(attrValue.replace('json::', ''))
       }
     }
 
@@ -237,56 +227,34 @@ class OOMElement {
   }
 
   /**
-   * @param {HTMLElement|string} tagName Имя тега DOM элемента для создания или сам DOM элемент,
-   *  на основе которого будет создан OOM элемент
+   * @param {HTMLElement|DocumentFragment|string} tagName Имя тега DOM элемента для создания,
+   *  сам DOM элемент, или его функция конструктор, на основе которого будет создан OOM элемент
    * @param {Array<OOMAttributes|OOMChild>} [args] Аргументы вызова - объекты с атрибутами элемента,
    *  или вложенные элементы. Типы аргументов можно комбинировать в 1-ом вызове
    */
   constructor(tagName, ...args) {
-    if (tagName instanceof HTMLElement || tagName instanceof DocumentFragment) {
-      this.dom = tagName
-    } else {
-      if (customElementTagName.has(tagName)) {
-        tagName = customElementTagName.get(tagName)
-        customElements.get(tagName).options = attributes ? attributes.options : undefined
+    if (typeof tagName === 'string') {
+      tagName = OOMElement.resolveTagName(tagName)
+
+      const Constructor = customElements.get(tagName)
+
+      if (Constructor) {
+        this.dom = new Constructor()
       } else {
-        tagName = OOMElement.resolveTagName(tagName)
-        if (customTagNames.has(tagName)) {
-          customElements.get(tagName).options = attributes ? attributes.options : undefined
-        }
+        this.dom = document.createElement(tagName)
       }
-      this.dom = typeof tagName === 'undefined'
-        ? document.createDocumentFragment()
-        : document.createElement(tagName)
+    } else if (tagName instanceof HTMLElement || tagName instanceof DocumentFragment) {
+      this.dom = tagName
+      /* eslint-disable-next-line no-prototype-builtins */
+    } else if (HTMLElement.isPrototypeOf(tagName) || DocumentFragment.isPrototypeOf(tagName)) {
+      /* eslint-disable-next-line new-cap */
+      this.dom = new tagName()
+    } else if (typeof tagName === 'undefined') {
+      this.dom = document.createDocumentFragment()
+    } else {
+      this.dom = document.createElement(tagName)
     }
     OOMElement.proxyApply({ instance: this }, null, args)
-  }
-
-  /**
-   * Установка атрибута элемента.
-   * Позволяет задавать методы, объекты в виде JSON, стили в виде объекта, и строковые атрибуты.
-   *
-   * @param {string} attrName Имя атрибута DOM элемента
-   * @param {OOMAttributeValue} attrValue Значения атрибута
-   * @returns {OOMElement} Замыкание на самого себя для использования чейнинга
-   */
-  setAttribute(attrName, attrValue) {
-    OOMElement.setAttribute(this.dom, attrName, attrValue)
-
-    return this
-  }
-
-  /**
-   * Установка атрибутов элемента.
-   * Работает аналогично setAttribute, но обновляет сразу несколько атрибутов
-   *
-   * @param {OOMAttributes} attributes Объект с обновляемыми атрибутами
-   * @returns {OOMElement} Замыкание на самого себя для использования чейнинга
-   */
-  setAttributes(attributes) {
-    OOMElement.setAttributes(this.dom, attributes)
-
-    return this
   }
 
   /**

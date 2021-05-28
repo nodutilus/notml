@@ -1,11 +1,9 @@
-import { customClasses } from './lib/shared-const.js'
 import { OOMElement } from './lib/factory.js'
 import { defineCustomElement } from './lib/custom-elements.js'
 
-const { customElements } = window
 const oomOrigin = Object.assign(Object.create(null), {
-  setAttributes: (...args) => {
-    OOMElement.setAttributes(...args)
+  update: (...args) => {
+    OOMElement.update(...args)
 
     return oom
   },
@@ -13,9 +11,6 @@ const oomOrigin = Object.assign(Object.create(null), {
     defineCustomElement(...args)
 
     return oom
-  },
-  getDefined: (tagName) => {
-    return customClasses.get(customElements.get(tagName))
   }
 })
 
