@@ -13,7 +13,8 @@ const isOOMElementSymbol = Symbol('isOOMElement')
 /** Базовый класс для OOM элементов */
 class OOMElement {
 
-  /** Создание внешнего Proxy для работы с OOM элементом
+  /**
+   * Создание внешнего Proxy для работы с OOM элементом
    *
    * @param {*} args Аргументы для конструктора OOMElement
    * @returns {Proxy<OOMElement>} Обертка для OOMElement
@@ -26,9 +27,10 @@ class OOMElement {
     return new Proxy(wrapper, OOMElement.proxyHandler)
   }
 
-  /** Обновление атрибутов или добавление вложенных элементов для OOMElement,
-   *    через перехват apply внешнего Proxy.
-   *  Поведение выбирается в зависимости от переданного типа аргументов
+  /**
+   * Обновление атрибутов или добавление вложенных элементов для OOMElement,
+   *  через перехват apply внешнего Proxy.
+   * Поведение выбирается в зависимости от переданного типа аргументов
    *
    * @param {{instance:OOMElement}} wrapper Обертка для OOMElement, и сам элемент в instance
    * @param {*} _ thisArg (контекст this)
@@ -52,10 +54,11 @@ class OOMElement {
     }
   }
 
-  /** Перехват обращений к свойствам OOM элемента.
-   *  Методы и свойства объявленные в HTMLElement обеспечивают API взаимодействия с элементом.
-   *  Остальные обращения, используя цепочки вызовов,
-   *    создают OOM элементы на одном уровне используя DocumentFragment
+  /**
+   * Перехват обращений к свойствам OOM элемента.
+   * Методы и свойства объявленные в HTMLElement обеспечивают API взаимодействия с элементом.
+   * Остальные обращения, используя цепочки вызовов,
+   *  создают OOM элементы на одном уровне используя DocumentFragment
    *
    * @param {{instance:OOMElement}} wrapper Обертка для OOMElement, и сам элемент в instance
    * @param {HTMLElement|string} tagName Имя тега DOM элемента для создания или сам DOM элемент,
