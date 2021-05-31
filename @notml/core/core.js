@@ -1,5 +1,5 @@
 import { OOMElement } from './lib/factory.js'
-import { defineCustomElement } from './lib/custom-elements.js'
+import { extendsCustomElement } from './lib/custom-elements.js'
 
 const oomOrigin = Object.assign(Object.create(null), {
   update: (...args) => {
@@ -7,11 +7,7 @@ const oomOrigin = Object.assign(Object.create(null), {
 
     return oom
   },
-  define: (...args) => {
-    defineCustomElement(...args)
-
-    return oom
-  }
+  extends: extendsCustomElement
 })
 
 
