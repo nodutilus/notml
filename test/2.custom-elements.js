@@ -43,7 +43,8 @@ export default class CustomElements extends Test {
     assert.equal(customElements.get('my-button1'), MyButton1)
   }
 
-  ['Работа с connectedCallback и template']() {
+  /** Свойство template экземпляра класса используется как шаблон компонента по аналогии с одноименным тегом */
+  ['Шаблон компонента в template']() {
     const MyElement3 = oom.extends(class MyElement3 extends HTMLElement {
 
       template = oom('div')
@@ -59,6 +60,91 @@ export default class CustomElements extends Test {
     document.body.innerHTML = ''
 
     assert.equal(myElm3.outerHTML, '<my-element3><div></div></my-element3>')
+  }
+
+  /**
+   * При вставке шаблона определяется такой порядок что бы были 2 точки взаимодействия:
+   *  1-ая в constructor до применения, 2-ая в connectedCallback, после применения шаблона
+   * Чтобы можно было гибко управлять содержимым и использовать такие элементы как slot
+   */
+  ['Работа с constructor, connectedCallback и template']() {
+    const MyElement4 = oom.extends(class MyElement4 extends HTMLElement {
+
+      template = oom('div')
+
+      /**
+       * На конструкторе шаблон еще не применен,
+       *  и можно изменить внутреннюю верстку, аналогично работе через createElement
+       */
+      constructor() {
+        super()
+        assert.equal(this.outerHTML, '<my-element4></my-element4>')
+        this.innerHTML = 'test1'
+      }
+
+      /**
+       * На обработчике вставки в DOM расширение в oom.extends вставляет шаблон,
+       *  и можно работать с готовой версткой компонента
+       */
+      connectedCallback() {
+        assert.equal(this.outerHTML, '<my-element4>test1<div></div></my-element4>')
+      }
+
+    })
+    const myElm4 = new MyElement4()
+
+    assert.equal(myElm4.outerHTML, '<my-element4>test1</my-element4>')
+
+    document.body.innerHTML = ''
+    document.body.append(myElm4)
+    assert.equal(document.body.innerHTML, '<my-element4>test1<div></div></my-element4>')
+    document.body.innerHTML = ''
+  }
+
+  /** Для разных типов шаблонов должна быть общая последовательность вставки */
+  ['Типы template']() {
+    const MyElement5 = oom.extends(class MyElement5 extends HTMLElement {
+
+      template = oom('div')
+
+    })
+    const MyElement6 = oom.extends(class MyElement6 extends HTMLElement {
+
+      template = '<div></div>'
+
+    })
+    const MyElement7 = oom.extends(class MyElement7 extends HTMLElement {
+
+      template = document.createElement('div')
+
+    })
+    const MyElement8 = oom.extends(class MyElement8 extends HTMLElement {
+
+      template = oom.a().b().dom
+
+    })
+    const myElm5 = new MyElement5()
+    const myElm6 = new MyElement6()
+    const myElm7 = new MyElement7()
+    const myElm8 = new MyElement8()
+
+    myElm5.innerHTML = 'test'
+    myElm6.innerHTML = 'test'
+    myElm7.innerHTML = 'test'
+    myElm8.innerHTML = 'test'
+
+    document.body.innerHTML = ''
+    document.body.append(myElm5)
+    document.body.append(myElm6)
+    document.body.append(myElm7)
+    document.body.append(myElm8)
+    assert.equal(document.body.innerHTML, `
+      <my-element5>test<div></div></my-element5>
+      <my-element6>test<div></div></my-element6>
+      <my-element7>test<div></div></my-element7>
+      <my-element8>test<a></a><b></b></my-element8>
+    `.replace(/\s*\n+\s+/g, ''))
+    document.body.innerHTML = ''
   }
 
 }

@@ -1,7 +1,7 @@
 import { OOMElement } from './factory.js'
 
 const oomElementRedySymbol = Symbol('oomElementRedySymbol')
-const { HTMLElement, customElements } = window
+const { DocumentFragment, HTMLElement, customElements } = window
 
 
 /**
@@ -14,8 +14,10 @@ function applyOOMTemplate(instance) {
 
   if (template instanceof OOMElement) {
     instance.append(template.dom)
+  } else if (template instanceof HTMLElement || template instanceof DocumentFragment) {
+    instance.append(template)
   } else if (typeof template === 'string') {
-    instance.innerHTML = template
+    instance.innerHTML += template
   }
 }
 
