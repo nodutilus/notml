@@ -10,7 +10,17 @@ const oomOrigin = Object.assign(Object.create(null), {
   extends: extendsCustomElement
 })
 
-
+/**
+ * @typedef {function():OOMElementProxy} OOMTagBuilder
+ */
+/**
+ * @typedef {Object<string,OOMTagBuilder>} OOMElementProxy
+ */
+/**
+ * @typedef {Object<string,OOMTagBuilder>} OOMProxy
+ * @property {number} test TestName
+ */
+/** @type {OOMProxy} */
 export const oom = oomOrigin.oom = new Proxy(OOMElement, {
   apply: (_, __, args) => {
     return OOMElement.createProxy(args)
