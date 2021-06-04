@@ -1,3 +1,4 @@
+/// <reference path="core.d.ts"/>
 import { OOMElement } from './lib/factory.js'
 import { extendsCustomElement } from './lib/custom-elements.js'
 
@@ -10,17 +11,8 @@ const oomOrigin = Object.assign(Object.create(null), {
   extends: extendsCustomElement
 })
 
-/**
- * @typedef {function():OOMElementProxy} OOMTagBuilder
- */
-/**
- * @typedef {Object<string,OOMTagBuilder>} OOMElementProxy
- */
-/**
- * @typedef {Object<string,OOMTagBuilder>} OOMProxy
- * @property {number} test TestName
- */
-/** @type {OOMProxy} */
+
+/** @type {import('@notml/core').OOMProxy} */
 export const oom = oomOrigin.oom = new Proxy(OOMElement, {
   apply: (_, __, args) => {
     return OOMElement.createProxy(args)
