@@ -1,5 +1,5 @@
 import { customTagNames, customElementTagName, customClasses, customOptions } from './shared-const.js'
-import { OOMElement } from './factory.js'
+import { OOMElement } from '../@notml/core/lib/factory.js'
 
 const { HTMLElement, customElements } = window
 const observedAttributesSymbol = Symbol('observedAttributes')

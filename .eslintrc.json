@@ -33,6 +33,7 @@
     }
   ],
   "ignorePatterns": [
+    "/_deprecated/",
     "/build/",
     "/@notml/notml/core.js",
     "/@notml/notml/core-global.js",
