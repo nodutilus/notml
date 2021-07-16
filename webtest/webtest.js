@@ -4,9 +4,9 @@ const { document } = window
 
 
 /**
- * @param {string} name
- * @param {any} actual
- * @param {any} expected
+ * @param {string} name Имя теста
+ * @param {any} actual Актуальное значение для проверки
+ * @param {any} expected Фактическое значение для проверки
  */
 function assertEqual(name, actual, expected) {
   if (actual !== expected) {
@@ -105,8 +105,8 @@ class MyElementExp4 extends HTMLElement {
   static field = oom('span', { class: 'field' })
 
   /**
-   * @param {{element:HTMLElement}} options
-   * @returns {oom}
+   * @param {{element:HTMLElement}} options Опции шаблона
+   * @returns {oom} Шаблон компонента
    */
   static template({ element }) {
     return oom()
@@ -119,8 +119,8 @@ class MyElementExp4 extends HTMLElement {
   /**
    * on 'data-field-text' attribute change
    *
-   * @param {string} oldValue
-   * @param {string} newValue
+   * @param {string} oldValue Старое значение атрибута fieldText
+   * @param {string} newValue Новое значение атрибута fieldText
    */
   dataFieldTextChanged(oldValue, newValue) {
     this._field.textContent = newValue
@@ -129,8 +129,8 @@ class MyElementExp4 extends HTMLElement {
   /**
    * on 'data-label-text' attribute change
    *
-   * @param {string} oldValue
-   * @param {string} newValue
+   * @param {string} oldValue Старое значение атрибута labelText
+   * @param {string} newValue Новое значение атрибута labelText
    */
   dataLabelTextChanged(oldValue, newValue) {
     this._label.textContent = newValue
