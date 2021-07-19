@@ -5,10 +5,9 @@ const isOOMElementSymbol = Symbol('isOOMElement')
 /** @typedef {DocumentFragment|HTMLElement|OOMElement|Proxy<OOMElement>} OOMChild */
 /** @typedef {Object<string,string>} DOMElementStyle */
 /** @typedef {string|Function|DOMElementStyle} OOMAttributeValue */
-/** @typedef {Object<string,OOMAttributeValue>} OOMAttributes */
+/** @typedef {Object<string,import('@notml/core').OOMAttributeValue>} OOMAttributes */
 
-
-/** Базовый класс для OOM элементов */
+/** @type {import('@notml/core').OOMElement} */
 class OOMElement {
 
   /**

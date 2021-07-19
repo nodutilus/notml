@@ -1,20 +1,23 @@
 declare module '@notml/core' {
 
-  declare type OOMAttributeValue = string | Function
+  type OOMAttributeValue = string | Function | CSSStyleDeclaration
 
-  declare interface OOMAttributes extends CSSStyleDeclaration {
+  interface OOMAttributes {
     [x: string]: OOMAttributeValue
     /** Тестовый атрибут */
-    test: CSSStyleDeclaration
+    style: CSSStyleDeclaration
   }
 
   /** Базовый класс для OOM элементов */
-  declare class OOMElement {
+  class OOMElement {
     /** Создание внешнего Proxy для работы с OOM элементом */
-    declare static createProxy(): ProxyConstructor<OOMElement>
+    static createProxy(): ProxyConstructor<OOMElement>
+    static y : number
+    x : string
+
   }
 
-  declare interface OOMElementProxy {
+  interface OOMElementProxy {
     (    /** Атрибуты */
       ...attributes?: OOMAttributes,
       /** Дочерние элементы */
@@ -23,7 +26,7 @@ declare module '@notml/core' {
   }
 
   /** Генератор OOM элементов */
-  declare interface OOMElementBuilder {
+  interface OOMElementBuilder {
     (
       /** Атрибуты */
       ...attributes?: OOMAttributes,
@@ -35,7 +38,7 @@ declare module '@notml/core' {
   /**
    * это OOMProxy
    */
-  declare interface OOMProxy {
+  interface OOMProxy {
     (tagName: string): OOMElementProxy
     [tagName: string]: OOMElementBuilder
     oom: OOMProxy,
@@ -43,6 +46,6 @@ declare module '@notml/core' {
     update: (...args: any) => OOMProxy
   }
 
-  declare export const oom: OOMProxy
+  export const oom: OOMProxy
 
 }
