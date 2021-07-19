@@ -9,8 +9,8 @@ on:
       - main
 
 jobs:
-  checks:
-    name: Checks with Linters
+  eslint:
+    name: ESLint Checking
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
@@ -18,6 +18,14 @@ jobs:
       - uses: nodutilus/project-config/actions/setup-npm@main
       - uses: nodutilus/project-config/actions/eslint@main
       - uses: nodutilus/project-config/actions/eslintcc@main
+
+  types:
+    name: Types Checking
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - uses: nodutilus/project-config/actions/setup-node-latest@main
+      - uses: nodutilus/project-config/actions/setup-npm@main
       - uses: nodutilus/project-config/actions/ts-check@main
 
   tests:
@@ -33,7 +41,8 @@ jobs:
       - uses: nodutilus/project-config/actions/test@main
 
   coverage:
-    name: Check Coverage
+    name: Coverage Checking
+    needs: [tests]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
@@ -43,7 +52,7 @@ jobs:
 
   build-and-publish:
     name: Build & Publish
-    needs: [checks, tests, coverage]
+    needs: [eslint, types, tests, coverage]
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
