@@ -11,7 +11,7 @@ declare module '@notml/core' {
   /** Базовый класс для OOM элементов */
   class OOMElement {
     /** Создание внешнего Proxy для работы с OOM элементом */
-    static createProxy(): ProxyConstructor<OOMElement>
+    static createProxy(args: any[]): ProxyConstructor<OOMElement>
     static y : number
     x : string
 
