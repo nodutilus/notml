@@ -7,15 +7,11 @@ const isOOMElementSymbol = Symbol('isOOMElement')
 /** @typedef {string|Function|DOMElementStyle} OOMAttributeValue */
 /** @typedef {Object<string,import('@notml/core').OOMAttributeValue>} OOMAttributes */
 
-/** @type {import('@notml/core').OOMElement} */
+/** @typedef {import('@notml/core').IOOMElement} IOOMElement */
+/** @implements {IOOMElement} */
 class OOMElement {
 
-  /**
-   * Создание внешнего Proxy для работы с OOM элементом
-   *
-   * @param {*} args Аргументы для конструктора OOMElement
-   * @returns {Proxy<OOMElement>} Обертка для OOMElement
-   */
+  /** @type {import('@notml/core').IOOMElement.createProxy} */
   static createProxy(args) {
     const wrapper = /* c8 ignore next */ () => { }
 

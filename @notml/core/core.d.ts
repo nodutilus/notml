@@ -4,17 +4,26 @@ declare module '@notml/core' {
 
   interface OOMAttributes {
     [x: string]: OOMAttributeValue
-    /** Тестовый атрибут */
+    /** CSS стили DOM элемента */
     style: CSSStyleDeclaration
   }
 
-  /** Базовый класс для OOM элементов */
-  class OOMElement {
-    /** Создание внешнего Proxy для работы с OOM элементом */
-    static createProxy(args: any[]): ProxyConstructor<OOMElement>
-    static y : number
-    x : string
+  namespace IOOMElement {
 
+    /** Создание внешнего Proxy для работы с OOM элементом */
+    interface createProxy {
+      (
+        /** Аргументы для конструктора OOMElement */
+        args: Array<any>
+      ): OOMProxy
+    }
+
+  }
+
+
+  /** Базовый класс для OOM элементов */
+  class IOOMElement {
+    static createProxy: IOOMElement.createProxy
   }
 
   interface OOMElementProxy {
@@ -36,7 +45,7 @@ declare module '@notml/core' {
   }
 
   /**
-   * это OOMProxy
+   * Обертка для OOMElement
    */
   interface OOMProxy {
     (tagName: string): OOMElementProxy
