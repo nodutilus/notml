@@ -1,11 +1,8 @@
 const { document, customElements, DocumentFragment, HTMLElement } = window
 const isOOMElementSymbol = Symbol('isOOMElement')
-
-
-/** @typedef {DocumentFragment|HTMLElement|OOMElement|Proxy<OOMElement>} OOMChild */
-/** @typedef {Object<string,string>} DOMElementStyle */
-/** @typedef {string|Function|DOMElementStyle} OOMAttributeValue */
-/** @typedef {Object<string,import('@notml/core').OOMAttributeValue>} OOMAttributes */
+/** @type {import('@notml/core').ExtProxyConstructor} */
+// @ts-ignore
+const XProxy = Proxy
 
 /** @typedef {import('@notml/core').OOMElement} IOOMElement */
 /** @implements {IOOMElement} */
@@ -20,7 +17,7 @@ class OOMElement {
 
     wrapper.instance = new OOMElement(...args)
 
-    return new Proxy(wrapper, OOMElement.proxyHandler)
+    return new XProxy(wrapper, OOMElement.proxyHandler)
   }
 
   /**
@@ -59,7 +56,7 @@ class OOMElement {
    * @param {{instance:OOMElement}} wrapper Обертка для OOMElement, и сам элемент в instance
    * @param {string} tagName Имя тега DOM элемента для создания,
    *  на основе которого будет создан OOM элемент
-   * @param {Proxy<OOMElement>} proxy Внешний Proxy для работы с OOM элементом
+   * @param {import('@notml/core').OOMProxy} proxy Внешний Proxy для работы с OOM элементом
    * @returns {*} Метод или свойство из OOM элемента или фабрика для генерации DocumentFragment
    */
   static proxyGetter({ instance }, tagName, proxy) {
@@ -93,7 +90,7 @@ class OOMElement {
   /**
    * Проверка на экземпляр OOMElement, в т.ч. обернутый в Proxy
    *
-   * @param {OOMElement|Proxy<OOMElement>} instance Экземпляр класса для проверки на соответствие OOMElement
+   * @param {OOMElement|import('@notml/core').OOMProxy} instance Экземпляр класса для проверки на соответствие OOMElement
    * @returns {boolean} Признак соответствия OOMElement
    */
   static [Symbol.hasInstance](instance) {
@@ -298,6 +295,7 @@ class OOMElement {
 
 }
 
+/** @type {import('@notml/core').OOMElement_proxyHandler} */
 OOMElement.proxyHandler = {
   apply: OOMElement.proxyApply,
   get: OOMElement.proxyGetter,
