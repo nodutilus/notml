@@ -18,7 +18,9 @@ declare module '@notml/core' {
 
   interface ExtProxyConstructor {
     revocable<T extends object, U extends object>(target: T, handler: XProxyHandler<T, U>): { proxy: U; revoke: () => void; };
-    new <T extends object, U extends object>(target: T, handler: XProxyHandler<T, U>): U;
+    revocable<T extends object>(target: T, handler: XProxyHandler<T, any>): { proxy: T; revoke: () => void; };
+    new <T extends object, U extends object>(target: T, handler: XProxyHandler<T, U>): U
+    new <T extends object>(target: T, handler: XProxyHandler<T, any>): T;
   }
 
   namespace OOMElement {
