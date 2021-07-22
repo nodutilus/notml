@@ -14,6 +14,7 @@ const oomOrigin = Object.assign(Object.create(null), {
 
 /** @type {import('@notml/core').OOMProxy} */
 export const oom = oomOrigin.oom = new Proxy(OOMElement, {
+  /** @type {import('@notml/core').OOMProxy.apply} */
   apply: (_, __, args) => {
     return OOMElement.createProxy(args)
   },

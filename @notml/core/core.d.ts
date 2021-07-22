@@ -1,6 +1,14 @@
 declare module '@notml/core' {
 
+  /**
+   * Имя тега DOM элемента для создания, сам DOM элемент,
+   * или его функция конструктор, на основе которого будет создан OOM элемент
+   */
+  type OOMTagName = HTMLElement | DocumentFragment | string
+
   type OOMAttributeValue = string | Function | CSSStyleDeclaration
+
+  type OOMChild = DocumentFragment | HTMLElement | OOMElement | OOMProxy
 
   interface OOMAttributes {
     [x: string]: OOMAttributeValue
@@ -8,13 +16,13 @@ declare module '@notml/core' {
     style: CSSStyleDeclaration
   }
 
-  namespace IOOMElement {
+  namespace OOMElement {
 
     /** Создание внешнего Proxy для работы с OOM элементом */
     interface createProxy {
       (
         /** Аргументы для конструктора OOMElement */
-        args: Array<any>
+        args: [OOMTagName, ...any]
       ): OOMProxy
     }
 
@@ -22,8 +30,8 @@ declare module '@notml/core' {
 
 
   /** Базовый класс для OOM элементов */
-  class IOOMElement {
-    static createProxy: IOOMElement.createProxy
+  class OOMElement {
+    static createProxy: OOMElement.createProxy
   }
 
   interface OOMElementProxy {
@@ -42,6 +50,14 @@ declare module '@notml/core' {
       /** Дочерние элементы */
       ...childs?: HTMLElement
     ): OOMElementProxy
+  }
+
+  namespace OOMProxy {
+
+    interface apply {
+      (_: any, __: any, args: [OOMTagName, ...any]): OOMProxy
+    }
+
   }
 
   /**
