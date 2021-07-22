@@ -1,10 +1,6 @@
 declare module '@notml/core' {
 
-  /**
-   * Имя тега DOM элемента для создания, сам DOM элемент,
-   * или его функция конструктор, на основе которого будет создан OOM элемент
-   */
-  type OOMTagName = HTMLElement | DocumentFragment | string
+
 
   type OOMAttributeValue = string | Function | CSSStyleDeclaration
 
@@ -18,12 +14,24 @@ declare module '@notml/core' {
 
   namespace OOMElement {
 
+    /**
+     * Имя тега DOM элемента для создания, сам DOM элемент,
+     * или его функция конструктор, на основе которого будет создан OOM элемент
+     */
+    type OOMTagName = HTMLElement | DocumentFragment | string
+
+    /**
+     * Аргументы вызова OOMProxy элемента - объекты с атрибутами элемента, или вложенные элементы.
+     * Типы аргументов можно комбинировать в 1-ом вызове
+     */
+    type ProxyApplyArgs = Array<OOMAttributes | OOMChild>
+
+    /** Аргументы для конструктора OOMElement */
+    type OOMElementArgs = [OOMTagName, ...ProxyApplyArgs]
+
     /** Создание внешнего Proxy для работы с OOM элементом */
     interface createProxy {
-      (
-        /** Аргументы для конструктора OOMElement */
-        args: [OOMTagName, ...any]
-      ): OOMProxy
+      (args: OOMElementArgs): OOMProxy
     }
 
   }
