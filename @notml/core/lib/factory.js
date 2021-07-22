@@ -27,7 +27,7 @@ class OOMElement {
    *
    * @param {{instance:OOMElement}} wrapper Обертка для OOMElement, и сам элемент в instance
    * @param {*} _ thisArg (контекст this)
-   * @param {Array<OOMAttributes|OOMChild>} args Аргументы вызова - объекты с атрибутами элемента,
+   * @param {import('@notml/core').OOMElement.ProxyApplyArgs} args Аргументы вызова - объекты с атрибутами элемента,
    *  или вложенные элементы. Типы аргументов можно комбинировать в 1-ом вызове
    */
   static proxyApply({ instance }, _, args) {
