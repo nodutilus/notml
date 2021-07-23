@@ -1,8 +1,7 @@
 const { document, customElements, DocumentFragment, HTMLElement } = window
 const isOOMElementSymbol = Symbol('isOOMElement')
-/** @type {import('@notml/core').ExtProxyConstructor} */
-// @ts-ignore
-const XProxy = Proxy
+/** @type {import('@notml/core').OOMProxyConstructor} */
+const OOMProxyConstructor = Proxy
 
 /** @typedef {import('@notml/core').OOMElement} IOOMElement */
 /** @implements {IOOMElement} */
@@ -17,7 +16,7 @@ class OOMElement {
 
     wrapper.instance = new OOMElement(...args)
 
-    return new XProxy(wrapper, OOMElement.proxyHandler)
+    return new OOMProxyConstructor(wrapper, OOMElement.proxyHandler)
   }
 
   /** @type {import('@notml/core').OOMElement.proxyApply} */
