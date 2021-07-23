@@ -20,17 +20,13 @@ class OOMElement {
     return new XProxy(wrapper, OOMElement.proxyHandler)
   }
 
-  /**
-   * Обновление атрибутов или добавление вложенных элементов для OOMElement,
-   *  через перехват apply внешнего Proxy.
-   * Поведение выбирается в зависимости от переданного типа аргументов
-   *
-   * @param {{instance:OOMElement}} wrapper Обертка для OOMElement, и сам элемент в instance
-   * @param {*} _ thisArg (контекст this)
-   * @param {import('@notml/core').OOMElement.ProxyApplyArgs} args Аргументы вызова - объекты с атрибутами элемента,
-   *  или вложенные элементы. Типы аргументов можно комбинировать в 1-ом вызове
-   */
-  static proxyApply({ instance }, _, args) {
+  /** @type {import('@notml/core').OOMElement.proxyApply} */
+  static proxyApply(
+    /** @type {import('@notml/core').OOMElement.OOMElementWrapper} */
+    { instance }, _,
+    /** @type {import('@notml/core').OOMElement.ProxyApplyArgs} */
+    args
+  ) {
     for (const arg of args) {
       const isChild =
         arg instanceof OOMElement ||
