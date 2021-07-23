@@ -37,7 +37,7 @@ class OOMElement {
 
       if (isChild) {
         instance.append(arg)
-      } else {
+      } else if (instance.dom instanceof HTMLElement) {
         OOMElement.setAttributes(instance.dom, arg)
       }
     }
@@ -188,11 +188,7 @@ class OOMElement {
    */
   [isOOMElementSymbol] = true
 
-  /**
-   * Экземпляр DOM элемента, которым управляет OOM элемент
-   *
-   * @type {DocumentFragment|HTMLElement}
-   */
+  /** @type {import('@notml/core').OOMElement.DOMElement} */
   dom
 
   /**
@@ -244,13 +240,8 @@ class OOMElement {
     OOMElement.proxyApply({ instance: this }, null, args)
   }
 
-  /**
-   * Добавление дочернего элемента для OOMElement в конец списка элементов
-   *
-   * @param {OOMChild} child Экземпляр элемента для вставки
-   * @returns {OOMElement} Замыкание на самого себя для использования чейнинга
-   */
-  append(child) {
+  /** @type {import('@notml/core').OOMElement.append} */
+  append(/** @type {any} */child) {
     if (child instanceof OOMElement) {
       this.dom.append(child.dom)
     } else if (typeof child !== 'undefined') {

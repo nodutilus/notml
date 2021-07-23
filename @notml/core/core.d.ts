@@ -5,7 +5,7 @@ declare module '@notml/core' {
     construct?(target: T, argArray: any[], newTarget: Function): object
     defineProperty?(target: T, p: string | symbol, attributes: PropertyDescriptor): boolean
     deleteProperty?(target: T, p: string | symbol): boolean
-    get?<K extends keyof U>(target: T, p: K, receiver: U): U[K]
+    get?<K extends keyof U & string>(target: T, p: K, receiver: U): U[K]
     getOwnPropertyDescriptor?(target: T, p: string | symbol): PropertyDescriptor | undefined
     getPrototypeOf?(target: T): object | null
     has?(target: T, p: string | symbol): boolean
@@ -96,6 +96,19 @@ declare module '@notml/core' {
       set: () => boolean
     }
 
+    /**
+     * Экземпляр DOM элемента, которым управляет OOM элемент
+     */
+    type DOMElement = DocumentFragment | HTMLElement
+
+    /**
+     * Добавление дочернего элемента для OOMElement в конец списка элементов.
+     * Вернет замыкание на самого себя для использования чейнинга
+     */
+    interface append {
+      (child: any): OOMElement
+    }
+
   }
 
   /** Базовый класс для OOM элементов */
@@ -104,6 +117,8 @@ declare module '@notml/core' {
     static proxyApply: OOMElement.proxyApply
     static proxyGetter: OOMElement.proxyGetter
     static proxyHandler: OOMElement.proxyHandler
+    dom: OOMElement.DOMElement
+    append: OOMElement.append
   }
 
 
@@ -139,8 +154,9 @@ declare module '@notml/core' {
    */
   interface OOMProxy {
     (tagName: string): OOMElementProxy
-    [tagName: string]: OOMElementBuilder
-    oom: OOMProxy,
+    [tagName: string]: OOMElementBuilder | OOMElement.DOMElement | Function
+    oom: OOMProxy
+    dom: OOMElement.DOMElement
     /** апдейт */
     update: (...args: any) => OOMProxy
   }
