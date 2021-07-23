@@ -25,8 +25,11 @@ declare module '@notml/core' {
 
   namespace OOMElement {
 
+    /** Имя тега DOM элемента для создания элемента */
+    type TagName = string
+
     /**
-     * Имя тега DOM элемента для создания, сам DOM элемент,
+     * Имя тега DOM элемента для создания элемента, сам DOM элемент,
      * или его функция конструктор, на основе которого будет создан OOM элемент
      */
     type OOMTagName = HTMLElement | DocumentFragment | string
@@ -76,12 +79,31 @@ declare module '@notml/core' {
       (wrapper: OOMElementWrapper, _: any, args: ProxyApplyArgs): void
     }
 
+    /**
+     * Перехват обращений к свойствам OOM элемента.
+     * Методы и свойства объявленные в HTMLElement обеспечивают API взаимодействия с элементом.
+     * Остальные обращения, используя цепочки вызовов, создают OOM элементы на одном уровне используя DocumentFragment.
+     * Вернет метод или свойство из OOM элемента или фабрику для генерации DocumentFragment
+     */
+    interface proxyGetter {
+      (wrapper: OOMElementWrapper, tagName: TagName, proxy: OOMProxy): any
+    }
+
+    /** Набор ловушек для создания OOMProxy */
+    interface proxyHandler {
+      apply: proxyApply
+      get: proxyGetter
+      set: () => boolean
+    }
+
   }
 
   /** Базовый класс для OOM элементов */
   class OOMElement {
     static createProxy: OOMElement.createProxy
     static proxyApply: OOMElement.proxyApply
+    static proxyGetter: OOMElement.proxyGetter
+    static proxyHandler: OOMElement.proxyHandler
   }
 
 
@@ -104,10 +126,6 @@ declare module '@notml/core' {
     ): OOMElementProxy
   }
 
-  interface OOMElement_proxyHandler {
-
-  }
-
   namespace OOMProxy {
 
     interface apply {
@@ -117,7 +135,7 @@ declare module '@notml/core' {
   }
 
   /**
-   * Обертка для OOMElement
+   * Proxy для работы с OOM элементом
    */
   interface OOMProxy {
     (tagName: string): OOMElementProxy

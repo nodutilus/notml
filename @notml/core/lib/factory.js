@@ -43,19 +43,15 @@ class OOMElement {
     }
   }
 
-  /**
-   * Перехват обращений к свойствам OOM элемента.
-   * Методы и свойства объявленные в HTMLElement обеспечивают API взаимодействия с элементом.
-   * Остальные обращения, используя цепочки вызовов,
-   *  создают OOM элементы на одном уровне используя DocumentFragment
-   *
-   * @param {{instance:OOMElement}} wrapper Обертка для OOMElement, и сам элемент в instance
-   * @param {string} tagName Имя тега DOM элемента для создания,
-   *  на основе которого будет создан OOM элемент
-   * @param {import('@notml/core').OOMProxy} proxy Внешний Proxy для работы с OOM элементом
-   * @returns {*} Метод или свойство из OOM элемента или фабрика для генерации DocumentFragment
-   */
-  static proxyGetter({ instance }, tagName, proxy) {
+  /** @type {import('@notml/core').OOMElement.proxyGetter} */
+  static proxyGetter(
+    /** @type {import('@notml/core').OOMElement.OOMElementWrapper} */
+    { instance },
+    /** @type {import('@notml/core').OOMElement.TagName} */
+    tagName,
+    /** @type {import('@notml/core').OOMProxy} */
+    proxy
+  ) {
     if (tagName in instance) {
       if (typeof instance[tagName] === 'function') {
         return (...args) => {
@@ -291,7 +287,7 @@ class OOMElement {
 
 }
 
-/** @type {import('@notml/core').OOMElement_proxyHandler} */
+/** @type {import('@notml/core').OOMElement.proxyHandler} */
 OOMElement.proxyHandler = {
   apply: OOMElement.proxyApply,
   get: OOMElement.proxyGetter,
