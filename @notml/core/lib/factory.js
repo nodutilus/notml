@@ -78,24 +78,19 @@ class OOMElement {
     }
   }
 
-  /**
-   * Проверка на экземпляр OOMElement, в т.ч. обернутый в Proxy
-   *
-   * @param {OOMElement|import('@notml/core').OOMProxy} instance Экземпляр класса для проверки на соответствие OOMElement
-   * @returns {boolean} Признак соответствия OOMElement
-   */
-  static [Symbol.hasInstance](instance) {
-    return instance && instance[isOOMElementSymbol]
+  /** @type {import('@notml/core').OOMElement.hasInstance} */
+  static [Symbol.hasInstance](
+    /** @type {import('@notml/core').OOMProxy} */
+    instance
+  ) {
+    return instance && instance[isOOMElementSymbol] === true
   }
 
-  /**
-   * Преобразование имени класса пользовательского элемента в имя html-тега.
-   * Заглавные буквы класса заменяются на нижний регистр, с разделением частей имени через "-"
-   *
-   * @param {string} tagName Исходное имя для html-тега
-   * @returns {string} Нормализованное имя html-тега
-   */
-  static resolveTagName(tagName) {
+  /** @type {import('@notml/core').OOMElement.resolveTagName} */
+  static resolveTagName(
+    /** @type {string} */
+    tagName
+  ) {
     let result
 
     if (typeof tagName === 'string' && tagName[0] === tagName[0].toUpperCase()) {
@@ -179,12 +174,7 @@ class OOMElement {
     }
   }
 
-  /**
-   * Свойство экземпляра для проверки на соответствие классу OOMElement,
-   *  позволяющее выполнить instanceof для Proxy-объекта через метод класса Symbol.hasInstance
-   *
-   * @type {boolean}
-   */
+  /** @type {import('@notml/core').OOMElement.isOOMElementSymbol} */
   [isOOMElementSymbol] = true
 
   /** @type {import('@notml/core').OOMElement.DOMElement} */

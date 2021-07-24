@@ -84,6 +84,31 @@ declare module '@notml/core' {
       set: () => boolean
     }
 
+    /** Проверка на соответствие экземпляру OOMElement, в т.ч. обернутый в Proxy */
+    interface hasInstance {
+      (
+        /** Экземпляр класса для проверки на соответствие OOMElement */
+        instance: OOMProxy
+      ): boolean
+    }
+
+    /**
+     * Преобразование имени класса пользовательского элемента в имя html-тега.
+     * Заглавные буквы класса заменяются на нижний регистр, с разделением частей имени через "-"
+     */
+    interface resolveTagName {
+      (tagName: string): TagName
+    }
+
+
+    type IsOOMElementSymbol = symbol
+
+    /**
+     * Свойство экземпляра для проверки на соответствие классу OOMElement,
+     *  позволяющее выполнить instanceof для Proxy-объекта через метод класса Symbol.hasInstance
+     */
+    type isOOMElementSymbol = boolean
+
     /**
      * Экземпляр DOM элемента, которым управляет OOM элемент
      */
@@ -105,6 +130,10 @@ declare module '@notml/core' {
     static proxyApply: OOMElement.proxyApply
     static proxyGetter: OOMElement.proxyGetter
     static proxyHandler: OOMElement.proxyHandler
+    static [Symbol.hasInstance]: OOMElement.hasInstance
+    static resolveTagName: OOMElement.resolveTagName
+    // @ts-ignore https://github.com/microsoft/TypeScript/pull/44512
+    [OOMElement.IsOOMElementSymbol]: OOMElement.isOOMElementSymbol
     dom: OOMElement.DOMElement
     append: OOMElement.append
   }
@@ -142,7 +171,8 @@ declare module '@notml/core' {
    */
   interface OOMProxy {
     (tagName: string): OOMElementProxy
-    [tagName: string]: OOMElementBuilder | OOMElement.DOMElement | Function
+    // @ts-ignore https://github.com/microsoft/TypeScript/pull/44512
+    [tagName: string | symbol]: OOMElementBuilder | any
     oom: OOMProxy
     dom: OOMElement.DOMElement
     /** апдейт */
