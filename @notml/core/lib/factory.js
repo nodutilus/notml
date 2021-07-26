@@ -22,7 +22,7 @@ class OOMElement {
   /** @type {import('@notml/core').OOMElement.proxyApply} */
   static proxyApply(
     /** @type {import('@notml/core').OOMElement.OOMElementWrapper} */
-    { instance }, _,
+    { instance }, /** @type {any} */_,
     /** @type {import('@notml/core').OOMElement.ProxyApplyArgs} */
     args
   ) {
