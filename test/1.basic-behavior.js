@@ -265,9 +265,6 @@ export default class BasicBehavior extends Test {
    *    помещая элементы последовательно
    */
   ['Создание последовательных элементов через чейнинг']() {
-
-    oom.div({ aasd: '1', style: { textAlign: 'q' } })
-
     const fragment1 = oom
       .div('test1')
       .div('test2')
