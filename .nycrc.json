@@ -8,6 +8,7 @@
     "@notml/notml/check-compatible.js",
     "@notml/notml/core-global.js",
     "@notml/notml/core.js",
-    "@notml/notml/rollup.config.js"
+    "@notml/notml/rollup.config.js",
+    "**/*.d.ts"
   ]
 }
