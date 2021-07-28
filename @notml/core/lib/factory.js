@@ -85,6 +85,7 @@ class OOMElement {
     /** @type {import('@notml/core').OOMProxy} */
     instance
   ) {
+    // @ts-ignore https://github.com/microsoft/TypeScript/pull/44512
     return instance && instance[isOOMElementSymbol] === true
   }
 

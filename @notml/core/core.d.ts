@@ -223,8 +223,7 @@ declare module '@notml/core' {
    */
   interface OOMProxy {
     (tagName: string): OOMElementProxy
-    // @ts-ignore https://github.com/microsoft/TypeScript/pull/44512
-    [tagName: string | symbol]: OOMElementBuilder | any
+    [tagName: string]: OOMElementBuilder | any
     oom: OOMProxy
     dom: OOMElement.DOMElement
     /** апдейт */
