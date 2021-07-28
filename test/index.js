@@ -1,4 +1,5 @@
 import './emulateDOM.js'
+// @ts-ignore
 import { Test } from '@nodutilus/test'
 import BasicBehavior from './1.basic-behavior.js'
 import CustomElements from './2.custom-elements.js'

@@ -1,3 +1,4 @@
+// @ts-ignore
 import { assert, Test } from '@nodutilus/test'
 import { oom } from '@notml/core'
 
