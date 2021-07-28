@@ -50,7 +50,7 @@ class OOMElement {
     { instance },
     /** @type {import('@notml/core').OOMElement.TagName} */
     tagName,
-    /** @type {import('@notml/core').OOMProxy} */
+    /** @type {import('@notml/core').OOMElementProxy} */
     proxy
   ) {
     if (tagName in instance) {
@@ -82,7 +82,7 @@ class OOMElement {
 
   /** @type {import('@notml/core').OOMElement.hasInstance} */
   static [Symbol.hasInstance](
-    /** @type {import('@notml/core').OOMProxy} */
+    /** @type {import('@notml/core').OOMElementProxy} */
     instance
   ) {
     // @ts-ignore https://github.com/microsoft/TypeScript/pull/44512

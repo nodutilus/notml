@@ -36,10 +36,10 @@ declare module '@notml/core' {
     }
 
     /** Экземпляр элемента для вставки */
-    type OOMChild = DocumentFragment | HTMLElement | OOMElement | OOMProxy
+    type OOMChild = string | DocumentFragment | HTMLElement | OOMElement | OOMElementProxy
 
     /**
-     * Аргументы вызова OOMProxy элемента - объекты с атрибутами элемента, или вложенные элементы.
+     * Аргументы вызова OOMElementProxy элемента - объекты с атрибутами элемента, или вложенные элементы.
      * Типы аргументов можно комбинировать в 1-ом вызове
      */
     type ProxyApplyArgs = Array<OOMAttributes | OOMChild>
@@ -56,17 +56,9 @@ declare module '@notml/core' {
       instance: OOMElement
     } | { instance: OOMElement }
 
-    /**
-     * Создает экземпляр OOMElement по переданному тегу DOM или классу пользовательского элемента,
-     * либо оборачивает в OOMElement существующий DOM элемент
-     */
-    interface constructor {
-      (tagName: OOMElement.OOMTagName, ...args: OOMElement.ProxyApplyArgs): OOMElement
-    }
-
     /** Создание внешнего Proxy для работы с OOM элементом */
     interface createProxy {
-      (args: OOMElementArgs): OOMProxy
+      (args: OOMElementArgs): OOMElementProxy
     }
 
     /**
@@ -85,10 +77,10 @@ declare module '@notml/core' {
      * Вернет метод или свойство из OOM элемента или фабрику для генерации DocumentFragment
      */
     interface proxyGetter {
-      (wrapper: OOMElementWrapper, tagName: TagName, proxy: OOMProxy): any
+      (wrapper: OOMElementWrapper, tagName: TagName, proxy: OOMElementProxy): any
     }
 
-    /** Набор ловушек для создания OOMProxy */
+    /** Набор ловушек для создания OOMElementProxy */
     interface proxyHandler {
       apply: proxyApply
       get: proxyGetter
@@ -99,7 +91,7 @@ declare module '@notml/core' {
     interface hasInstance {
       (
         /** Экземпляр класса для проверки на соответствие OOMElement */
-        instance: OOMProxy
+        instance: OOMElementProxy
       ): boolean
     }
 
@@ -154,6 +146,14 @@ declare module '@notml/core' {
     type HTML = string
 
     /**
+     * Создает экземпляр OOMElement по переданному тегу DOM или классу пользовательского элемента,
+     * либо оборачивает в OOMElement существующий DOM элемент
+     */
+    interface constructor {
+      (tagName: OOMElement.OOMTagName, ...args: OOMElement.ProxyApplyArgs): OOMElement
+    }
+
+    /**
      * Добавление дочернего элемента для OOMElement в конец списка элементов.
      * Вернет замыкание на самого себя для использования чейнинга
      */
@@ -165,7 +165,7 @@ declare module '@notml/core' {
      * Клонирует DOM элемент и возвращает новый экземпляр OOM, содержащий копию DOM элемента
      */
     interface clone {
-      (): OOMProxy
+      (): OOMElementProxy
     }
 
   }
@@ -191,43 +191,29 @@ declare module '@notml/core' {
   }
 
 
-
-  interface OOMElementProxy {
-    (    /** Атрибуты */
-      ...attributes?: OOMAttributes,
-      /** Дочерние элементы */
-      ...childs?: HTMLElement): OOMElementProxy
-    [tagName: string]: OOMElementBuilder
-  }
-
-  /** Генератор OOM элементов */
-  interface OOMElementBuilder {
-    (
-      /** Атрибуты */
-      ...attributes?: OOMAttributes,
-      /** Дочерние элементы */
-      ...childs?: HTMLElement
-    ): OOMElementProxy
-  }
-
   namespace OOMProxy {
 
-    interface apply {
-      (_: any, __: any, args: [OOMTagName, ...any]): OOMProxy
+    interface createElementProxy {
+      (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMElementProxy
     }
 
+    interface apply {
+      (_: any, __: any, args: OOMElement.OOMElementArgs): OOMElementProxy
+    }
+
+  }
+
+  interface OOMElementProxy extends OOMElement {
+    (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): void
+    [tagName: string]: OOMProxy.createElementProxy | any
   }
 
   /**
    * Proxy для работы с OOM элементом
    */
   interface OOMProxy {
-    (tagName: string): OOMElementProxy
-    [tagName: string]: OOMElementBuilder | any
-    oom: OOMProxy
-    dom: OOMElement.DOMElement
-    /** апдейт */
-    update: (...args: any) => OOMProxy
+    (tagName?: OOMElement.OOMTagName, ...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMElementProxy
+    [tagName: string]: OOMProxy.createElementProxy
   }
 
   export const oom: OOMProxy

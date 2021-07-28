@@ -60,11 +60,13 @@ export default class BasicBehavior extends Test {
     let div
 
     try {
+      // @ts-ignore
       div = oom(0)
     } catch (error) {
       assert.ok(error.message.startsWith('"0" did not match the Name production'))
     }
     try {
+      // @ts-ignore
       div = oom({})
     } catch (error) {
       assert.ok(error.message.startsWith('"[object Object]" did not match the Name production'))
@@ -263,6 +265,9 @@ export default class BasicBehavior extends Test {
    *    помещая элементы последовательно
    */
   ['Создание последовательных элементов через чейнинг']() {
+
+    oom.div({ aasd: '1', style: { textAlign: 'q' } })
+
     const fragment1 = oom
       .div('test1')
       .div('test2')
