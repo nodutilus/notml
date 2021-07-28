@@ -232,18 +232,6 @@ class OOMElement {
     return this
   }
 
-  /**
-   * Добавление дочернего элемента с аргументами вызова OOM
-   *
-   * @param {...any} args Аргументы конструктора класса OOMElement
-   * @returns {OOMElement} Замыкание на самого себя для использования чейнинга
-   */
-  oom(...args) {
-    this.append(new OOMElement(...args))
-
-    return this
-  }
-
   /** @type {import('@notml/core').OOMElement.clone} */
   clone() {
     const dom = document.importNode(this.dom, true)
