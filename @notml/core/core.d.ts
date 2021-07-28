@@ -161,6 +161,13 @@ declare module '@notml/core' {
       (child: any): OOMElement
     }
 
+    /**
+     * Клонирует DOM элемент и возвращает новый экземпляр OOM, содержащий копию DOM элемента
+     */
+    interface clone {
+      (): OOMProxy
+    }
+
   }
 
   /** Базовый класс для OOM элементов */
@@ -180,6 +187,7 @@ declare module '@notml/core' {
     html: OOMElement.HTML
     constructor(tagName: OOMElement.OOMTagName, ...args: OOMElement.ProxyApplyArgs)
     append: OOMElement.append
+    clone: OOMElement.clone
   }
 
 

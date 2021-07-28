@@ -244,17 +244,11 @@ class OOMElement {
     return this
   }
 
-  /**
-   * Клонирование OOM элемента
-   *
-   * @returns {Proxy<OOMElement>} Новый экземпляр обертки и OOM элемента
-   */
+  /** @type {import('@notml/core').OOMElement.clone} */
   clone() {
     const dom = document.importNode(this.dom, true)
-    const element = new this.constructor(dom)
-    const proxy = new Proxy(element, OOMElement.proxyHandler)
 
-    return proxy
+    return OOMElement.createProxy([dom])
   }
 
 }
