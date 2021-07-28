@@ -104,73 +104,64 @@ class OOMElement {
     return result
   }
 
-  /**
-   * Установка атрибута элемента.
-   * Позволяет задавать методы, объекты в виде JSON, стили в виде объекта, и строковые атрибуты.
-   *
-   * @param {HTMLElement} instance Элемент DOM
-   * @param {string} attrName Имя атрибута DOM элемента
-   * @param {OOMAttributeValue} attrValue Значения атрибута
-   */
-  static setAttribute(instance, attrName, attrValue) {
-    const attrType = typeof attrValue
-
-    if (attrName === 'style' && attrType === 'object') {
-      for (const name in attrValue) {
-        instance.style[name] = attrValue[name]
-      }
-    } else {
-      if (attrType === 'function') {
+  /** @type {import('@notml/core').OOMElement.setAttribute} */
+  static setAttribute(
+    /** @type {HTMLElement} */
+    instance,
+    /** @type {import('@notml/core').OOMElement.AttributeName} */
+    attrName,
+    /** @type {import('@notml/core').OOMElement.OOMAttributeValue} */
+    attrValue
+  ) {
+    switch (typeof attrValue) {
+      case 'object':
+        if (attrName === 'style') {
+          for (const name in attrValue) {
+            instance.style[name] = attrValue[name]
+          }
+        }
+        break
+      case 'function':
         instance[attrName] = attrValue
-      } else {
+        break
+      default:
         if ((/[A-Z]/).test(attrName)) {
           attrName = attrName.replace(/[A-Z]/g, str => `-${str.toLowerCase()}`)
         }
-        if (attrType === 'object') {
-          instance.setAttribute(attrName, `json::${JSON.stringify(attrValue)}`)
-        } else {
-          instance.setAttribute(attrName, attrValue)
-        }
-      }
+        instance.setAttribute(attrName, attrValue)
+        break
     }
   }
 
-  /**
-   * Получение атрибута элемента.
-   * Работает аналогично установке атрибутов в setAttribute
-   *
-   * @param {HTMLElement} instance Элемент DOM
-   * @param {string} attrName Имя атрибута DOM элемента
-   * @returns {OOMAttributeValue} Значения атрибута
-   */
-  static getAttribute(instance, attrName) {
-    let attrValue
-
-    if (typeof instance[attrName] === 'function') {
-      attrValue = instance[attrName]
-    } else {
-      if ((/[A-Z]/).test(attrName)) {
-        attrName = attrName.replace(/[A-Z]/g, str => `-${str.toLowerCase()}`)
-      }
-      attrValue = instance.getAttribute(attrName)
-      if (attrValue && attrValue.startsWith('json::')) {
-        attrValue = JSON.parse(attrValue.replace('json::', ''))
-      }
-    }
-
-    return attrValue
-  }
-
-  /**
-   * Установка атрибутов элемента.
-   * Работает аналогично setAttribute, но обновляет сразу несколько атрибутов
-   *
-   * @param {HTMLElement} instance Элемент DOM
-   * @param {OOMAttributes} attributes Объект с обновляемыми атрибутами
-   */
-  static setAttributes(instance, attributes = {}) {
+  /** @type {import('@notml/core').OOMElement.setAttributes} */
+  static setAttributes(
+    /** @type {HTMLElement} */
+    instance,
+    /** @type {import('@notml/core').OOMElement.OOMAttributes} */
+    attributes = {}
+  ) {
     for (const [attrName, attrValue] of Object.entries(attributes)) {
       OOMElement.setAttribute(instance, attrName, attrValue)
+    }
+  }
+
+  /** @type {import('@notml/core').OOMElement.getAttribute} */
+  static getAttribute(
+    /** @type {HTMLElement} */
+    instance,
+    /** @type {import('@notml/core').OOMElement.AttributeName} */
+    attrName
+  ) {
+    if (typeof instance[attrName] === 'function') {
+      return instance[attrName]
+    }
+    if ((/[A-Z]/).test(attrName)) {
+      attrName = attrName.replace(/[A-Z]/g, str => `-${str.toLowerCase()}`)
+    }
+    if (attrName === 'style') {
+      return instance.style
+    } else {
+      return instance.getAttribute(attrName)
     }
   }
 
@@ -180,15 +171,13 @@ class OOMElement {
   /** @type {import('@notml/core').OOMElement.DOMElement} */
   dom
 
-  /**
-   * @returns {string} HTML код элемента
-   */
+  /** @type {import('@notml/core').OOMElement.HTML} */
   get html() {
     const { dom } = this
     let html = ''
 
     if (dom instanceof DocumentFragment) {
-      for (const item of dom.children) {
+      for (const item of Array.from(dom.children)) {
         html += item.outerHTML
       }
     } else {
@@ -198,13 +187,13 @@ class OOMElement {
     return html
   }
 
-  /**
-   * @param {HTMLElement|DocumentFragment|string} tagName Имя тега DOM элемента для создания,
-   *  сам DOM элемент, или его функция конструктор, на основе которого будет создан OOM элемент
-   * @param {Array<OOMAttributes|OOMChild>} [args] Аргументы вызова - объекты с атрибутами элемента,
-   *  или вложенные элементы. Типы аргументов можно комбинировать в 1-ом вызове
-   */
-  constructor(tagName, ...args) {
+  /** @type {import('@notml/core').OOMElement.constructor} */
+  constructor(
+    /** @type {import('@notml/core').OOMElement.OOMTagName} */
+    tagName,
+    /** @type {import('@notml/core').OOMElement.ProxyApplyArgs} */
+    ...args
+  ) {
     if (typeof tagName === 'string') {
       tagName = OOMElement.resolveTagName(tagName)
 
@@ -224,6 +213,7 @@ class OOMElement {
     } else if (typeof tagName === 'undefined') {
       this.dom = document.createDocumentFragment()
     } else {
+      // @ts-ignore В остальных случаях createElement вернет собственную ошибку создания элемента
       this.dom = document.createElement(tagName)
     }
     OOMElement.proxyApply({ instance: this }, null, args)

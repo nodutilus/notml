@@ -20,7 +20,10 @@ declare module '@notml/core' {
      * Имя тега DOM элемента для создания элемента, сам DOM элемент,
      * или его функция конструктор, на основе которого будет создан OOM элемент
      */
-    type OOMTagName = DocumentFragment | HTMLElement | string
+    type OOMTagName = DocumentFragment | HTMLElement | string | typeof DocumentFragment | typeof HTMLElement
+
+    /** Имя атрибута DOM элемента */
+    type AttributeName = string
 
     /** Поддерживаемые значения атрибутов для OOMElement */
     type OOMAttributeValue = string | Function | CSSStyleDeclaration
@@ -29,7 +32,7 @@ declare module '@notml/core' {
     type OOMAttributes = {
       [x: string]: OOMAttributeValue
       /** CSS стили DOM элемента */
-      style: CSSStyleDeclaration
+      style?: CSSStyleDeclaration
     }
 
     /** Экземпляр элемента для вставки */
@@ -51,6 +54,14 @@ declare module '@notml/core' {
     type OOMElementWrapper = {
       (): void
       instance: OOMElement
+    } | { instance: OOMElement }
+
+    /**
+     * Создает экземпляр OOMElement по переданному тегу DOM или классу пользовательского элемента,
+     * либо оборачивает в OOMElement существующий DOM элемент
+     */
+    interface constructor {
+      (tagName: OOMElement.OOMTagName, ...args: OOMElement.ProxyApplyArgs): OOMElement
     }
 
     /** Создание внешнего Proxy для работы с OOM элементом */
@@ -100,6 +111,29 @@ declare module '@notml/core' {
       (tagName: string): TagName
     }
 
+    /**
+     * Установка атрибута элемента.
+     * Позволяет задавать методы, стили в виде объекта, и строковые атрибуты DOM элемента.
+     */
+    interface setAttribute {
+      (instance: HTMLElement, attrName: AttributeName, attrValue: OOMAttributeValue): void
+    }
+
+    /**
+     * Установка атрибутов элемента.
+     * Работает аналогично setAttribute, но обновляет сразу несколько атрибутов
+     */
+    interface setAttributes {
+      (instance: HTMLElement, attributes: OOMAttributes): void
+    }
+
+    /**
+     * Получение атрибута элемента.
+     * Возвращает значение аналогичное логике установки атрибутов в setAttribute
+     */
+    interface getAttribute {
+      (instance: HTMLElement, attrName: AttributeName): OOMAttributeValue
+    }
 
     type IsOOMElementSymbol = symbol
 
@@ -113,6 +147,11 @@ declare module '@notml/core' {
      * Экземпляр DOM элемента, которым управляет OOM элемент
      */
     type DOMElement = DocumentFragment | HTMLElement
+
+    /**
+     * HTML код DOM элемента, привязанного к OOMElement
+     */
+    type HTML = string
 
     /**
      * Добавление дочернего элемента для OOMElement в конец списка элементов.
@@ -132,9 +171,14 @@ declare module '@notml/core' {
     static proxyHandler: OOMElement.proxyHandler
     static [Symbol.hasInstance]: OOMElement.hasInstance
     static resolveTagName: OOMElement.resolveTagName
+    static setAttribute: OOMElement.setAttribute
+    static setAttributes: OOMElement.setAttributes
+    static getAttribute: OOMElement.getAttribute
     // @ts-ignore https://github.com/microsoft/TypeScript/pull/44512
     [OOMElement.IsOOMElementSymbol]: OOMElement.isOOMElementSymbol
     dom: OOMElement.DOMElement
+    html: OOMElement.HTML
+    constructor(tagName: OOMElement.OOMTagName, ...args: OOMElement.ProxyApplyArgs)
     append: OOMElement.append
   }
 
