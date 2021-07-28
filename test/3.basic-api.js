@@ -14,10 +14,9 @@ export default class BasicAPI extends Test {
    */
   ['OOMElement#append - Вставка дочернего элемента']() {
     const div = oom('div')
-
-    div.append(oom('a'))
-    div.append(document.createElement('b'))
-    div.append('test')
+      .append(oom('a'))
+      .append(document.createElement('b'))
+      .append('test')
 
     assert.equal(div.html, '<div><a></a><b></b>test</div>')
   }
