@@ -246,13 +246,15 @@ export default class BasicBehavior extends Test {
    */
   ['Ошибка обновления атрибутов для DocumentFragment']() {
     const fragment = oom()
+    let err
 
     try {
       fragment({ class: 'test' })
     } catch (error) {
-      assert.equal(error.message, 'instance.setAttribute is not a function')
+      err = error
     }
 
+    assert.equal(err.message, 'instance.setAttribute is not a function')
     assert.equal(fragment.html, '')
   }
 

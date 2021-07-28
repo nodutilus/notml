@@ -36,7 +36,9 @@ class OOMElement {
 
       if (isChild) {
         instance.append(arg)
-      } else if (instance.dom instanceof HTMLElement) {
+      } else {
+        // @ts-ignore независимо от типа аргументов вызываем установку атрибутов,
+        // чтобы поймать стандартное исключение
         OOMElement.setAttributes(instance.dom, arg)
       }
     }
