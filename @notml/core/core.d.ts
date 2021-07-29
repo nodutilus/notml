@@ -683,7 +683,10 @@ declare module '@notml/core' {
 
   /** Общий Proxy для создания OOM элементов */
   interface OOMProxy {
-    (tagName?: OOMElement.OOMTagName, ...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMElement
+    (
+      tagName?: OOMElement.OOMTagName,
+      ...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>
+    ): OOMElementProxy
     [tagName: string]: OOMProxy.createElementProxy
   }
 
