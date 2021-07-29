@@ -1,6 +1,6 @@
 const { document, customElements, DocumentFragment, HTMLElement } = window
 const isOOMElementSymbol = Symbol('isOOMElement')
-/** @type {import('@notml/core').OOMProxyConstructor} */
+/** @type {import('@notml/core').basic.OOMProxyConstructor} */
 const OOMProxyConstructor = Proxy
 
 /** @typedef {import('@notml/core').OOMElement} IOOMElement */

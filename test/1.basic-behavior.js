@@ -127,8 +127,11 @@ export default class BasicBehavior extends Test {
     const p2Date = new Date()
     const p2Str = p2Date + ''
 
+    // @ts-ignore
     p1(/test/i) // RegExp - превратиться в строку
+    // @ts-ignore
     p2(p2Date)
+    // @ts-ignore
     p3(null, false, true, undefined)
 
     assert.equal(p1.html, '<p>/test/i</p>')
