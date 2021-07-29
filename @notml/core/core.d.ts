@@ -658,29 +658,32 @@ declare module '@notml/core' {
     clone: OOMElement.clone
   }
 
-
   namespace OOMProxy {
 
+    /**
+     * Создает новый OOM элемент согласно имени запрошенного атрибута родительского Proxy,
+     * задем добавляет его в конец списка дочерних элементов
+     */
     interface createElementProxy {
       (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMElementProxy
     }
 
+    /** Создает новый OOM элемент и оборачивает его в Proxy */
     interface apply {
       (_: any, __: any, args: OOMElement.OOMElementArgs): OOMElementProxy
     }
 
   }
 
+  /** Proxy для работы с OOM элементом */
   interface OOMElementProxy extends OOMElement {
     (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): void
     [tagName: string]: OOMProxy.createElementProxy | any
   }
 
-  /**
-   * Proxy для работы с OOM элементом
-   */
+  /** Общий Proxy для создания OOM элементов */
   interface OOMProxy {
-    (tagName?: OOMElement.OOMTagName, ...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMElementProxy
+    (tagName?: OOMElement.OOMTagName, ...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMElement
     [tagName: string]: OOMProxy.createElementProxy
   }
 
