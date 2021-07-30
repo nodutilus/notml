@@ -672,6 +672,8 @@ declare module '@notml/core' {
   /** Экземпляр пользовательского DOM элемента, расширенный для работы с компонентами OOM */
   interface CustomElement extends HTMLElement {
 
+    new(): CustomElement
+
     /**
      * Содержимое пользовательского элемента, которое будет добавлено в его состав
      * в момент вставки пользовательского компонента в состав документа
@@ -709,7 +711,8 @@ declare module '@notml/core' {
       tagName?: OOMElement.OOMTagName,
       ...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>
     ): OOMElementProxy
-    [tagName: string]: OOMProxy.createElementProxy
+    [tagName: string]: OOMProxy.createElementProxy | any
+    extends: (cls: typeof HTMLElement) => CustomElement
   }
 
   export const oom: OOMProxy
