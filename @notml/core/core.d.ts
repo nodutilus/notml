@@ -658,6 +658,28 @@ declare module '@notml/core' {
     clone: OOMElement.clone
   }
 
+  namespace CustomElement {
+
+    /**
+     * Применение OOM шаблона пользовательского элемента
+     */
+    interface applyOOMTemplate {
+      (instance: CustomElement): void
+    }
+
+  }
+
+  /** Экземпляр пользовательского DOM элемента, расширенный для работы с компонентами OOM */
+  interface CustomElement extends HTMLElement {
+
+    /**
+     * Содержимое пользовательского элемента, которое будет добавлено в его состав
+     * в момент вставки пользовательского компонента в состав документа
+     */
+    template: OOMElement.OOMChild
+
+  }
+
   namespace OOMProxy {
 
     /**

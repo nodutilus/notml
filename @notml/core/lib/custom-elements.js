@@ -4,11 +4,7 @@ const oomElementRedySymbol = Symbol('oomElementRedySymbol')
 const { DocumentFragment, HTMLElement, customElements } = window
 
 
-/**
- * Применение OOM шаблона пользовательского элемента
- *
- * @param {HTMLElement} instance Экземпляр DOM для вставки шаблона
- */
+/** @type {import('@notml/core').CustomElement.applyOOMTemplate} */
 function applyOOMTemplate(instance) {
   const { template } = instance
 
