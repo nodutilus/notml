@@ -34,11 +34,12 @@ class OOMElement {
         typeof arg !== 'object' || !arg ||
         arg.constructor !== Object
 
+      // Чтобы поймать стандартное исключение DOM API, игнорируем проверку на произвольные типы данных
       if (isChild) {
+        // @ts-ignore независимо от типа добавляемого элемента вызовем вставку
         instance.append(arg)
       } else {
-        // @ts-ignore независимо от типа аргументов вызываем установку атрибутов,
-        // чтобы поймать стандартное исключение
+        // @ts-ignore независимо от типа аргументов вызываем установку атрибутов
         OOMElement.setAttributes(instance.dom, arg)
       }
     }

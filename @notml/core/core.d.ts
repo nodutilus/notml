@@ -626,7 +626,7 @@ declare module '@notml/core' {
      * Вернет замыкание на самого себя для использования чейнинга
      */
     interface append {
-      (child: any): OOMElement
+      (child: OOMChild): OOMElement
     }
 
     /**
@@ -697,22 +697,28 @@ declare module '@notml/core' {
       (_: any, __: any, args: OOMElement.OOMElementArgs): OOMElementProxy
     }
 
+    /** Внутренний объект OOMProxy описывающий его базовые методы */
+    interface origin {
+      extends: (cls: typeof HTMLElement) => CustomElement
+    }
+
   }
 
   /** Proxy для работы с OOM элементом */
   interface OOMElementProxy extends OOMElement {
     (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): void
-    [tagName: string]: OOMProxy.createElementProxy | any
+    //@ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
+    [tagName: string]: OOMProxy.createElementProxy
   }
 
   /** Общий Proxy для создания OOM элементов */
-  interface OOMProxy {
+  interface OOMProxy extends OOMProxy.origin {
     (
       tagName?: OOMElement.OOMTagName,
       ...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>
     ): OOMElementProxy
-    [tagName: string]: OOMProxy.createElementProxy | any
-    extends: (cls: typeof HTMLElement) => CustomElement
+    //@ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
+    [tagName: string]: OOMProxy.createElementProxy
   }
 
   export const oom: OOMProxy
