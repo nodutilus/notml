@@ -1,9 +1,10 @@
 /// <reference path="core.d.ts"/>
 import { OOMElement } from './lib/factory.js'
-import { extendsCustomElement } from './lib/custom-elements.js'
+import { extendsCustomElement, defineCustomElement } from './lib/custom-elements.js'
 
 const oomOrigin = Object.assign(Object.create(null), {
-  extends: extendsCustomElement
+  extends: extendsCustomElement,
+  define: defineCustomElement
 })
 
 

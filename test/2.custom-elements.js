@@ -11,19 +11,23 @@ export default class CustomElements extends Test {
   /** Для удобства регистрации и переиспользования все опции define перенесены на класс */
   ['Регистрация пользовательского элемента']() {
     /** Имя тега забирается по названию класса */
-    const MyElement1 = oom.extends(class MyElement1 extends HTMLElement { })
+    class MyElement1 extends oom.extends(HTMLElement) { }
+
     /** Имя тега получается из статического свойства класса */
-    const MyElement2 = oom.extends(class MyElement2 extends HTMLElement {
+    class MyElement2 extends oom.extends(HTMLElement) {
 
       static tagName = 'm-e-2'
 
-    })
+    }
+
     /** Расширения базового тега так же выполняется через класс */
-    const MyButton1 = oom.extends(class MyButton1 extends HTMLButtonElement {
+    class MyButton1 extends oom.extends(HTMLButtonElement) {
 
       static extendsTagName = 'button'
 
-    })
+    }
+
+    oom.define(MyElement1, MyElement2, MyButton1)
 
     assert.equal(oom(new MyElement1()).html, '<my-element1></my-element1>')
     assert.equal(oom(MyElement1).html, '<my-element1></my-element1>')
@@ -46,11 +50,15 @@ export default class CustomElements extends Test {
 
   /** Свойство template экземпляра класса используется как шаблон компонента по аналогии с одноименным тегом */
   ['Шаблон компонента в template']() {
-    const MyElement3 = oom.extends(class MyElement3 extends HTMLElement {
+    /** Класс с шаблоном */
+    class MyElement3 extends oom.extends(HTMLElement) {
 
       template = oom('div')
 
-    })
+    }
+
+    oom.define(MyElement3)
+
     const myElm3 = new MyElement3()
 
     assert.equal(myElm3.outerHTML, '<my-element3></my-element3>')
@@ -69,7 +77,8 @@ export default class CustomElements extends Test {
    * Чтобы можно было гибко управлять содержимым и использовать такие элементы как slot
    */
   ['Работа с constructor, connectedCallback и template']() {
-    const MyElement4 = oom.extends(class MyElement4 extends HTMLElement {
+    /** Шаблон + обновление верстки в конструкторе */
+    class MyElement4 extends oom.extends(HTMLElement) {
 
       template = oom('div')
 
@@ -88,10 +97,14 @@ export default class CustomElements extends Test {
        *  и можно работать с готовой версткой компонента
        */
       connectedCallback() {
+        super.connectedCallback() // Применение template
         assert.equal(this.outerHTML, '<my-element4>test1<div></div></my-element4>')
       }
 
-    })
+    }
+
+    oom.define(MyElement4)
+
     const myElm4 = new MyElement4()
 
     assert.equal(myElm4.outerHTML, '<my-element4>test1</my-element4>')
@@ -104,26 +117,27 @@ export default class CustomElements extends Test {
 
   /** Для разных типов шаблонов должна быть общая последовательность вставки */
   ['Типы template']() {
-    const MyElement5 = oom.extends(class MyElement5 extends HTMLElement {
+    const [MyElement5, MyElement6, MyElement7, MyElement8] = oom.define(
+      class MyElement5 extends oom.extends(HTMLElement) {
 
-      template = oom('div')
+        template = oom('div')
 
-    })
-    const MyElement6 = oom.extends(class MyElement6 extends HTMLElement {
+      },
+      class MyElement6 extends oom.extends(HTMLElement) {
 
-      template = '<div></div>'
+        template = '<div></div>'
 
-    })
-    const MyElement7 = oom.extends(class MyElement7 extends HTMLElement {
+      },
+      class MyElement7 extends oom.extends(HTMLElement) {
 
-      template = document.createElement('div')
+        template = document.createElement('div')
 
-    })
-    const MyElement8 = oom.extends(class MyElement8 extends HTMLElement {
+      },
+      class MyElement8 extends oom.extends(HTMLElement) {
 
-      template = oom.a().b().dom
+        template = oom.a().b().dom
 
-    })
+      })
     const myElm5 = new MyElement5()
     const myElm6 = new MyElement6()
     const myElm7 = new MyElement7()

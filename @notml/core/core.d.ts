@@ -680,6 +680,9 @@ declare module '@notml/core' {
      */
     template: OOMElement.OOMChild
 
+    /** Хук ЖЦ элемента срабатывающий при вставке элемента в DOM */
+    connectedCallback(): void
+
   }
 
   namespace OOMProxy {
