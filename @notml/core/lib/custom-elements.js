@@ -21,29 +21,28 @@ function applyOOMTemplate(instance) {
 /**
  * Регистрация пользовательского элемента с элементами OOM шаблонизатора
  *
- * @param {typeof HTMLElement} CustomElement Класс пользовательского элемента
- * @returns {typeof CustomElement} Расширенный класс пользовательского элемента
+ * @param {import('@notml/core').CustomElement} CustomElement Класс пользовательского элемента
+ * @returns {import('@notml/core').CustomElement} Расширенный класс пользовательского элемента
  */
 function extendsCustomElement(CustomElement) {
   if (oomCustomElementMap.has(CustomElement)) {
     return oomCustomElementMap.get(CustomElement)
   } else {
-    const OOMCustomElement = {
-      [CustomElement.name]: class extends CustomElement {
+    /** @type {import('@notml/core').CustomElement} */
+    class OOMCustomElement extends CustomElement {
 
-        /** Создание элемента по шаблону при вставке в DOM */
-        connectedCallback() {
-          if (!this[oomElementRedySymbol]) {
-            this[oomElementRedySymbol] = false
-            applyOOMTemplate(this)
-          }
-          if (super.connectedCallback) {
-            super.connectedCallback()
-          }
+      /** Создание элемента по шаблону при вставке в DOM */
+      connectedCallback() {
+        if (!this[oomElementRedySymbol]) {
+          this[oomElementRedySymbol] = false
+          applyOOMTemplate(this)
         }
-
+        if (super.connectedCallback) {
+          super.connectedCallback()
+        }
       }
-    }[CustomElement.name]
+
+    }
 
     oomCustomElementMap.set(CustomElement, OOMCustomElement)
 
