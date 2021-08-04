@@ -111,7 +111,7 @@ class MyElementExp4 extends HTMLElement {
 
   /**
    * @param {{element:HTMLElement}} options Опции шаблона
-   * @returns {oom} Шаблон компонента
+   * @returns {any} Шаблон компонента
    */
   static template({ element }) {
     return oom()

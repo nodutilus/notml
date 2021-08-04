@@ -197,4 +197,32 @@ export default class CustomElements extends Test {
     document.body.innerHTML = ''
   }
 
+  /** Тест примера из в extends из types.d.ts */
+  ['types.d.ts - example for extends']() {
+    /** Тестовая кнопка */
+    class MyButton extends oom.extends(HTMLButtonElement) {
+
+      static tagName = 'my-butt'
+      static extendsTagName = 'button'
+
+      /** @param {string} caption Надпись на кнопке */
+      constructor(caption) {
+        super()
+        this.template = oom.span({ class: 'my-butt__caption' }, caption)
+      }
+
+    }
+
+    oom.define(MyButton)
+    document.body.innerHTML = ''
+    document.body.append(new MyButton('Жми тут'))
+    assert.equal(document.body.innerHTML, `
+      <button is="my-butt">
+        <span class="my-butt__caption">Жми тут</span>
+      </button>
+    `.replace(/\s*\n+\s+/g, ''))
+
+    document.body.innerHTML = ''
+  }
+
 }

@@ -651,7 +651,9 @@ declare module '@notml/core' {
     static getAttribute: OOMElement.getAttribute
     // @ts-ignore https://github.com/microsoft/TypeScript/pull/44512
     [OOMElement.IsOOMElementSymbol]: OOMElement.isOOMElementSymbol
+    /** Ссылка на оригинальный DOM элемент */
     dom: OOMElement.DOMElement
+    /** HTML код элемента, аналогично HTMLElement.outerHTML, но работает и для DocumentFragment */
     html: OOMElement.HTML
     constructor(tagName: OOMElement.OOMTagName, ...args: OOMElement.ProxyApplyArgs)
     append: OOMElement.append
@@ -680,7 +682,7 @@ declare module '@notml/core' {
     }
 
     /**
-     * Регистрирует переданный массив классов пользовательских элементов в customElements.define.
+     * Регистрирует переданный набор классов пользовательских элементов в customElements.define.
      * В качестве тега используется имя класса или `static tagName`
      */
     interface defineCustomElement {
@@ -704,7 +706,7 @@ declare module '@notml/core' {
      */
     static extendsTagName?: string
 
-    new(): CustomElement
+    constructor(...args: any)
 
     /**
      * Содержимое пользовательского элемента, которое будет добавлено в его состав
@@ -720,8 +722,10 @@ declare module '@notml/core' {
   namespace OOMProxy {
 
     /**
-     * Создает новый OOM элемент согласно имени запрошенного атрибута родительского Proxy,
-     * задем добавляет его в конец списка дочерних элементов
+     * Создает новый OOM элемент согласно имени запрошенного атрибута,
+     * затем добавляет его в конец списка дочерних элементов
+     * @example
+     * oom.div({ class: 'header' }, ...childs)
      */
     interface createElementProxy {
       (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMElementProxy
@@ -734,21 +738,77 @@ declare module '@notml/core' {
 
     /** Внутренний объект OOMProxy описывающий его базовые методы */
     interface origin {
-      extends: (cls: typeof HTMLElement | CustomElement.CustomElementCls) => CustomElement.CustomElementCls
+      /**
+       * Расширение пользовательского элемента возможностями OOM шаблонизатора.
+       * Возвращает новый класс наследуемый от указанного базового или пользовательского класса элемента,
+       * от которого можно наследовать класс нового элемента с поддержкой OOM
+       * @example
+       * class MyButton extends oom.extends(HTMLButtonElement) {
+       *   static tagName = 'my-butt'
+       *   static extendsTagName = 'button'
+       *   constructor(caption) {
+       *     super()
+       *     this.template = oom.span({ class: 'my-butt__caption' }, caption)
+       *   }
+       * }
+       * oom.define(MyButton)
+       * document.body.append(new MyButton('Жми тут'))
+       *
+       * >>
+       *   <button is="my-butt">
+       *     <span class="my-butt__caption">Жми тут</span>
+       *   </button>
+       */
+      extends(cls: typeof HTMLElement | CustomElement.CustomElementCls): CustomElement.CustomElementCls
+      /**
+       * Регистрирует переданный набор классов пользовательских элементов в customElements.define.
+       * В качестве тега используется имя класса или `static tagName`
+       */
       define: CustomElement.defineCustomElement
     }
 
+    interface OOMElementOrigin extends OOMElement {
+      /**
+       * Добавление дочернего элемента к верстке в конец списка элементов.
+       * Вернет замыкание на собственный OOMElementProxy для использования чейнинга
+       * @example
+       * const mySpan = oom.span('My element new text')
+       * oom('div').append(mySpan)
+       */
+      append(child: OOMElement.OOMChild): OOMElementProxy
+      /**
+       * Клонирует элемент и возвращает новый экземпляр OOM, содержащий копию DOM элемента
+       * @example
+       * const mySpan1 = oom.span('My element new text')
+       * const mySpan2 = mySpan1.clone()
+       */
+      clone(): OOMElementProxy
+    }
   }
 
   /** Proxy для работы с OOM элементом */
-  interface OOMElementProxy extends OOMElement {
+  interface OOMElementProxy extends OOMProxy.OOMElementOrigin {
     (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): void
     //@ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
     [tagName: string]: OOMProxy.createElementProxy
   }
 
-  /** Общий Proxy для создания OOM элементов */
+  /** Фабрика Proxy для создания OOM элементов и сопутствующее API */
   interface OOMProxy extends OOMProxy.origin {
+    /**
+     * Вернет новый экземпляр Proxy элемента для создания верстки
+     * @example
+     * const component = oom('div', { class: 'link' }, oom
+     *   .span({ class: 'title' }, 'Link: ')
+     *   .a({ href: 'https://test.ok' }, 'test.ok'))
+     * document.body.append(component.dom)
+     *
+     * >>
+     *   <div class="link">
+     *     <span class="title">Link: </span>
+     *     <a href="https://test.ok">test.ok</a>
+     *   </div>
+     */
     (
       tagName?: OOMElement.OOMTagName,
       ...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>
@@ -757,6 +817,7 @@ declare module '@notml/core' {
     [tagName: string]: OOMProxy.createElementProxy
   }
 
+  /** Фабрика Proxy для создания OOM элементов и сопутствующее API */
   export const oom: OOMProxy
 
 }
