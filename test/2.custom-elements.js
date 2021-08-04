@@ -198,7 +198,7 @@ export default class CustomElements extends Test {
   }
 
   ['Опции класса конструктора']() {
-    throw new Error('Реализовать проверку работы опций')
+    throw new Error('Реализовать проверку работы опций и их типизации через указание дефолтных опций')
   }
 
   /** Тест примера из в extends из types.d.ts */
