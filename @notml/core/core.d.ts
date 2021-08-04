@@ -660,6 +660,9 @@ declare module '@notml/core' {
 
   namespace CustomElement {
 
+    type CustomElementCls = typeof CustomElement
+    /** Класс пользовательского элемента, расширенный для работы с компонентами OOM */
+
     /**
      * Применение OOM шаблона пользовательского элемента
      */
@@ -667,10 +670,39 @@ declare module '@notml/core' {
       (instance: CustomElement): void
     }
 
+    /**
+     * Расширение пользовательского элемента возможностями OOM шаблонизатора.
+     * Возвращает новый класс наследуемый от указанного базового или пользовательского класса элемента,
+     * от которого можно наследовать класс нового элемента с поддержкой OOM
+     */
+    interface extendsCustomElement {
+      (CustomElement: CustomElementCls): CustomElementCls
+    }
+
+    /**
+     * Регистрирует переданный массив классов пользовательских элементов в customElements.define.
+     * В качестве тега используется имя класса или `static tagName`
+     */
+    interface defineCustomElement {
+      (...oomCustomElements: Array<CustomElementCls>): Array<CustomElementCls>
+    }
+
   }
 
   /** Экземпляр пользовательского DOM элемента, расширенный для работы с компонентами OOM */
-  interface CustomElement extends HTMLElement {
+  class CustomElement extends HTMLElement {
+
+    /** Имя класса пользовательского элемента */
+    static name?: string
+
+    /** Имя тега для регистрации пользовательского элемента */
+    static tagName?: string
+
+    /**
+     * Имя тега встроенного DOM элемента который расширяется данным классом
+     * @see customElements.define~options.extends {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/define#syntax}
+     */
+    static extendsTagName?: string
 
     new(): CustomElement
 
@@ -678,7 +710,7 @@ declare module '@notml/core' {
      * Содержимое пользовательского элемента, которое будет добавлено в его состав
      * в момент вставки пользовательского компонента в состав документа
      */
-    template: OOMElement.OOMChild
+    template?: OOMElement.OOMChild
 
     /** Хук ЖЦ элемента срабатывающий при вставке элемента в DOM */
     connectedCallback(): void
@@ -702,7 +734,8 @@ declare module '@notml/core' {
 
     /** Внутренний объект OOMProxy описывающий его базовые методы */
     interface origin {
-      extends: (cls: typeof HTMLElement) => CustomElement
+      extends: (cls: typeof HTMLElement | CustomElement.CustomElementCls) => CustomElement.CustomElementCls
+      define: CustomElement.defineCustomElement
     }
 
   }

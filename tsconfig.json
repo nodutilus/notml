@@ -2,6 +2,7 @@
   "extends": "@nodutilus/project-config/tsconfig",
   "exclude": [
     "_deprecated/**",
-    "coverage/**"
+    "coverage/**",
+    "@notml/notml/**"
   ]
 }

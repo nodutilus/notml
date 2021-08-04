@@ -17,13 +17,7 @@ function applyOOMTemplate(instance) {
   }
 }
 
-
-/**
- * Регистрация пользовательского элемента с элементами OOM шаблонизатора
- *
- * @param {import('@notml/core').CustomElement} CustomElement Класс пользовательского элемента
- * @returns {import('@notml/core').CustomElement} Расширенный класс пользовательского элемента
- */
+/** @type {import('@notml/core').CustomElement.extendsCustomElement} */
 function extendsCustomElement(CustomElement) {
   if (oomCustomElementMap.has(CustomElement)) {
     return oomCustomElementMap.get(CustomElement)
@@ -50,7 +44,7 @@ function extendsCustomElement(CustomElement) {
   }
 }
 
-
+/** @type {import('@notml/core').CustomElement.defineCustomElement} */
 function defineCustomElement(...oomCustomElements) {
   for (const CustomElement of oomCustomElements) {
     const tagName = CustomElement.tagName || OOMElement.resolveTagName(CustomElement.name)
