@@ -197,6 +197,10 @@ export default class CustomElements extends Test {
     document.body.innerHTML = ''
   }
 
+  ['Опции класса конструктора']() {
+    throw new Error('Реализовать проверку работы опций')
+  }
+
   /** Тест примера из в extends из types.d.ts */
   ['types.d.ts - example for extends']() {
     /** Тестовая кнопка */
