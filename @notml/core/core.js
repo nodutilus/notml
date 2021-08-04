@@ -1,4 +1,3 @@
-/// <reference path="core.d.ts"/>
 import { OOMElement } from './lib/factory.js'
 import { extendsCustomElement, defineCustomElement } from './lib/custom-elements.js'
 

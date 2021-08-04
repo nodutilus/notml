@@ -15,6 +15,7 @@
   "exports": {
     ".": "./core.js"
   },
+  "types": "./types.d.ts",
   "publishConfig": {
     "access": "public"
   }
