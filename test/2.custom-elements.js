@@ -115,6 +115,41 @@ export default class CustomElements extends Test {
     document.body.innerHTML = ''
   }
 
+  /**
+   * oom.extends может работать и от пользовательского класса, например из сторонней библиотеки.
+   * В таком случае методы из OOMCustomElement выполняются всегда раньше, сохраняя базовое поведение.
+   * Однако это создает больше классов OOMCustomElement чем наследование от базовых классов
+   * (по 1му на каждый пользовательский, вместо 1го общего на базовый)
+   */
+  ['Наследование через oom.extends от пользовательского класса']() {
+    let myE9html = ''
+
+    /** Расширяемый класс. Может быть компонентом из другой библиотеки */
+    class MyElement9 extends HTMLElement {
+
+      /** Выполниться до построения верстки в дочернем классе, но имя тега уже будет переопределено */
+      connectedCallback() {
+        myE9html = this.outerHTML
+      }
+
+    }
+
+    /** Наследуется от стороннего класса пользовательского элемента, при этом добавляя oom поведение */
+    class MyElement10 extends oom.extends(MyElement9) {
+
+      template = 'test10'
+
+    }
+
+    oom.define(MyElement10)
+
+    document.body.innerHTML = ''
+    document.body.append(new MyElement10())
+    assert.equal(myE9html, '<my-element10></my-element10>')
+    assert.equal(document.body.innerHTML, '<my-element10>test10</my-element10>')
+    document.body.innerHTML = ''
+  }
+
   /** Для разных типов шаблонов должна быть общая последовательность вставки */
   ['Типы template']() {
     const [MyElement5, MyElement6, MyElement7, MyElement8] = oom.define(

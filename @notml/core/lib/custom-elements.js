@@ -33,12 +33,12 @@ function extendsCustomElement(CustomElement) {
 
       /** Создание элемента по шаблону при вставке в DOM */
       connectedCallback() {
+        if (super.connectedCallback) {
+          super.connectedCallback()
+        }
         if (!this[oomElementRedySymbol]) {
           this[oomElementRedySymbol] = false
           applyOOMTemplate(this)
-        }
-        if (super.connectedCallback) {
-          super.connectedCallback()
         }
       }
 
