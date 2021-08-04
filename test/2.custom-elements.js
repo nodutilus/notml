@@ -205,17 +205,13 @@ export default class CustomElements extends Test {
       static tagName = 'my-butt'
       static extendsTagName = 'button'
 
-      /** @param {string} caption Надпись на кнопке */
-      constructor(caption) {
-        super()
-        this.template = oom.span({ class: 'my-butt__caption' }, caption)
-      }
+      template = oom.span({ class: 'my-butt__caption' }, this.options.caption)
 
     }
 
     oom.define(MyButton)
     document.body.innerHTML = ''
-    document.body.append(new MyButton('Жми тут'))
+    document.body.append(new MyButton({ caption: 'Жми тут' }))
     assert.equal(document.body.innerHTML, `
       <button is="my-butt">
         <span class="my-butt__caption">Жми тут</span>

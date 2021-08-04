@@ -662,8 +662,25 @@ declare module '@notml/core' {
 
   namespace CustomElement {
 
-    type CustomElementCls = typeof CustomElement
     /** Класс пользовательского элемента, расширенный для работы с компонентами OOM */
+    type CustomElementCls = typeof CustomElement
+
+    /** Опци пользовательского компонента */
+    interface options {
+      readonly [x: string]: any
+    }
+
+    /** Глубокая заморозка объекта */
+    interface deepFreeze {
+      (object: object): object
+    }
+
+    /**
+     * Создает экземпляр CustomElement
+     */
+    interface constructor {
+      (options: options): CustomElement
+    }
 
     /**
      * Применение OOM шаблона пользовательского элемента
@@ -706,7 +723,10 @@ declare module '@notml/core' {
      */
     static extendsTagName?: string
 
-    constructor(...args: any)
+    constructor(options?: CustomElement.options)
+
+    /** Объект с опциями пользовательского компонента */
+    readonly options: CustomElement.options
 
     /**
      * Содержимое пользовательского элемента, которое будет добавлено в его состав
@@ -746,13 +766,10 @@ declare module '@notml/core' {
        * class MyButton extends oom.extends(HTMLButtonElement) {
        *   static tagName = 'my-butt'
        *   static extendsTagName = 'button'
-       *   constructor(caption) {
-       *     super()
-       *     this.template = oom.span({ class: 'my-butt__caption' }, caption)
-       *   }
+       *   template = oom.span({ class: 'my-butt__caption' }, this.options.caption)
        * }
        * oom.define(MyButton)
-       * document.body.append(new MyButton('Жми тут'))
+       * document.body.append(new MyButton({ caption: 'Жми тут' }))
        *
        * >>
        *   <button is="my-butt">

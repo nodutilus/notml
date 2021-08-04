@@ -17,6 +17,19 @@ function applyOOMTemplate(instance) {
   }
 }
 
+/** @type {import('@notml/core').CustomElement.deepFreeze } */
+function __deepFreeze(object) {
+  for (const name of Object.getOwnPropertyNames(object)) {
+    const value = object[name]
+
+    if (value && typeof value === 'object') {
+      __deepFreeze(value)
+    }
+  }
+
+  return Object.freeze(object)
+}
+
 /** @type {import('@notml/core').CustomElement.extendsCustomElement} */
 function extendsCustomElement(CustomElement) {
   if (oomCustomElementMap.has(CustomElement)) {
@@ -34,6 +47,18 @@ function extendsCustomElement(CustomElement) {
           this[oomElementRedySymbol] = false
           applyOOMTemplate(this)
         }
+      }
+
+      /** @type {import('@notml/core').CustomElement.constructor} */
+      constructor(
+        /** @type {import('@notml/core').CustomElement.options} */
+        options = {}
+      ) {
+        super()
+        Object.defineProperty(this, 'options', {
+          value: __deepFreeze(options),
+          writable: false
+        })
       }
 
     }
