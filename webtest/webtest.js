@@ -10,6 +10,7 @@ const { document } = window
  */
 function assertEqual(name, actual, expected) {
   if (actual !== expected) {
+    console.log(name, ' -> failed')
     console.log('actual =>', actual)
     console.log('expected =>', expected)
     console.error(new Error('actual !== expected'))
@@ -21,12 +22,12 @@ function assertEqual(name, actual, expected) {
 
 // Example #1
 const exp1 = document.getElementById('exp1')
-const div1 = oom('div')
+const div1 = oom('div', oom
   .div({ class: 'header' })
   .div({ class: 'test' }, oom
     .span('Name: ', { class: 'test-label' })
     .span('Test', { class: 'test-name' }))
-  .div({ class: 'footer' })
+  .div({ class: 'footer' }))
 const html1 = div1.html
 
 exp1.append(div1.dom)
@@ -44,15 +45,20 @@ assertEqual('Example #1-2', exp1.innerHTML,
 
 // Example #2
 const exp2 = document.getElementById('exp2')
-const header2 = oom('div', { class: 'header' })
-  .span('Test Header')
-const block2 = oom
-  .div(oom
-    .append(header2.clone())
-    .div('div 1'))
-  .div(oom
-    .append(header2.clone())
-    .div('div 2'))
+const header2 = oom('div', { class: 'header' }, oom
+  .span('Test Header'))
+const block2 = oom()
+
+block2(
+  oom
+    .div(oom()
+      .append(header2.clone())
+      .div('div 1')),
+  oom
+    .div(oom()
+      .append(header2.clone())
+      .div('div 2')))
+
 const html2 = block2.html
 
 exp2.append(block2.dom)
