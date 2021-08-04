@@ -49,15 +49,14 @@ const header2 = oom('div', { class: 'header' }, oom
   .span('Test Header'))
 const block2 = oom()
 
-block2(
-  oom
-    .div(oom()
-      .append(header2.clone())
-      .div('div 1')),
-  oom
-    .div(oom()
-      .append(header2.clone())
-      .div('div 2')))
+block2(oom
+  .div(oom()
+    .append(header2.clone())
+    .div('div 1')))
+block2(oom
+  .div(oom()
+    .append(header2.clone())
+    .div('div 2')))
 
 const html2 = block2.html
 
