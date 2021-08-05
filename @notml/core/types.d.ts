@@ -663,11 +663,25 @@ declare module '@notml/core' {
   namespace CustomElement {
 
     /** Класс пользовательского элемента, расширенный для работы с компонентами OOM */
-    type CustomElementCls = typeof CustomElement
+    interface CustomElementCls<T> {
+      /** Имя класса пользовательского элемента */
+      name?: string
+
+      /** Имя тега для регистрации пользовательского элемента */
+      tagName?: string
+
+      /**
+       * Имя тега встроенного DOM элемента который расширяется данным классом
+       * @see customElements.define~options.extends {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/define#syntax}
+       */
+      extendsTagName?: string
+
+      new(options?: Options<T>): CustomElement<T>
+    }
 
     /** Опци пользовательского компонента */
-    interface options {
-      readonly [x: string]: any
+    type Options<T> = {
+      readonly [K in keyof T]?: T[K]
     }
 
     /** Глубокая заморозка объекта */
@@ -679,14 +693,14 @@ declare module '@notml/core' {
      * Создает экземпляр CustomElement
      */
     interface constructor {
-      (options: options): CustomElement
+      (options: Options<any>): CustomElement<any>
     }
 
     /**
      * Применение OOM шаблона пользовательского элемента
      */
     interface applyOOMTemplate {
-      (instance: CustomElement): void
+      (instance: CustomElement<any>): void
     }
 
     /**
@@ -694,8 +708,8 @@ declare module '@notml/core' {
      * Возвращает новый класс наследуемый от указанного базового или пользовательского класса элемента,
      * от которого можно наследовать класс нового элемента с поддержкой OOM
      */
-    interface extendsCustomElement {
-      (CustomElement: CustomElementCls): CustomElementCls
+    interface extendsCustomElement<T> {
+      (CustomElement: CustomElementCls<T>, optionsDefaults?: CustomElement.Options<T>): CustomElementCls<T>
     }
 
     /**
@@ -703,13 +717,13 @@ declare module '@notml/core' {
      * В качестве тега используется имя класса или `static tagName`
      */
     interface defineCustomElement {
-      (...oomCustomElements: Array<CustomElementCls>): Array<CustomElementCls>
+      (...oomCustomElements: Array<CustomElementCls<any>>): Array<CustomElementCls<any>>
     }
 
   }
 
   /** Экземпляр пользовательского DOM элемента, расширенный для работы с компонентами OOM */
-  class CustomElement extends HTMLElement {
+  class CustomElement<T> extends HTMLElement {
 
     /** Имя класса пользовательского элемента */
     static name?: string
@@ -723,10 +737,8 @@ declare module '@notml/core' {
      */
     static extendsTagName?: string
 
-    constructor(options?: CustomElement.options)
-
     /** Объект с опциями пользовательского компонента */
-    readonly options: CustomElement.options
+    readonly options: CustomElement.Options<T>
 
     /**
      * Содержимое пользовательского элемента, которое будет добавлено в его состав
@@ -763,7 +775,8 @@ declare module '@notml/core' {
        * Возвращает новый класс наследуемый от указанного базового или пользовательского класса элемента,
        * от которого можно наследовать класс нового элемента с поддержкой OOM
        * @example
-       * class MyButton extends oom.extends(HTMLButtonElement) {
+       * const optionsDefaults = { caption: '' }
+       * class MyButton extends oom.extends(HTMLButtonElement, optionsDefaults) {
        *   static tagName = 'my-butt'
        *   static extendsTagName = 'button'
        *   template = oom.span({ class: 'my-butt__caption' }, this.options.caption)
@@ -776,7 +789,10 @@ declare module '@notml/core' {
        *     <span class="my-butt__caption">Жми тут</span>
        *   </button>
        */
-      extends(cls: typeof HTMLElement | CustomElement.CustomElementCls): CustomElement.CustomElementCls
+      extends<T>(
+        CustomElement: typeof HTMLElement | CustomElement.CustomElementCls<T>,
+        optionsDefaults?: CustomElement.Options<T>
+      ): CustomElement.CustomElementCls<T>
       /**
        * Регистрирует переданный набор классов пользовательских элементов в customElements.define.
        * В качестве тега используется имя класса или `static tagName`

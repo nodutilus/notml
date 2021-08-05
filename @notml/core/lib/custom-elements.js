@@ -31,7 +31,7 @@ function __deepFreeze(object) {
 }
 
 /** @type {import('@notml/core').CustomElement.extendsCustomElement} */
-function extendsCustomElement(CustomElement) {
+function extendsCustomElement(CustomElement, optionsDefaults) {
   if (oomCustomElementMap.has(CustomElement)) {
     return oomCustomElementMap.get(CustomElement)
   } else {
@@ -51,10 +51,13 @@ function extendsCustomElement(CustomElement) {
 
       /** @type {import('@notml/core').CustomElement.constructor} */
       constructor(
-        /** @type {import('@notml/core').CustomElement.options} */
+        /** @type {import('@notml/core').CustomElement.Options<any>} */
         options = {}
       ) {
         super()
+
+        // TODO слить optionsDefaults с options в новый объект
+
         Object.defineProperty(this, 'options', {
           value: __deepFreeze(options),
           writable: false

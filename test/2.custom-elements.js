@@ -198,13 +198,22 @@ export default class CustomElements extends Test {
   }
 
   ['Опции класса конструктора']() {
+    // Проверка optionsDefaults
+    // Расширение через наследование (пробрасывать опции внутри компонента в конструктор родителя)
     throw new Error('Реализовать проверку работы опций и их типизации через указание дефолтных опций вторым аргументом в oom.extends')
   }
 
   /** Тест примера из в extends из types.d.ts */
   ['types.d.ts - example for extends']() {
+    /**
+     * @typedef OptionsDefaults
+     * @property {string} [caption] Надпись на кнопке
+     */
+    /** @type {OptionsDefaults} */
+    const optionsDefaults = { caption: '' }
+
     /** Тестовая кнопка */
-    class MyButton extends oom.extends(HTMLButtonElement) {
+    class MyButton extends oom.extends(HTMLButtonElement, optionsDefaults) {
 
       static tagName = 'my-butt'
       static extendsTagName = 'button'
