@@ -66,7 +66,9 @@ function extendsCustomElement(CustomElement, optionsDefaults) {
 
     }
 
-    oomCustomElementMap.set(CustomElement, OOMCustomElement)
+    if (typeof optionsDefaults === 'undefined') {
+      oomCustomElementMap.set(CustomElement, OOMCustomElement)
+    }
 
     return OOMCustomElement
   }
