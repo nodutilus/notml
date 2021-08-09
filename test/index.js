@@ -4,6 +4,7 @@ import { Test } from '@nodutilus/test'
 import BasicBehavior from './1.basic-behavior.js'
 import CustomElements from './2.custom-elements.js'
 import BasicAPI from './3.basic-api.js'
+import OOMStyle from './4.style.js'
 // import TestOOM from './oom.js'
 
 
@@ -13,6 +14,7 @@ class TestNotMLCore extends Test {
   static ['Базовое поведение'] = BasicBehavior
   static ['Пользовательские элементы'] = CustomElements
   static ['Базовое API для OOM элементов'] = BasicAPI
+  static ['Генератор CSS in JS'] = OOMStyle
 
   // static TestOOM = TestOOM
 

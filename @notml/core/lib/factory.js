@@ -1,3 +1,5 @@
+import { OOMStyle } from './style.js'
+
 const { document, customElements, DocumentFragment, HTMLElement } = window
 const isOOMElementSymbol = Symbol('isOOMElement')
 /** @type {import('@notml/core').basic.OOMProxyConstructor} */
@@ -26,21 +28,25 @@ class OOMElement {
     /** @type {import('@notml/core').OOMElement.ProxyApplyArgs} */
     args
   ) {
-    for (const arg of args) {
-      const isChild =
-        arg instanceof OOMElement ||
-        arg instanceof HTMLElement ||
-        arg instanceof DocumentFragment ||
-        typeof arg !== 'object' || !arg ||
-        arg.constructor !== Object
+    if (instance.dom instanceof OOMStyle) {
+      instance.dom.update(...args)
+    } else {
+      for (const arg of args) {
+        const isChild =
+          arg instanceof OOMElement ||
+          arg instanceof HTMLElement ||
+          arg instanceof DocumentFragment ||
+          typeof arg !== 'object' || !arg ||
+          arg.constructor !== Object
 
-      // Чтобы поймать стандартное исключение DOM API, игнорируем проверку на произвольные типы данных
-      if (isChild) {
-        // @ts-ignore независимо от типа добавляемого элемента вызовем вставку
-        instance.append(arg)
-      } else {
-        // @ts-ignore независимо от типа аргументов вызываем установку атрибутов
-        OOMElement.setAttributes(instance.dom, arg)
+        // Чтобы поймать стандартное исключение DOM API, игнорируем проверку на произвольные типы данных
+        if (isChild) {
+          // @ts-ignore независимо от типа добавляемого элемента вызовем вставку
+          instance.append(arg)
+        } else {
+          // @ts-ignore независимо от типа аргументов вызываем установку атрибутов
+          OOMElement.setAttributes(instance.dom, arg)
+        }
       }
     }
   }
@@ -100,9 +106,13 @@ class OOMElement {
     if (typeof tagName === 'string' && tagName[0] === tagName[0].toUpperCase()) {
       result = tagName
         .replace((/^[A-Z]/), str => str.toLowerCase())
-        .replace((/[A-Z]/g), str => `-${str.toLowerCase()}`)
+        .replace((/[A-Z][a-z]/g), str => `-${str.toLowerCase()}`)
+        .replace((/[A-Z]+/g), str => str.toLowerCase())
     } else {
       result = tagName
+    }
+    if (result === 'style') {
+      result = 'oom-style'
     }
 
     return result

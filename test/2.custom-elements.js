@@ -16,9 +16,15 @@ export default class CustomElements extends Test {
     /** Имя тега получается из статического свойства класса */
     class MyElement2 extends oom.extends(HTMLElement) {
 
-      static tagName = 'm-e-2'
+      static tagName = 'me-2'
 
     }
+
+    /**
+     * Несколько заклавных в названии класса подряд,
+     * при использовании его в качетстве имени тега, не разделяется
+     */
+    class OOMElement2 extends oom.extends(HTMLElement) { }
 
     /** Расширения базового тега так же выполняется через класс */
     class MyButton1 extends oom.extends(HTMLButtonElement) {
@@ -27,7 +33,7 @@ export default class CustomElements extends Test {
 
     }
 
-    oom.define(MyElement1, MyElement2, MyButton1)
+    oom.define(MyElement1, MyElement2, OOMElement2, MyButton1)
 
     assert.equal(oom(new MyElement1()).html, '<my-element1></my-element1>')
     assert.equal(oom(MyElement1).html, '<my-element1></my-element1>')
@@ -35,11 +41,17 @@ export default class CustomElements extends Test {
     assert.equal(oom('MyElement1').html, '<my-element1></my-element1>')
     assert.equal(customElements.get('my-element1'), MyElement1)
 
-    assert.equal(oom(new MyElement2()).html, '<m-e-2></m-e-2>')
-    assert.equal(oom(MyElement2).html, '<m-e-2></m-e-2>')
-    assert.equal(oom['ME-2']().html, '<m-e-2></m-e-2>')
-    assert.equal(oom('ME-2').html, '<m-e-2></m-e-2>')
-    assert.equal(customElements.get('m-e-2'), MyElement2)
+    assert.equal(oom(new MyElement2()).html, '<me-2></me-2>')
+    assert.equal(oom(MyElement2).html, '<me-2></me-2>')
+    assert.equal(oom['ME-2']().html, '<me-2></me-2>')
+    assert.equal(oom('ME-2').html, '<me-2></me-2>')
+    assert.equal(customElements.get('me-2'), MyElement2)
+
+    assert.equal(oom(new OOMElement2()).html, '<oom-element2></oom-element2>')
+    assert.equal(oom(OOMElement2).html, '<oom-element2></oom-element2>')
+    assert.equal(oom.OOMElement2().html, '<oom-element2></oom-element2>')
+    assert.equal(oom('OOMElement2').html, '<oom-element2></oom-element2>')
+    assert.equal(customElements.get('oom-element2'), OOMElement2)
 
     assert.equal(oom(new MyButton1()).html, '<button is="my-button1"></button>')
     assert.equal(oom(MyButton1).html, '<button is="my-button1"></button>')
