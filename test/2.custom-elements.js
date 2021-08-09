@@ -209,11 +209,84 @@ export default class CustomElements extends Test {
     document.body.innerHTML = ''
   }
 
-  ['Опции класса конструктора']() {
-    // Проверка optionsDefaults
-    // Расширение через наследование (пробрасывать опции внутри компонента в конструктор родителя)
-    throw new Error('Реализовать проверку работы опций и их типизации через указание дефолтных опций вторым аргументом в oom.extends')
+  /**
+   * В качестве описания структуры опций можно использовать простые объекты и массивы.
+   * - Объекты будут клонированы и объединены с опциями по умолчанию в новые объекты.
+   * - Массивы из опций по умолчанию будет полностью заменены копиями массивов указанными в опциях.
+   * - Примитивные значения опций передаются по значению.
+   * - Сложные объекты, такие как Date, RegExp, пр., и пользовательские классы, будут переданы по ссылке.
+   * Такое поведение позволит создавать структурированные опции,
+   *  и использовать в качестве опций DOM элементы для создания агрегаций
+   */
+  ['Опции: объект']() {
+    let mye11, mye12
+
+    /** Без опций по умолчанию */
+    class MyElement11 extends oom.extends(HTMLElement) { }
+
+    oom.define(MyElement11)
+
+    // Без указания опций
+    mye11 = new MyElement11()
+    assert.deepEqual(mye11.options, {})
+
+    // Можно передать любые опции
+    mye11 = new MyElement11({ a: 1, b11: { c11: 2 } })
+    assert.deepEqual(mye11.options, { a: 1, b11: { c11: 2 } })
+    assert.equal(mye11.options.a, 1)
+    assert.equal(mye11.options.b11.c11, 2)
+
+
+    /** С опцией по умолчанию */
+    class MyElement12 extends oom.extends(HTMLElement, { a: 'test', b12: { c12: 2 } }) { }
+
+    oom.define(MyElement12)
+
+    // Без указания опций, вернется по умолчанию
+    mye12 = new MyElement12()
+    assert.equal(mye12.options.a, 'test')
+    assert.equal(mye12.options.b12.c12, 2)
+
+    // Обновлениен опций
+    mye12 = new MyElement12({ a: 'update', b12: { c12: 3 } })
+    assert.equal(mye12.options.a, 'update')
+    assert.equal(mye12.options.b12.c12, 3)
   }
+
+  /** Опции запрещено редактировать */
+  ['Опции: readonly']() {
+    /** объект + объект в объекте */
+    class MyElement13 extends oom.extends(HTMLElement, { b13: { c13: 2 } }) { }
+
+    oom.define(MyElement13)
+
+    let err
+    const mye13 = new MyElement13()
+
+    try {
+      // @ts-ignore
+      mye13.options = {}
+    } catch (error) { err = error }
+    assert.equal(err.message, "Cannot assign to read only property 'options' of object '#<MyElement13>'")
+    try {
+      // @ts-ignore
+      mye13.options.a13 = {}
+    } catch (error) { err = error }
+    assert.equal(err.message, 'Cannot add property a13, object is not extensible')
+    try {
+      // @ts-ignore
+      mye13.options.b13.c13 = {}
+    } catch (error) { err = error }
+    assert.equal(err.message, "Cannot assign to read only property 'c13' of object '#<Object>'")
+    try {
+      // @ts-ignore
+      mye13.options.b13.e13 = {}
+    } catch (error) { err = error }
+    assert.equal(err.message, 'Cannot add property e13, object is not extensible')
+  }
+
+  //TODO Опции в виде массива
+  //TODO Расширение через наследование (пробрасывать опции внутри компонента в конструктор родителя)
 
   /** Тест примера из в extends из types.d.ts */
   ['types.d.ts - example for extends']() {

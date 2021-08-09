@@ -17,6 +17,35 @@ function applyOOMTemplate(instance) {
   }
 }
 
+function __mergeSimpleObjects(target, source) {
+  let result = target
+
+  switch (typeof source) {
+    case 'object': {
+      const sType = Object.prototype.toString.call(source)
+
+      switch (sType) {
+        case '[object Object]':
+          for (const key in source) {
+            target[key] = __mergeSimpleObjects(target[key] || {}, source[key])
+          }
+          break
+        default:
+          result = source
+          break
+      }
+      break
+    }
+    case 'undefined':
+      break
+    default:
+      result = source
+      break
+  }
+
+  return result
+}
+
 /** @type {import('@notml/core').CustomElement.deepFreeze } */
 function __deepFreeze(object) {
   for (const name of Object.getOwnPropertyNames(object)) {
@@ -32,7 +61,7 @@ function __deepFreeze(object) {
 
 /** @type {import('@notml/core').CustomElement.extendsCustomElement} */
 function extendsCustomElement(CustomElement, optionsDefaults) {
-  if (oomCustomElementMap.has(CustomElement)) {
+  if (oomCustomElementMap.has(CustomElement) && typeof optionsDefaults === 'undefined') {
     return oomCustomElementMap.get(CustomElement)
   } else {
     /** @type {import('@notml/core').CustomElement} */
@@ -55,8 +84,7 @@ function extendsCustomElement(CustomElement, optionsDefaults) {
         options = {}
       ) {
         super()
-
-        // TODO слить optionsDefaults с options в новый объект
+        options = __mergeSimpleObjects(__mergeSimpleObjects({}, optionsDefaults || {}), options)
 
         Object.defineProperty(this, 'options', {
           value: __deepFreeze(options),
