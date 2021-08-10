@@ -8,6 +8,31 @@ const { document } = window
 export default class OOMStyle extends Test {
 
   /**
+   * Атрибут style в oom шаблоне позволяет задавать стили объектом в формате CSSStyleDeclaration.
+   * Что позволяет последовательно обновлять inline стили, не перетирая всё значение атрибута.
+   * Также можно указать style в классическом виде, как строку
+   */
+  ['Атрибут style']() {
+    const div = oom.div({ style: { background: 'red' } })
+
+    assert.equal(div.html, '<div style="background: red;"></div>')
+
+    div({ style: { background: 'green', fontSize: '14px' } })
+    assert.equal(div.html, '<div style="background: green; font-size: 14px;"></div>')
+
+    div({ style: { background: 'orange' } })
+    assert.equal(div.html, '<div style="font-size: 14px; background: orange;"></div>')
+
+    // Можно указать строкой и перезаписать весь style
+    div({ style: 'background: red;' })
+    assert.equal(div.html, '<div style="background: red;"></div>')
+
+    // Для обнуления стилей можно использовать указание пустой строки
+    div({ style: '' })
+    assert.equal(div.html, '<div style=""></div>')
+  }
+
+  /**
    * Генератор стилей наследуется от базового style для сохранения оригинального tagName.
    * И все обращения к style через oom шаблонизатор создают OOMStyle, что бы использовать объектную модель
    */

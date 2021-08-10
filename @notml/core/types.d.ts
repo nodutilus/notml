@@ -500,7 +500,7 @@ declare module '@notml/core' {
     type OOMAttributes = {
       [x: string]: OOMAttributeValue
       /** CSS стили DOM элемента */
-      style?: basic.CSSStyleDeclaration
+      style?: basic.CSSStyleDeclaration | string
     }
 
     /** Экземпляр элемента для вставки */
