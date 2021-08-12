@@ -253,10 +253,55 @@ export default class CustomElements extends Test {
     assert.equal(mye12.options.b12.c12, 3)
   }
 
+  /** Опции могут являться массивом, содержимое массивов и вложенные объекты копируются */
+  ['Опции: массив']() {
+    const dOptions = ['defaults']
+    const options = ['ok']
+
+    /** Опции в виде массива */
+    class MyElement15 extends oom.extends(HTMLElement, dOptions) { }
+
+    oom.define(MyElement15)
+
+    const myE15 = new MyElement15(options)
+
+    dOptions.push('1')
+    options.push('2')
+
+    assert.deepEqual(myE15.options, ['ok'])
+    assert.deepEqual(dOptions, ['defaults', '1'])
+    assert.deepEqual(options, ['ok', '2'])
+  }
+
+  /**
+   * Сложные объекты считаем уникальными и передаются по ссылке, например дата или пользовательские классы.
+   * При этом объект подвергается глубокой заморозке, чтобы быть доступным только на чтение
+   */
+  ['Опции: сложные объекты']() {
+    /** Пользовательский класс опций */
+    class COptions { c16 = new Date() }
+
+    const dOptions = { a16: null, b16: new Date() }
+    const options = { a16: new COptions() }
+
+    /** Сложные объекты в опциях */
+    class MyElement16 extends oom.extends(HTMLElement, dOptions) { }
+
+    oom.define(MyElement16)
+
+    const myE16 = new MyElement16(options)
+
+    // TODO: Пользовательский класс не должен копироваться...
+    assert.ok(myE16.options.a16 === options)
+    assert.ok(myE16.options.a16.c16 === options.c16)
+    assert.ok(myE16.options.b16 === dOptions.b16)
+  }
+
+
   /** Опции запрещено редактировать */
   ['Опции: readonly']() {
     /** объект + объект в объекте */
-    class MyElement13 extends oom.extends(HTMLElement, { b13: { c13: 2 } }) { }
+    class MyElement13 extends oom.extends(HTMLElement, { b13: { c13: 2 }, d13: [1, 2, 3] }) { }
 
     oom.define(MyElement13)
 
@@ -283,9 +328,39 @@ export default class CustomElements extends Test {
       mye13.options.b13.e13 = {}
     } catch (error) { err = error }
     assert.equal(err.message, 'Cannot add property e13, object is not extensible')
+    try {
+      // @ts-ignore
+      mye13.options.d13.push(4)
+    } catch (error) { err = error }
+    assert.equal(err.message, 'Cannot add property 3, object is not extensible')
   }
 
-  //TODO Опции в виде массива
+  /**
+   * Объект передаваемый в качестве значения опций по умолчанию или опций остается неизменным,
+   *  внутри компонента опции копируются, и внешний объект можно использовать повторно
+   */
+  ['Опции: копирование']() {
+    const dOptions = { a14: 1, b14: { c14: 1 } }
+    const options = { a14: 2, d14: [{ e14: 0 }, 2, 3] }
+
+    /** объект + объект в объекте */
+    class MyElement14 extends oom.extends(HTMLElement, dOptions) { }
+
+    oom.define(MyElement14)
+
+    const myE14 = new MyElement14(options)
+
+    dOptions.b14.c14 = 3
+    options.a14 = 4
+    options.d14.push(4)
+    // @ts-ignore
+    options.d14[0].e14 = -1
+
+    assert.deepEqual(myE14.options, { a14: 2, b14: { c14: 1 }, d14: [{ e14: 0 }, 2, 3] })
+    assert.deepEqual(dOptions, { a14: 1, b14: { c14: 3 } })
+    assert.deepEqual(options, { a14: 4, d14: [{ e14: -1 }, 2, 3, 4] })
+  }
+
   //TODO Расширение через наследование (пробрасывать опции внутри компонента в конструктор родителя)
 
   /** Тест примера из в extends из types.d.ts */

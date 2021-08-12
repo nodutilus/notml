@@ -18,29 +18,22 @@ function applyOOMTemplate(instance) {
 }
 
 function __mergeSimpleObjects(target, source) {
-  let result = target
+  let result
 
-  switch (typeof source) {
-    case 'object': {
-      const sType = Object.prototype.toString.call(source)
-
-      switch (sType) {
-        case '[object Object]':
-          for (const key in source) {
-            target[key] = __mergeSimpleObjects(target[key] || {}, source[key])
-          }
-          break
-        default:
-          result = source
-          break
-      }
-      break
+  if (typeof source === 'object') {
+    switch (Object.prototype.toString.call(source)) {
+      case '[object Object]':
+      case '[object Array]':
+        result = Object.assign(source instanceof Array ? [] : {}, target, source)
+        for (const key in result) {
+          result[key] = __mergeSimpleObjects(null, result[key])
+        }
+        break
+      default:
+        result = source
     }
-    case 'undefined':
-      break
-    default:
-      result = source
-      break
+  } else {
+    result = source
   }
 
   return result
@@ -84,7 +77,7 @@ function extendsCustomElement(CustomElement, optionsDefaults) {
         options = {}
       ) {
         super()
-        options = __mergeSimpleObjects(__mergeSimpleObjects({}, optionsDefaults || {}), options)
+        options = __mergeSimpleObjects(optionsDefaults, options)
 
         Object.defineProperty(this, 'options', {
           value: __deepFreeze(options),
