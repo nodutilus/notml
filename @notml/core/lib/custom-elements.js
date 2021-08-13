@@ -3,6 +3,7 @@ import { OOMElement } from './factory.js'
 const oomElementRedySymbol = Symbol('oomElementRedySymbol')
 const { DocumentFragment, HTMLElement, customElements } = window
 const oomCustomElementMap = new WeakMap()
+const optionsDefaultsGlobals = Object.freeze({})
 
 /** @type {import('@notml/core').CustomElement.applyOOMTemplate} */
 function applyOOMTemplate(instance) {
@@ -17,40 +18,29 @@ function applyOOMTemplate(instance) {
   }
 }
 
-function __mergeSimpleObjects(target, source) {
+/** @type {import('@notml/core').CustomElement.resolveOptions } */
+function resolveOptions(target, source) {
   let result
 
-  if (typeof source === 'object') {
-    switch (Object.prototype.toString.call(source)) {
-      case '[object Object]':
-      case '[object Array]':
-        result = Object.assign(source instanceof Array ? [] : {}, target, source)
-        for (const key in result) {
-          result[key] = __mergeSimpleObjects(null, result[key])
-        }
-        break
-      default:
-        result = source
+  if (source && typeof source === 'object') {
+    if (source.constructor === Object || source.constructor === Array) {
+      // Только простые объекты и массивы подвергаем копированию и заморозке,
+      //  чтобы не сломать логику встроенных и пользовательских классов
+      result = Object.assign(source instanceof Array ? [] : {}, target, source)
+      for (const key in result) {
+        result[key] = resolveOptions(null, result[key])
+      }
+      result = Object.freeze(result)
+    } else {
+      result = source
     }
   } else {
-    result = source
+    result = typeof source === 'undefined' ? target : source
   }
 
   return result
 }
 
-/** @type {import('@notml/core').CustomElement.deepFreeze } */
-function __deepFreeze(object) {
-  for (const name of Object.getOwnPropertyNames(object)) {
-    const value = object[name]
-
-    if (value && typeof value === 'object') {
-      __deepFreeze(value)
-    }
-  }
-
-  return Object.freeze(object)
-}
 
 /** @type {import('@notml/core').CustomElement.extendsCustomElement} */
 function extendsCustomElement(CustomElement, optionsDefaults) {
@@ -59,6 +49,10 @@ function extendsCustomElement(CustomElement, optionsDefaults) {
   } else {
     /** @type {import('@notml/core').CustomElement} */
     class OOMCustomElement extends CustomElement {
+
+      static optionsDefaults = resolveOptions(null, optionsDefaults) || optionsDefaultsGlobals
+
+      optionsDefaults = OOMCustomElement.optionsDefaults
 
       /** Создание элемента по шаблону при вставке в DOM */
       connectedCallback() {
@@ -74,13 +68,13 @@ function extendsCustomElement(CustomElement, optionsDefaults) {
       /** @type {import('@notml/core').CustomElement.constructor} */
       constructor(
         /** @type {import('@notml/core').CustomElement.Options<any>} */
-        options = {}
+        options
       ) {
         super()
-        options = __mergeSimpleObjects(optionsDefaults, options)
+        options = resolveOptions(this.optionsDefaults, options)
 
         Object.defineProperty(this, 'options', {
-          value: __deepFreeze(options),
+          value: options,
           writable: false
         })
       }

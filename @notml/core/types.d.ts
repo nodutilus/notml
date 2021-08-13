@@ -676,17 +676,24 @@ declare module '@notml/core' {
        */
       extendsTagName?: string
 
+      /** Объект с опциями компонента по умолчанию */
+      readonly optionsDefaults: CustomElement.Options<T>
+
       new(options?: Options<T>): CustomElement<T>
     }
 
-    /** Опци пользовательского компонента */
+    /** Опции пользовательского компонента */
     type Options<T> = {
       readonly [K in keyof T]?: T[K]
     }
 
-    /** Глубокая заморозка объекта */
-    interface deepFreeze {
-      (object: object): object
+    /**
+     * Объединяет опции по умолчанию с опциями пользователя,
+     *  возвращая копию защищенную от изменения (только для базовых объектов и массивов).
+     * Экземпляры пользовательских и сложных встроенных классов передаются по ссылке.
+     */
+    interface resolveOptions {
+      (target: object, source: object): object
     }
 
     /**
@@ -736,6 +743,12 @@ declare module '@notml/core' {
      * @see customElements.define~options.extends {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/define#syntax}
      */
     static extendsTagName?: string
+
+    /** Объект с опциями компонента по умолчанию */
+    static readonly optionsDefaults: CustomElement.Options<any>
+
+    /** Объект с опциями компонента по умолчанию */
+    readonly optionsDefaults: CustomElement.Options<T>
 
     /** Объект с опциями пользовательского компонента */
     readonly options: CustomElement.Options<T>

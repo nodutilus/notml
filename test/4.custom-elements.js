@@ -236,6 +236,10 @@ export default class CustomElements extends Test {
     assert.equal(mye11.options.a, 1)
     assert.equal(mye11.options.b11.c11, 2)
 
+    const mye11V2 = new MyElement11()
+
+    // Опции по умолчанию указывают на один объект в состоянии readonly
+    assert.ok(mye11.optionsDefaults === mye11V2.optionsDefaults)
 
     /** С опцией по умолчанию */
     class MyElement12 extends oom.extends(HTMLElement, { a: 'test', b12: { c12: 2 } }) { }
@@ -246,11 +250,19 @@ export default class CustomElements extends Test {
     mye12 = new MyElement12()
     assert.equal(mye12.options.a, 'test')
     assert.equal(mye12.options.b12.c12, 2)
+    assert.deepEqual(mye12.optionsDefaults, { a: 'test', b12: { c12: 2 } })
 
     // Обновлениен опций
     mye12 = new MyElement12({ a: 'update', b12: { c12: 3 } })
     assert.equal(mye12.options.a, 'update')
     assert.equal(mye12.options.b12.c12, 3)
+    assert.deepEqual(mye12.optionsDefaults, { a: 'test', b12: { c12: 2 } })
+
+    const mye12V2 = new MyElement12()
+
+    // Пользовательские опции определяются для всего класса,
+    //  и свойство на экземпляре указывают на общий объект в состоянии readonly
+    assert.ok(mye12.optionsDefaults === mye12V2.optionsDefaults)
   }
 
   /** Опции могут являться массивом, содержимое массивов и вложенные объекты копируются */
@@ -275,7 +287,7 @@ export default class CustomElements extends Test {
 
   /**
    * Сложные объекты считаем уникальными и передаются по ссылке, например дата или пользовательские классы.
-   * При этом объект подвергается глубокой заморозке, чтобы быть доступным только на чтение
+   * При этом сложные объекты не подвергается заморозке, чтобы не нарушить их логику работы
    */
   ['Опции: сложные объекты']() {
     /** Пользовательский класс опций */
@@ -291,10 +303,21 @@ export default class CustomElements extends Test {
 
     const myE16 = new MyElement16(options)
 
-    // TODO: Пользовательский класс не должен копироваться...
-    assert.ok(myE16.options.a16 === options)
-    assert.ok(myE16.options.a16.c16 === options.c16)
+    assert.ok(myE16.options.a16 === options.a16)
+    assert.ok(myE16.options.a16.c16 === options.a16.c16)
     assert.ok(myE16.options.b16 === dOptions.b16)
+
+    myE16.options.a16.e16 = 1
+    // @ts-ignore
+    myE16.options.b16.e16 = 2
+
+    assert.ok(myE16.options.b16.getTime() > 0)
+    myE16.options.b16.setTime(0)
+
+    assert.equal(myE16.options.a16.e16, 1)
+    // @ts-ignore
+    assert.equal(myE16.options.b16.e16, 2)
+    assert.equal(myE16.options.b16.getTime(), 0)
   }
 
 
@@ -333,6 +356,16 @@ export default class CustomElements extends Test {
       mye13.options.d13.push(4)
     } catch (error) { err = error }
     assert.equal(err.message, 'Cannot add property 3, object is not extensible')
+    // Опции по умолчанию также неизменяемые
+    try {
+      mye13.optionsDefaults.b13.c13 = 4
+    } catch (error) { err = error }
+    assert.equal(err.message, "Cannot assign to read only property 'c13' of object '#<Object>'")
+    try {
+      // @ts-ignore
+      mye13.optionsDefaults.b13.cd13 = {}
+    } catch (error) { err = error }
+    assert.equal(err.message, 'Cannot add property cd13, object is not extensible')
   }
 
   /**
