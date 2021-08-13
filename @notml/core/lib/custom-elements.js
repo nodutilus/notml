@@ -5,6 +5,7 @@ const { DocumentFragment, HTMLElement, customElements } = window
 const oomCustomElementMap = new WeakMap()
 const optionsDefaultsGlobals = Object.freeze({})
 
+
 /** @type {import('@notml/core').CustomElement.applyOOMTemplate} */
 function applyOOMTemplate(instance) {
   const { template } = instance
@@ -17,6 +18,7 @@ function applyOOMTemplate(instance) {
     instance.innerHTML += template
   }
 }
+
 
 /** @type {import('@notml/core').CustomElement.resolveOptions } */
 function resolveOptions(target, source) {
