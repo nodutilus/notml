@@ -236,11 +236,6 @@ export default class CustomElements extends Test {
     assert.equal(mye11.options.a, 1)
     assert.equal(mye11.options.b11.c11, 2)
 
-    const mye11V2 = new MyElement11()
-
-    // Опции по умолчанию указывают на один объект в состоянии readonly
-    assert.ok(mye11.optionsDefaults === mye11V2.optionsDefaults)
-
     /** С опцией по умолчанию */
     class MyElement12 extends oom.extends(HTMLElement, { a: 'test', b12: { c12: 2 } }) { }
 
@@ -250,19 +245,13 @@ export default class CustomElements extends Test {
     mye12 = new MyElement12()
     assert.equal(mye12.options.a, 'test')
     assert.equal(mye12.options.b12.c12, 2)
-    assert.deepEqual(mye12.optionsDefaults, { a: 'test', b12: { c12: 2 } })
+    assert.deepEqual(MyElement12.optionsDefaults, { a: 'test', b12: { c12: 2 } })
 
     // Обновлениен опций
     mye12 = new MyElement12({ a: 'update', b12: { c12: 3 } })
     assert.equal(mye12.options.a, 'update')
     assert.equal(mye12.options.b12.c12, 3)
-    assert.deepEqual(mye12.optionsDefaults, { a: 'test', b12: { c12: 2 } })
-
-    const mye12V2 = new MyElement12()
-
-    // Пользовательские опции определяются для всего класса,
-    //  и свойство на экземпляре указывают на общий объект в состоянии readonly
-    assert.ok(mye12.optionsDefaults === mye12V2.optionsDefaults)
+    assert.deepEqual(MyElement12.optionsDefaults, { a: 'test', b12: { c12: 2 } })
   }
 
   /** Опции могут являться массивом, содержимое массивов и вложенные объекты копируются */
@@ -281,6 +270,7 @@ export default class CustomElements extends Test {
     options.push('2')
 
     assert.deepEqual(myE15.options, ['ok'])
+    assert.deepEqual(MyElement15.optionsDefaults, ['defaults'])
     assert.deepEqual(dOptions, ['defaults', '1'])
     assert.deepEqual(options, ['ok', '2'])
   }
@@ -323,8 +313,10 @@ export default class CustomElements extends Test {
 
   /** Опции запрещено редактировать */
   ['Опции: readonly']() {
+    const optionsDefaults = { b13: { c13: 2 }, d13: [1, 2, 3] }
+
     /** объект + объект в объекте */
-    class MyElement13 extends oom.extends(HTMLElement, { b13: { c13: 2 }, d13: [1, 2, 3] }) { }
+    class MyElement13 extends oom.extends(HTMLElement, optionsDefaults) { }
 
     oom.define(MyElement13)
 
@@ -358,12 +350,17 @@ export default class CustomElements extends Test {
     assert.equal(err.message, 'Cannot add property 3, object is not extensible')
     // Опции по умолчанию также неизменяемые
     try {
-      mye13.optionsDefaults.b13.c13 = 4
+      // @ts-ignore
+      MyElement13.optionsDefaults = {}
+    } catch (error) { err = error }
+    assert.equal(err.message, "Cannot assign to read only property 'optionsDefaults' of function 'class MyElement13 extends oom.extends(HTMLElement, optionsDefaults) { }'")
+    try {
+      MyElement13.optionsDefaults.b13.c13 = 4
     } catch (error) { err = error }
     assert.equal(err.message, "Cannot assign to read only property 'c13' of object '#<Object>'")
     try {
       // @ts-ignore
-      mye13.optionsDefaults.b13.cd13 = {}
+      MyElement13.optionsDefaults.b13.cd13 = {}
     } catch (error) { err = error }
     assert.equal(err.message, 'Cannot add property cd13, object is not extensible')
   }
@@ -394,7 +391,77 @@ export default class CustomElements extends Test {
     assert.deepEqual(options, { a14: 4, d14: [{ e14: -1 }, 2, 3, 4] })
   }
 
-  //TODO Расширение через наследование (пробрасывать опции внутри компонента в конструктор родителя)
+  /**
+   * При наследовании классов расширенных через oom, опции по умолчанию тоже расширяются
+   */
+  ['Опции: наследование optionsDefaults']() {
+    /** Базовый класс */
+    class MyElement17 extends oom.extends(HTMLElement, { a17: 1, c17: 1 }) { }
+
+    /** Класс наследник */
+    class MyElement18 extends oom.extends(MyElement17, { b18: 1, c17: 2 }) { }
+
+    assert.deepEqual(MyElement17.optionsDefaults, { a17: 1, c17: 1 })
+    assert.deepEqual(MyElement18.optionsDefaults, { a17: 1, b18: 1, c17: 2 })
+  }
+
+  /**
+   * При расширении через наследование опции компонента пробрасываются в конструктор родителя.
+   * Опции собираются в первом OOMCustomElement, и в родительский конструктор прокидываются только на чтение
+   */
+  ['Опции: доступ к опциям в parent и child']() {
+    /** Базовый класс */
+    class MyElement19 extends oom.extends(HTMLElement, { name: 'testName' }) {
+
+      template = oom.div({ class: 'field' }, this.options.name)
+
+    }
+
+    /** Класс наследник */
+    class MyElement20 extends oom.extends(MyElement19, { label: 'testLabel' }) {
+
+      template = oom.span({ class: 'label' },
+        oom.span(this.options.label, {
+          class: 'label__title'
+        }),
+        this.template)
+
+    }
+
+    oom.define(MyElement19, MyElement20)
+
+    const myE19 = new MyElement19()
+    const myE20 = new MyElement20()
+
+    document.body.innerHTML = ''
+    document.body.append(myE19)
+    document.body.append(myE20)
+    assert.equal(document.body.innerHTML, `
+      <my-element19>
+        <div class="field">testName</div>
+      </my-element19>
+      <my-element20>
+        <span class="label">
+          <span class="label__title">testLabel</span>
+          <div class="field">testName</div>
+        </span>
+      </my-element20>
+    `.replace(/\s*\n+\s+/g, ''))
+    document.body.innerHTML = ''
+
+    const myE20v2 = new MyElement20({ label: 'label2', name: 'name2' })
+
+    document.body.append(myE20v2)
+    assert.equal(document.body.innerHTML, `
+      <my-element20>
+        <span class="label">
+        <span class="label__title">label2</span>
+          <div class="field">name2</div>
+        </span>
+      </my-element20>
+    `.replace(/\s*\n+\s+/g, ''))
+    document.body.innerHTML = ''
+  }
 
   /** Тест примера из в extends из types.d.ts */
   ['types.d.ts - example for extends']() {

@@ -52,10 +52,6 @@ function extendsCustomElement(CustomElement, optionsDefaults) {
     /** @type {import('@notml/core').CustomElement} */
     class OOMCustomElement extends CustomElement {
 
-      static optionsDefaults = resolveOptions(null, optionsDefaults) || optionsDefaultsGlobals
-
-      optionsDefaults = OOMCustomElement.optionsDefaults
-
       /** Создание элемента по шаблону при вставке в DOM */
       connectedCallback() {
         if (super.connectedCallback) {
@@ -72,16 +68,26 @@ function extendsCustomElement(CustomElement, optionsDefaults) {
         /** @type {import('@notml/core').CustomElement.Options<any>} */
         options
       ) {
-        super()
-        options = resolveOptions(this.optionsDefaults, options)
-
-        Object.defineProperty(this, 'options', {
-          value: options,
-          writable: false
-        })
+        if (options && Object.isFrozen(options)) {
+          super(options)
+        } else {
+          options = resolveOptions(OOMCustomElement.optionsDefaults, options)
+          super(options)
+        }
+        if (!Reflect.has(this, 'options')) {
+          Object.defineProperty(this, 'options', {
+            value: options,
+            writable: false
+          })
+        }
       }
 
     }
+
+    Object.defineProperty(OOMCustomElement, 'optionsDefaults', {
+      value: resolveOptions(CustomElement.optionsDefaults, optionsDefaults) || optionsDefaultsGlobals,
+      writable: false
+    })
 
     if (typeof optionsDefaults === 'undefined') {
       oomCustomElementMap.set(CustomElement, OOMCustomElement)

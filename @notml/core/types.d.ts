@@ -747,9 +747,6 @@ declare module '@notml/core' {
     /** Объект с опциями компонента по умолчанию */
     static readonly optionsDefaults: CustomElement.Options<any>
 
-    /** Объект с опциями компонента по умолчанию */
-    readonly optionsDefaults: CustomElement.Options<T>
-
     /** Объект с опциями пользовательского компонента */
     readonly options: CustomElement.Options<T>
 
@@ -802,10 +799,15 @@ declare module '@notml/core' {
        *     <span class="my-butt__caption">Жми тут</span>
        *   </button>
        */
+      extends<T, U>(
+        CustomElement: CustomElement.CustomElementCls<T>,
+        optionsDefaults?: CustomElement.Options<U>
+      ): CustomElement.CustomElementCls<T & U>
       extends<T>(
-        CustomElement: typeof HTMLElement | CustomElement.CustomElementCls<T>,
+        CustomElement: typeof HTMLElement,
         optionsDefaults?: CustomElement.Options<T>
       ): CustomElement.CustomElementCls<T>
+
       /**
        * Регистрирует переданный набор классов пользовательских элементов в customElements.define.
        * В качестве тега используется имя класса или `static tagName`
