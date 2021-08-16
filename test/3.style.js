@@ -85,7 +85,8 @@ export default class OOMStyle extends Test {
   }
 
   /**
-   * Возможность создания встроенного style остается при передаче экземпляра элемента
+   * Возможность создания встроенного style остается через document.createElement,
+   *  в oom шаблоне для обычного style нет особого применения
    */
   ['Создание style через document.createElement']() {
     const style = oom(document.createElement('style'))
