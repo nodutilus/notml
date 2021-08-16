@@ -97,6 +97,7 @@ function extendsCustomElement(CustomElement, optionsDefaults) {
   }
 }
 
+
 /** @type {import('@notml/core').CustomElement.defineCustomElement} */
 function defineCustomElement(...oomCustomElements) {
   for (const CustomElement of oomCustomElements) {
