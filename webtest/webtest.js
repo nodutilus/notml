@@ -106,13 +106,13 @@ assertEqual('Example #3-2', exp3.innerHTML,
 
 // Example #4 - генерация style is="oom-style"
 const exp4 = oom(document.getElementById('exp4'), oom
-  .style({ '.exp4__label': { color: 'red' } })
+  .style({ '.exp4__label': { color: 'darkgreen' } })
   .span('exp4__label', { class: 'exp4__label' }))
 
 assertEqual('Example #4-1', exp4.html, `
   <div id="exp4">
     <style is="oom-style">
-      .exp4__label{ color: red; }
+      .exp4__label{ color: darkgreen; }
     </style>
     <span class="exp4__label">exp4__label</span>
   </div>
