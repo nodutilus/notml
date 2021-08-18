@@ -11,7 +11,7 @@ const { document } = window
 function assertEqual(name, actual, expected) {
   if (actual !== expected) {
     console.log(name, ' -> failed')
-    console.log('actual =>', actual)
+    console.log('actual   =>', actual)
     console.log('expected =>', expected)
     console.error(new Error('actual !== expected'))
   } else {
@@ -20,7 +20,7 @@ function assertEqual(name, actual, expected) {
 }
 
 
-// Example #1
+// Example #1 - базовая верстка
 const exp1 = document.getElementById('exp1')
 const div1 = oom('div', oom
   .div({ class: 'header' })
@@ -43,7 +43,7 @@ assertEqual('Example #1-2', exp1.innerHTML,
   '</div>')
 
 
-// Example #2
+// Example #2 - переиспользование и копирование
 const exp2 = document.getElementById('exp2')
 const header2 = oom('div', { class: 'header' }, oom
   .span('Test Header'))
@@ -73,9 +73,9 @@ assertEqual('Example #2-2', exp2.innerHTML,
   '</div>')
 
 
-// Example #3
+// Example #3 - простой кастомный компонент
 /** Test custom element */
-class MyElementExp3 extends HTMLElement {
+class MyElementExp3 extends oom.extends(HTMLElement) {
 
   mySpan = oom.span('My element new text')
 
@@ -86,8 +86,10 @@ class MyElementExp3 extends HTMLElement {
 
 }
 
+oom.define(MyElementExp3)
+
 const exp3 = document.getElementById('exp3')
-const block3 = oom.define(MyElementExp3).MyElementExp3()
+const block3 = oom.MyElementExp3()
 const html3 = block3.html
 
 exp3.append(block3.dom)
@@ -102,62 +104,16 @@ assertEqual('Example #3-2', exp3.innerHTML,
   '</my-element-exp3>')
 
 
-// Example #4
-/** Test custom element */
-class MyElementExp4 extends HTMLElement {
+// Example #4 - генерация style is="oom-style"
+const exp4 = oom(document.getElementById('exp4'), oom
+  .style({ '.exp4__label': { color: 'red' } })
+  .span('exp4__label', { class: 'exp4__label' }))
 
-  static label = oom('span', { class: 'label' })
-  static field = oom('span', { class: 'field' })
-
-  /**
-   * @param {{element:HTMLElement}} options Опции шаблона
-   * @returns {any} Шаблон компонента
-   */
-  static template({ element }) {
-    return oom()
-      .append(this.label.clone()
-        .span({ class: 'text' }, label => (element._label = label)))
-      .append(this.field.clone()
-        .span({ class: 'text' }, field => (element._field = field)))
-  }
-
-  /**
-   * on 'data-field-text' attribute change
-   *
-   * @param {string} oldValue Старое значение атрибута fieldText
-   * @param {string} newValue Новое значение атрибута fieldText
-   */
-  dataFieldTextChanged(oldValue, newValue) {
-    this._field.textContent = newValue
-  }
-
-  /**
-   * on 'data-label-text' attribute change
-   *
-   * @param {string} oldValue Старое значение атрибута labelText
-   * @param {string} newValue Новое значение атрибута labelText
-   */
-  dataLabelTextChanged(oldValue, newValue) {
-    this._label.textContent = newValue
-  }
-
-}
-
-oom.define(MyElementExp4)
-
-const exp4 = document.getElementById('exp4')
-const block4 = document.createElement('my-element-exp4')
-const html4 = block4.outerHTML
-
-block4.dataset.labelText = 'Name: '
-block4.dataset.fieldText = 'Test'
-
-exp4.append(block4)
-
-assertEqual('Example #4-1', html4, '<my-element-exp4></my-element-exp4>')
-
-assertEqual('Example #4-3', exp4.innerHTML,
-  '<my-element-exp4 data-label-text="Name: " data-field-text="Test">' +
-  '<span class="label"><span class="text">Name: </span></span>' +
-  '<span class="field"><span class="text">Test</span></span>' +
-  '</my-element-exp4>')
+assertEqual('Example #4-1', exp4.html, `
+  <div id="exp4">
+    <style is="oom-style">
+      .exp4__label{ color: red; }
+    </style>
+    <span class="exp4__label">exp4__label</span>
+  </div>
+`.replace(/\s*\n+\s*/g, ''))
