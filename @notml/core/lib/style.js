@@ -26,11 +26,15 @@ class OOMStyle extends HTMLStyleElement {
     }
   }
 
-  /** @type {import('@notml/core').OOMStyle.StyleName} */
-  #prefix = ''
-
   /** @type {import('@notml/core').OOMStyle.Style} */
   #style = new Map()
+
+  /** @type {import('@notml/core').OOMStyle.ScopeName} */
+  scopeName = ''
+
+  setScopeName(scopeName) {
+    this.scopeName = scopeName
+  }
 
   /** @type {import('@notml/core').OOMStyle.update} */
   update(
@@ -45,7 +49,7 @@ class OOMStyle extends HTMLStyleElement {
       styles.unshift(media)
     }
     for (const style of styles) {
-      OOMStyle.updateStyle(this.#style, this.#prefix, style)
+      OOMStyle.updateStyle(this.#style, '', style)
     }
   }
 
@@ -54,7 +58,10 @@ class OOMStyle extends HTMLStyleElement {
     let textStyle = ''
 
     for (const [name, style] of this.#style) {
-      textStyle += `${name}{ ${style.getAttribute('style')} }`
+      const selector = (this.scopeName && name && `${this.scopeName} ${name}`) ||
+        this.scopeName || name || '*'
+
+      textStyle += `${selector}{ ${style.getAttribute('style')} }`
     }
 
     this.innerHTML = textStyle

@@ -251,6 +251,14 @@ class OOMElement {
     return OOMElement.createProxy([dom])
   }
 
+  /** @type {import('@notml/core').OOMStyle.setScopeName} */
+  setScopeName(scopeName) {
+    // @ts-ignore Чтобы поймать стандартное исключение DOM API, игнорируем проверку на тип this.dom
+    this.dom.setScopeName(scopeName)
+
+    return this
+  }
+
 }
 
 /** @type {import('@notml/core').OOMElement.proxyHandler} */

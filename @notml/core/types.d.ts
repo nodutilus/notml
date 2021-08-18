@@ -477,7 +477,7 @@ declare module '@notml/core' {
   namespace OOMStyle {
 
     /**
-     * Коллекция CSS селекторов и заданных для них свойств,
+     * Коллекция CSS селекторов и заданных для них правил,
      *  преобразуемых через атрибут style тега div из объектного представления в текстовый.
      * Для преобразования используется особенность работы класса CSSStyleDeclaration,
      *  см. HTMLElement.style (@see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style)
@@ -485,19 +485,24 @@ declare module '@notml/core' {
     type Style = Map<string, HTMLDivElement>
 
     /**
-     * CSS селектор для указания свойств
+     * CSS селектор для указания правил
      */
     type StyleName = string
 
     /**
-     * Объект со свойствами CSS определяется в формате CSSStyleDeclaration.
-     * Может содержать вложенные объекты, преобразуемые в CSS селекторы согласно пути в объекте CSS свойств
+     * CSS селектор, который будет являться родительским для всех селекторов, описанных в коллекции
      */
-    type StyleSource = CSSStyleDeclaration | {
-      [x: string]: StyleSource
+    type ScopeName = string
+
+    /**
+     * Объект с правилами CSS определяется в формате CSSStyleDeclaration.
+     * Может содержать вложенные объекты, преобразуемые в CSS селекторы согласно пути в объекте CSS правил
+     */
+    interface StyleSource extends CSSStyleDeclaration {
+      [x: string]: string | StyleSource
     }
 
-    /** Выполняет обновление коллекция CSS селекторов и их свойств */
+    /** Выполняет обновление коллекция CSS селекторов и их правил */
     interface updateStyle {
       (style: Style, styleName: StyleName, source: StyleSource): void
     }
@@ -506,7 +511,7 @@ declare module '@notml/core' {
     type Media = string
 
     /**
-     * Выполняет обновление коллекция CSS селекторов и их свойств.
+     * Выполняет обновление коллекция CSS селекторов и их правил.
      * С поддержкой обновления атрибута media в качестве необязательного 1го аргумента,
      *  т.к. у тега style всего 1 значимый атрибут для HTML5 - это media
      */
@@ -526,8 +531,9 @@ declare module '@notml/core' {
   /** Пользовательский элемент, наследуемый от style, для использования CSS-in-JS в шаблонах OOM */
   class OOMStyle extends HTMLStyleElement {
     static updateStyle: OOMStyle.updateStyle
-    #prefix: OOMStyle.StyleName
     #style: OOMStyle.Style
+    scopeName: OOMStyle.ScopeName
+    setScopeName: OOMStyle.setScopeName
     update: OOMStyle.update
     connectedCallback: OOMStyle.connectedCallback
   }
@@ -659,7 +665,7 @@ declare module '@notml/core' {
     /**
      * Экземпляр DOM элемента, которым управляет OOM элемент
      */
-    type DOMElement = DocumentFragment | HTMLElement
+    type DOMElement = DocumentFragment | HTMLElement | CustomElement<any>
 
     /**
      * HTML код DOM элемента, привязанного к OOMElement
@@ -895,6 +901,12 @@ declare module '@notml/core' {
         ...styles: Array<OOMStyle.StyleSource>
       ) => OOMStyleElementProxy
     }
+
+    interface OOMStyleElementOrigin extends OOMElementOrigin {
+      dom: OOMStyle,
+      setScopeName: OOMStyle.setScopeName
+    }
+
   }
 
   /** Proxy для работы с OOM элементом */
@@ -905,7 +917,7 @@ declare module '@notml/core' {
   }
 
   /** Proxy для работы с OOMStyle элементом */
-  interface OOMStyleElementProxy extends OOMProxy.OOMElementOrigin {
+  interface OOMStyleElementProxy extends OOMProxy.OOMStyleElementOrigin {
     (
       media?: OOMStyle.Media | OOMStyle.StyleSource,
       ...styles: Array<OOMStyle.StyleSource>

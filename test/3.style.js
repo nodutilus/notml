@@ -101,12 +101,16 @@ export default class OOMStyle extends Test {
    * Объект со свойствами определяется в формате CSSStyleDeclaration, как и атрибут style в oom шаблоне
    */
   ['Простой объект с селекторами']() {
-    const style = oom.style({ '.my-class': { background: 'red', fontSize: '12px' } })
+    const style = oom.style({
+      'fontSize': '10px',
+      '.my-class': { background: 'red', fontSize: '12px' }
+    })
 
     document.body.innerHTML = ''
     document.body.append(style.dom)
     assert.equal(document.body.innerHTML, `
       <style is="oom-style">
+        *{ font-size: 10px; }
         .my-class{ background: red; font-size: 12px; }
       </style>
     `.replace(/\s*\n+\s+/g, ''))
@@ -118,7 +122,7 @@ export default class OOMStyle extends Test {
    * Можно выносить описание классов отдельно и переиспользовать для нескольких компонентов
    */
   ['Переиспользование описания стиля']() {
-    /** @type {import('@notml/core').CSSStyleDeclaration} */
+    /** @type {import('@notml/core').OOMStyle.StyleSource} */
     const myStyle = {
       background: 'red',
       fontSize: '12px'
@@ -153,6 +157,29 @@ export default class OOMStyle extends Test {
         .my-class3{ align-content: center; }
         .my-class3 .my-class1{ background: red; font-size: 12px; }
         .my-class4 .my-class5{ background: red; font-size: 12px; }
+      </style>
+    `.replace(/\s*\n+\s+/g, ''))
+    document.body.innerHTML = ''
+  }
+
+  /**
+   * Для всех стилей в коллекции можно задать общее имен области действия.
+   * Например для пользовательских элементов использовать имя их атрибута для стилизации
+   */
+  ['Имя области действия для селекторов']() {
+    const style = oom.style({
+      'alignItems': 'center',
+      '.my-class1': { background: 'red', fontSize: '11px' },
+      '.my-class2': { background: 'red', fontSize: '12px' }
+    }).setScopeName('my-scope')
+
+    document.body.innerHTML = ''
+    document.body.append(style.dom)
+    assert.equal(document.body.innerHTML, `
+      <style is="oom-style">
+        my-scope{ align-items: center; }
+        my-scope .my-class1{ background: red; font-size: 11px; }
+        my-scope .my-class2{ background: red; font-size: 12px; }
       </style>
     `.replace(/\s*\n+\s+/g, ''))
     document.body.innerHTML = ''
