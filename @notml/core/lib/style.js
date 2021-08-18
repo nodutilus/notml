@@ -32,6 +32,7 @@ class OOMStyle extends HTMLStyleElement {
     }
   }
 
+  /** Обновление содержимого элемента при вставке в DOM */
   connectedCallback() {
     let textStyle = ''
 

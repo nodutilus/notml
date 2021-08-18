@@ -2,7 +2,7 @@ import { OOMStyle } from './style.js'
 
 const { document, customElements, DocumentFragment, HTMLElement } = window
 const isOOMElementSymbol = Symbol('isOOMElement')
-/** @type {import('@notml/core').basic.OOMProxyConstructor} */
+/** @type {import('@notml/core').OOMProxyConstructor} */
 const OOMProxyConstructor = Proxy
 
 /** @typedef {import('@notml/core').OOMElement} IOOMElement */
