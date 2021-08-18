@@ -113,4 +113,46 @@ export default class OOMStyle extends Test {
     document.body.innerHTML = ''
   }
 
+  /**
+   * Основная фича использования стилей как объектов, это переиспользование описания стиля элементов.
+   * Можно выносить описание классов отдельно и переиспользовать для нескольких компонентов
+   */
+  ['Переиспользование описания стиля']() {
+    /** @type {import('@notml/core').CSSStyleDeclaration} */
+    const myStyle = {
+      background: 'red',
+      fontSize: '12px'
+    }
+    const style1 = oom.style({ '.my-class1': myStyle })
+    const style2 = oom.style({ '.my-class2': { alignContent: 'center', ...myStyle } })
+    const style3 = oom.style({
+      '.my-class3': {
+        'alignContent': 'center',
+        '.my-class1': myStyle
+      },
+      '.my-class4': {
+        '.my-class5': myStyle
+      }
+    })
+
+    document.body.innerHTML = ''
+    document.body.append(style1.dom)
+    document.body.append(style2.dom)
+    document.body.append(style3.dom)
+    assert.equal(document.body.innerHTML, `
+      <style is="oom-style">
+        .my-class1{ background: red; font-size: 12px; }
+      </style>
+      <style is="oom-style">
+        .my-class2{ align-content: center; background: red; font-size: 12px; }
+      </style>
+      <style is="oom-style">
+        .my-class3{ align-content: center; }
+        .my-class3 .my-class1{ background: red; font-size: 12px; }
+        .my-class4 .my-class5{ background: red; font-size: 12px; }
+      </style>
+    `.replace(/\s*\n+\s+/g, ''))
+    document.body.innerHTML = ''
+  }
+
 }

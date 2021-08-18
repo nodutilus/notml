@@ -3,17 +3,16 @@ const { document, customElements, HTMLStyleElement } = window
 
 class OOMStyle extends HTMLStyleElement {
 
-  static updateStyle(style, prefix, source) {
-    for (const [name, value] of Object.entries(source)) {
-      const styleName = prefix ? `${prefix} ${name}` : name
-
-      if (value && typeof value === 'object' && value.constructor === Object) {
-        if (!(styleName in style)) {
+  static updateStyle(style, styleName, source) {
+    for (const [propName, propValue] of Object.entries(source)) {
+      if (propValue && typeof propValue === 'object' && propValue.constructor === Object) {
+        // Рекурсивно разворачиваем вложенное описание стилей в плоский список
+        OOMStyle.updateStyle(style, styleName ? `${styleName} ${propName}` : propName, propValue)
+      } else {
+        if (!style.has(styleName)) {
           style.set(styleName, document.createElement('div'))
         }
-        OOMStyle.updateStyle(style, styleName, value)
-      } else {
-        style.get(prefix).style[name] = value
+        style.get(styleName).style[propName] = propValue
       }
     }
   }
