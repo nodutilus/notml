@@ -96,4 +96,21 @@ export default class OOMStyle extends Test {
     assert.equal(oomStyle.html, '<style is="oom-style"></style>')
   }
 
+  /**
+   * Стили указываются объектом, где ключи это CSS селекторы, а значения объект со свойствами CSS.
+   * Объект со свойствами определяется в формате CSSStyleDeclaration, как и атрибут style в oom шаблоне
+   */
+  ['Простой объект с селекторами']() {
+    const style = oom.style({ '.my-class': { background: 'red', fontSize: '12px' } })
+
+    document.body.innerHTML = ''
+    document.body.append(style.dom)
+    assert.equal(document.body.innerHTML, `
+      <style is="oom-style">
+        .my-class{ background: red; font-size: 12px; }
+      </style>
+    `.replace(/\s*\n+\s+/g, ''))
+    document.body.innerHTML = ''
+  }
+
 }
