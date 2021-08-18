@@ -5,8 +5,7 @@ const isOOMElementSymbol = Symbol('isOOMElement')
 /** @type {import('@notml/core').OOMProxyConstructor} */
 const OOMProxyConstructor = Proxy
 
-/** @typedef {import('@notml/core').OOMElement} IOOMElement */
-/** @implements {IOOMElement} */
+/** @type {import('@notml/core').OOMElement} */
 class OOMElement {
 
   /** @type {import('@notml/core').OOMElement.createProxy} */
@@ -29,6 +28,7 @@ class OOMElement {
     args
   ) {
     if (instance.dom instanceof OOMStyle) {
+      // @ts-ignore вызываем независимо от аргументов, чтобы упало стандартное исключение из DOM API
       instance.dom.update(...args)
     } else {
       for (const arg of args) {

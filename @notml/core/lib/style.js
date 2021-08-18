@@ -1,9 +1,18 @@
 const { document, customElements, HTMLStyleElement } = window
 
 
+/** @type {import('@notml/core').OOMStyle} */
 class OOMStyle extends HTMLStyleElement {
 
-  static updateStyle(style, styleName, source) {
+  /** @type {import('@notml/core').OOMStyle.updateStyle} */
+  static updateStyle(
+    /** @type {import('@notml/core').OOMStyle.Style} */
+    style,
+    /** @type {import('@notml/core').OOMStyle.StyleName} */
+    styleName,
+    /** @type {import('@notml/core').OOMStyle.StyleSource} */
+    source
+  ) {
     for (const [propName, propValue] of Object.entries(source)) {
       if (propValue && typeof propValue === 'object' && propValue.constructor === Object) {
         // Рекурсивно разворачиваем вложенное описание стилей в плоский список
@@ -17,11 +26,19 @@ class OOMStyle extends HTMLStyleElement {
     }
   }
 
+  /** @type {import('@notml/core').OOMStyle.StyleName} */
   #prefix = ''
 
+  /** @type {import('@notml/core').OOMStyle.Style} */
   #style = new Map()
 
-  update(media, ...styles) {
+  /** @type {import('@notml/core').OOMStyle.update} */
+  update(
+    /** @type {import('@notml/core').OOMStyle.Media} */
+    media,
+    /** @type {Array<import('@notml/core').OOMStyle.StyleSource>} */
+    ...styles
+  ) {
     if (typeof media === 'string') {
       this.setAttribute('media', media)
     } else if (typeof media !== 'undefined') {
@@ -32,7 +49,7 @@ class OOMStyle extends HTMLStyleElement {
     }
   }
 
-  /** Обновление содержимого элемента при вставке в DOM */
+  /** @type {import('@notml/core').OOMStyle.connectedCallback} */
   connectedCallback() {
     let textStyle = ''
 

@@ -474,7 +474,63 @@ declare module '@notml/core' {
     zoom?: string
   }
 
+  namespace OOMStyle {
 
+    /**
+     * Коллекция CSS селекторов и заданных для них свойств,
+     *  преобразуемых через атрибут style тега div из объектного представления в текстовый.
+     * Для преобразования используется особенность работы класса CSSStyleDeclaration,
+     *  см. HTMLElement.style (@see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style)
+     */
+    type Style = Map<string, HTMLDivElement>
+
+    /**
+     * CSS селектор для указания свойств
+     */
+    type StyleName = string
+
+    /**
+     * Объект со свойствами CSS определяется в формате CSSStyleDeclaration.
+     * Может содержать вложенные объекты, преобразуемые в CSS селекторы согласно пути в объекте CSS свойств
+     */
+    type StyleSource = CSSStyleDeclaration | {
+      [x: string]: StyleSource
+    }
+
+    /** Выполняет обновление коллекция CSS селекторов и их свойств */
+    interface updateStyle {
+      (style: Style, styleName: StyleName, source: StyleSource): void
+    }
+
+    /** Определяет устройство вывода, @see http://htmlbook.ru/html/style/media */
+    type Media = string
+
+    /**
+     * Выполняет обновление коллекция CSS селекторов и их свойств.
+     * С поддержкой обновления атрибута media в качестве необязательного 1го аргумента,
+     *  т.к. у тега style всего 1 значимый атрибут для HTML5 - это media
+     */
+    interface update {
+      (media?: Media | StyleSource, ...styles: Array<StyleSource>): void
+    }
+
+    /**
+     * Выполняет обновление содержимого элемента при вставке в DOM.
+     * Преобразует CSS селекторы из #style в текстовый вид CSS и записывает в innerHTML
+     */
+    interface connectedCallback {
+      (): any
+    }
+  }
+
+  /** Пользовательский элемент, наследуемый от style, для использования CSS-in-JS в шаблонах OOM */
+  class OOMStyle extends HTMLStyleElement {
+    static updateStyle: OOMStyle.updateStyle
+    #prefix: OOMStyle.StyleName
+    #style: OOMStyle.Style
+    update: OOMStyle.update
+    connectedCallback: OOMStyle.connectedCallback
+  }
 
   namespace OOMElement {
 
@@ -810,6 +866,11 @@ declare module '@notml/core' {
        * В качестве тега используется имя класса или `static tagName`
        */
       define: CustomElement.defineCustomElement
+
+      style: (
+        media?: OOMStyle.Media | OOMStyle.StyleSource,
+        ...styles: Array<OOMStyle.StyleSource>
+      ) => OOMStyleElementProxy
     }
 
     interface OOMElementOrigin extends OOMElement {
@@ -828,12 +889,27 @@ declare module '@notml/core' {
        * const mySpan2 = mySpan1.clone()
        */
       clone(): OOMElementProxy
+
+      style: (
+        media?: OOMStyle.Media | OOMStyle.StyleSource,
+        ...styles: Array<OOMStyle.StyleSource>
+      ) => OOMStyleElementProxy
     }
   }
 
   /** Proxy для работы с OOM элементом */
   interface OOMElementProxy extends OOMProxy.OOMElementOrigin {
     (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): void
+    //@ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
+    [tagName: string]: OOMProxy.createElementProxy
+  }
+
+  /** Proxy для работы с OOMStyle элементом */
+  interface OOMStyleElementProxy extends OOMProxy.OOMElementOrigin {
+    (
+      media?: OOMStyle.Media | OOMStyle.StyleSource,
+      ...styles: Array<OOMStyle.StyleSource>
+    ): void
     //@ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
     [tagName: string]: OOMProxy.createElementProxy
   }

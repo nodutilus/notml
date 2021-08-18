@@ -129,7 +129,10 @@ export default class OOMStyle extends Test {
       '.my-class3': {
         'alignContent': 'center',
         '.my-class1': myStyle
-      },
+      }
+    })
+
+    style3({
       '.my-class4': {
         '.my-class5': myStyle
       }
