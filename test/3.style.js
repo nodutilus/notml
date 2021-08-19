@@ -167,11 +167,11 @@ export default class OOMStyle extends Test {
    * Например для пользовательских элементов использовать имя их атрибута для стилизации
    */
   ['Имя области действия для селекторов']() {
-    const style = oom.style({
+    const style = oom.style('my-scope', {
       'alignItems': 'center',
       '.my-class1': { background: 'red', fontSize: '11px' },
       '.my-class2': { background: 'red', fontSize: '12px' }
-    }).setScopeName('my-scope')
+    })
 
     document.body.innerHTML = ''
     document.body.append(style.dom)
