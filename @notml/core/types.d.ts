@@ -880,12 +880,15 @@ declare module '@notml/core' {
        *
        * @example
        * const optionsDefaults = { caption: '' }
+       *
        * class MyButton extends oom.extends(HTMLButtonElement, optionsDefaults) {
        *   static tagName = 'my-butt'
        *   static extendsTagName = 'button'
        *   template = oom.span({ class: 'my-butt__caption' }, this.options.caption)
        * }
+       *
        * oom.define(MyButton)
+       *
        * document.body.append(new MyButton({ caption: 'Жми тут' }))
        *
        * >>
@@ -998,6 +1001,7 @@ declare module '@notml/core' {
      * const component = oom('div', { class: 'link' }, oom
      *   .span({ class: 'title' }, 'Link: ')
      *   .a({ href: 'https://test.ok' }, 'test.ok'))
+     *
      * document.body.append(component.dom)
      *
      * >>
