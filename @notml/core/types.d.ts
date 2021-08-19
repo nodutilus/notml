@@ -823,8 +823,14 @@ declare module '@notml/core' {
     /**
      * Создает новый OOM элемент согласно имени запрошенного атрибута,
      * затем добавляет его в конец списка дочерних элементов
+     *
      * @example
      * oom.div({ class: 'header' }, ...childs)
+     *
+     * >>
+     *   <div class="header">
+     *     ...childs
+     *   </div>
      */
     interface createElementProxy {
       (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMElementProxy
@@ -835,12 +841,43 @@ declare module '@notml/core' {
       (_: any, __: any, args: OOMElement.OOMElementArgs): OOMElementProxy
     }
 
+    interface CommonOrigin {
+
+      /**
+       * Создает экземпляр пользовательского элемента OOMStyle генерирующий таблицу селекторов и их правил.
+       * OOMStyle является расширением тега style,
+       *  преобразующий объектное представление CSS в текстовый, и заполняет содержимое style.
+       * Для преобразования используется особенность работы класса CSSStyleDeclaration,
+       *  см. HTMLElement.style (@see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style)
+       *
+       * @example
+       * const style = oom.style({
+       *   'fontSize': '10px',
+       *   '.my-class': { background: 'red', fontSize: '12px' }
+       * })
+       *
+       * document.head.append(style.dom)
+       *
+       * >>
+       *   <style is="oom-style">
+       *     *{ font-size: 10px; }
+       *     .my-class{ background: red; font-size: 12px; }
+       *   </style>
+       */
+      style: (
+        scopeName?: OOMStyle.ScopeName | OOMStyle.StyleSource,
+        ...styles: Array<OOMStyle.StyleSource>
+      ) => OOMStyleElementProxy
+
+    }
+
     /** Внутренний объект OOMProxy описывающий его базовые методы */
-    interface origin {
+    interface origin extends CommonOrigin {
       /**
        * Расширение пользовательского элемента возможностями OOM шаблонизатора.
        * Возвращает новый класс наследуемый от указанного базового или пользовательского класса элемента,
        * от которого можно наследовать класс нового элемента с поддержкой OOM
+       *
        * @example
        * const optionsDefaults = { caption: '' }
        * class MyButton extends oom.extends(HTMLButtonElement, optionsDefaults) {
@@ -870,17 +907,13 @@ declare module '@notml/core' {
        * В качестве тега используется имя класса или `static tagName`
        */
       define: CustomElement.defineCustomElement
-
-      style: (
-        scopeName?: OOMStyle.ScopeName | OOMStyle.StyleSource,
-        ...styles: Array<OOMStyle.StyleSource>
-      ) => OOMStyleElementProxy
     }
 
-    interface OOMElementOrigin extends OOMElement {
+    interface OOMElementOrigin extends OOMElement, CommonOrigin {
       /**
        * Добавление дочернего элемента к верстке в конец списка элементов.
        * Вернет замыкание на собственный OOMElementProxy для использования чейнинга
+       *
        * @example
        * const mySpan = oom.span('My element new text')
        * oom('div').append(mySpan)
@@ -888,16 +921,12 @@ declare module '@notml/core' {
       append(child: OOMElement.OOMChild): OOMElementProxy
       /**
        * Клонирует элемент и возвращает новый экземпляр OOM, содержащий копию DOM элемента
+       *
        * @example
        * const mySpan1 = oom.span('My element new text')
        * const mySpan2 = mySpan1.clone()
        */
       clone(): OOMElementProxy
-
-      style: (
-        scopeName?: OOMStyle.ScopeName | OOMStyle.StyleSource,
-        ...styles: Array<OOMStyle.StyleSource>
-      ) => OOMStyleElementProxy
     }
 
     interface OOMStyleElementOrigin extends OOMElementOrigin {
@@ -908,6 +937,23 @@ declare module '@notml/core' {
 
   /** Proxy для работы с OOM элементом */
   interface OOMElementProxy extends OOMProxy.OOMElementOrigin {
+    /**
+     * Выполняет обновление атрибутов текущего элемента,
+     *  а также добавление дочерних элемента к верстке в конец списка элементов.
+     *
+     * @example
+     * const div = oom.div()
+     *
+     * div({ class: 'MyClass' },
+     *   oom.span('My text'),
+     *   oom.span('ok'))
+     *
+     * >>
+     *   <div class="MyClass">
+     *     <span>My text</span>
+     *     <span>ok</span>
+     *   </div>
+     */
     (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): void
     //@ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
     [tagName: string]: OOMProxy.createElementProxy
@@ -915,6 +961,26 @@ declare module '@notml/core' {
 
   /** Proxy для работы с OOMStyle элементом */
   interface OOMStyleElementProxy extends OOMProxy.OOMStyleElementOrigin {
+    /**
+     * Выполняет обновление селекторов и их правил в элементе OOMStyle,
+     *  С поддержкой указания имени области действия в качестве необязательного 1го аргумента.
+     *
+     * **!ВАЖНО:** Обновление возможно только до вставки элемента в документ,
+     *  т.к. после вставки объектная модель CSS будет очищена
+     *
+     * @example
+     * const style = oom.style({ fontSize: '10px' })
+     *
+     * style({ '.my-class': { background: 'red', fontSize: '12px' } })
+     *
+     * document.body.append(style.dom)
+     *
+     * >>
+     *   <style is="oom-style">
+     *     *{ font-size: 10px; }
+     *     .my-class{ background: red; font-size: 12px; }
+     *   </style>
+     */
     (
       scopeName?: OOMStyle.ScopeName | OOMStyle.StyleSource,
       ...styles: Array<OOMStyle.StyleSource>
@@ -927,6 +993,7 @@ declare module '@notml/core' {
   interface OOMProxy extends OOMProxy.origin {
     /**
      * Вернет новый экземпляр Proxy элемента для создания верстки
+     *
      * @example
      * const component = oom('div', { class: 'link' }, oom
      *   .span({ class: 'title' }, 'Link: ')
