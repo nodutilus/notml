@@ -2,7 +2,7 @@ import { OOMStyle } from './style.js'
 
 const { document, customElements, DocumentFragment, HTMLElement } = window
 const isOOMElementSymbol = Symbol('isOOMElement')
-/** @type {import('@notml/core').OOMProxyConstructor} */
+/** @type {import('@notml/core').base.OOMProxyConstructor} */
 const OOMProxyConstructor = Proxy
 
 /** @type {import('@notml/core').OOMElement} */
@@ -249,14 +249,6 @@ class OOMElement {
     const dom = document.importNode(this.dom, true)
 
     return OOMElement.createProxy([dom])
-  }
-
-  /** @type {import('@notml/core').OOMStyle.setScopeName} */
-  setScopeName(scopeName) {
-    // @ts-ignore Чтобы поймать стандартное исключение DOM API, игнорируем проверку на тип this.dom
-    this.dom.setScopeName(scopeName)
-
-    return this
   }
 
 }
