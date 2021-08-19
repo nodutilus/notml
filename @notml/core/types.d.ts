@@ -507,16 +507,12 @@ declare module '@notml/core' {
       (style: Style, styleName: StyleName, source: StyleSource): void
     }
 
-    /** Определяет устройство вывода, @see http://htmlbook.ru/html/style/media */
-    type Media = string
-
     /**
      * Выполняет обновление коллекция CSS селекторов и их правил.
-     * С поддержкой обновления атрибута media в качестве необязательного 1го аргумента,
-     *  т.к. у тега style всего 1 значимый атрибут для HTML5 - это media
+     * С поддержкой указания имени области действия в качестве необязательного 1го аргумента
      */
     interface update {
-      (media?: Media | StyleSource, ...styles: Array<StyleSource>): void
+      (scopeName?: ScopeName | StyleSource, ...styles: Array<StyleSource>): void
     }
 
     /**
@@ -531,9 +527,8 @@ declare module '@notml/core' {
   /** Пользовательский элемент, наследуемый от style, для использования CSS-in-JS в шаблонах OOM */
   class OOMStyle extends HTMLStyleElement {
     static updateStyle: OOMStyle.updateStyle
+    #scopeName: OOMStyle.ScopeName
     #style: OOMStyle.Style
-    scopeName: OOMStyle.ScopeName
-    setScopeName: OOMStyle.setScopeName
     update: OOMStyle.update
     connectedCallback: OOMStyle.connectedCallback
   }
@@ -874,7 +869,7 @@ declare module '@notml/core' {
       define: CustomElement.defineCustomElement
 
       style: (
-        media?: OOMStyle.Media | OOMStyle.StyleSource,
+        scopeName?: OOMStyle.ScopeName | OOMStyle.StyleSource,
         ...styles: Array<OOMStyle.StyleSource>
       ) => OOMStyleElementProxy
     }
@@ -897,14 +892,13 @@ declare module '@notml/core' {
       clone(): OOMElementProxy
 
       style: (
-        media?: OOMStyle.Media | OOMStyle.StyleSource,
+        scopeName?: OOMStyle.ScopeName | OOMStyle.StyleSource,
         ...styles: Array<OOMStyle.StyleSource>
       ) => OOMStyleElementProxy
     }
 
     interface OOMStyleElementOrigin extends OOMElementOrigin {
-      dom: OOMStyle,
-      setScopeName: OOMStyle.setScopeName
+      dom: OOMStyle
     }
 
   }
@@ -919,7 +913,7 @@ declare module '@notml/core' {
   /** Proxy для работы с OOMStyle элементом */
   interface OOMStyleElementProxy extends OOMProxy.OOMStyleElementOrigin {
     (
-      media?: OOMStyle.Media | OOMStyle.StyleSource,
+      scopeName?: OOMStyle.ScopeName | OOMStyle.StyleSource,
       ...styles: Array<OOMStyle.StyleSource>
     ): void
     //@ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет

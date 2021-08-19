@@ -26,27 +26,23 @@ class OOMStyle extends HTMLStyleElement {
     }
   }
 
+  /** @type {import('@notml/core').OOMStyle.ScopeName} */
+  #scopeName = ''
+
   /** @type {import('@notml/core').OOMStyle.Style} */
   #style = new Map()
 
-  /** @type {import('@notml/core').OOMStyle.ScopeName} */
-  scopeName = ''
-
-  setScopeName(scopeName) {
-    this.scopeName = scopeName
-  }
-
   /** @type {import('@notml/core').OOMStyle.update} */
   update(
-    /** @type {import('@notml/core').OOMStyle.Media} */
-    media,
+    /** @type {import('@notml/core').OOMStyle.ScopeName} */
+    scopeName,
     /** @type {Array<import('@notml/core').OOMStyle.StyleSource>} */
     ...styles
   ) {
-    if (typeof media === 'string') {
-      this.setAttribute('media', media)
-    } else if (typeof media !== 'undefined') {
-      styles.unshift(media)
+    if (typeof scopeName === 'string') {
+      this.#scopeName = scopeName
+    } else if (typeof scopeName !== 'undefined') {
+      styles.unshift(scopeName)
     }
     for (const style of styles) {
       OOMStyle.updateStyle(this.#style, '', style)
@@ -58,13 +54,14 @@ class OOMStyle extends HTMLStyleElement {
     let textStyle = ''
 
     for (const [name, style] of this.#style) {
-      const selector = (this.scopeName && name && `${this.scopeName} ${name}`) ||
-        this.scopeName || name || '*'
+      const selector = (this.#scopeName && name && `${this.#scopeName} ${name}`) ||
+        this.#scopeName || name || '*'
 
       textStyle += `${selector}{ ${style.getAttribute('style')} }`
     }
 
     this.innerHTML = textStyle
+    this.#style.clear()
   }
 
 }

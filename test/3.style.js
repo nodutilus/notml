@@ -69,22 +69,6 @@ export default class OOMStyle extends Test {
   }
 
   /**
-   * У style всего 1 значимый атрибут для HTML5 - media,
-   * только его установка и поддерживается в OOM шаблонизаторе. @see http://htmlbook.ru/html/style
-   */
-  ['Атрибут media для style']() {
-    let style
-
-    style = oom.style('print')
-    assert.equal(style.html, '<style is="oom-style" media="print"></style>')
-
-    style = oom.style()
-    assert.equal(style.html, '<style is="oom-style"></style>')
-    style('handheld')
-    assert.equal(style.html, '<style is="oom-style" media="handheld"></style>')
-  }
-
-  /**
    * Возможность создания встроенного style остается через document.createElement,
    *  в oom шаблоне для обычного style нет особого применения
    */
