@@ -478,6 +478,8 @@ export default class CustomElements extends Test {
       static tagName = 'my-butt'
       static extendsTagName = 'button'
 
+      static style = oom.style({ '.my-butt__caption': { color: 'red' } })
+
       template = oom.span({ class: 'my-butt__caption' }, this.options.caption)
 
     }
@@ -485,6 +487,11 @@ export default class CustomElements extends Test {
     oom.define(MyButton)
     document.body.innerHTML = ''
     document.body.append(new MyButton({ caption: 'Жми тут' }))
+    assert.equal(document.head.innerHTML, `
+      <style is="oom-style" oom-element="my-butt">
+        button[is="my-butt"] .my-butt__caption{ color: red; }
+      </style>
+    `.replace(/\s*\n+\s+/g, ''))
     assert.equal(document.body.innerHTML, `
       <button is="my-butt">
         <span class="my-butt__caption">Жми тут</span>

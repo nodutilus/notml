@@ -733,6 +733,13 @@ declare module '@notml/core' {
        */
       extendsTagName?: string
 
+      /**
+       * Коллекция CSS правил, описывающих стиль пользовательского компонента через oom.style.
+       * При регистрации компонента через oom.define добавляться в документ в секцию <head>,
+       *  автоматически добавляя для стилей имя области действия соответствующее имени тега элемента.
+       */
+      style: OOMStyleProxy
+
       /** Объект с опциями компонента по умолчанию */
       readonly optionsDefaults: CustomElement.Options<T>
 
@@ -801,6 +808,13 @@ declare module '@notml/core' {
      */
     static extendsTagName?: string
 
+    /**
+     * Коллекция CSS правил, описывающих стиль пользовательского компонента через oom.style.
+     * При регистрации компонента через oom.define добавляться в документ в секцию <head>,
+     *  автоматически добавляя для стилей имя области действия соответствующее имени тега элемента.
+     */
+    static style: OOMStyleProxy
+
     /** Объект с опциями компонента по умолчанию */
     static readonly optionsDefaults: CustomElement.Options<any>
 
@@ -867,7 +881,7 @@ declare module '@notml/core' {
       style: (
         scopeName?: OOMStyle.ScopeName | OOMStyle.StyleSource,
         ...styles: Array<OOMStyle.StyleSource>
-      ) => OOMStyleElementProxy
+      ) => OOMStyleProxy
 
     }
 
@@ -932,7 +946,7 @@ declare module '@notml/core' {
       clone(): OOMElementProxy
     }
 
-    interface OOMStyleElementOrigin extends OOMElementOrigin {
+    interface OOMStyleOrigin extends OOMElementOrigin {
       dom: OOMStyle
     }
 
@@ -963,7 +977,7 @@ declare module '@notml/core' {
   }
 
   /** Proxy для работы с OOMStyle элементом */
-  interface OOMStyleElementProxy extends OOMProxy.OOMStyleElementOrigin {
+  interface OOMStyleProxy extends OOMProxy.OOMStyleOrigin {
     /**
      * Выполняет обновление селекторов и их правил в элементе OOMStyle,
      *  С поддержкой указания имени области действия в качестве необязательного 1го аргумента.

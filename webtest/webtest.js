@@ -117,3 +117,30 @@ assertEqual('Example #4-1', exp4.html, `
     <span class="exp4__label">exp4__label</span>
   </div>
 `.replace(/\s*\n+\s*/g, ''))
+
+
+// Example #5 - стилизация CustomElement через static style
+/** Тестовая кнопка */
+class MyButton extends oom.extends(HTMLButtonElement, { caption: '' }) {
+
+  static tagName = 'my-butt'
+  static extendsTagName = 'button'
+
+  static style = oom.style({ '.my-butt__caption': { color: 'red' } })
+
+  template = oom.span({ class: 'my-butt__caption' }, this.options.caption)
+
+}
+
+oom.define(MyButton)
+
+const exp5 = oom(document.getElementById('exp5'),
+  oom(new MyButton({ caption: 'Жми тут' })))
+
+assertEqual('Example #5-1', exp5.html, `
+  <div id="exp5">
+    <button is="my-butt">
+      <span class="my-butt__caption">Жми тут</span>
+    </button>
+  </div>
+`.replace(/\s*\n+\s*/g, ''))

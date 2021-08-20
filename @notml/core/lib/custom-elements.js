@@ -1,7 +1,8 @@
 import { OOMElement } from './factory.js'
+import { OOMStyle } from './style.js'
 
 const oomElementRedySymbol = Symbol('oomElementRedySymbol')
-const { DocumentFragment, HTMLElement, customElements } = window
+const { document, DocumentFragment, HTMLElement, customElements } = window
 const oomCustomElementMap = new WeakMap()
 const optionsDefaultsGlobals = Object.freeze({})
 
@@ -104,6 +105,16 @@ function defineCustomElement(...oomCustomElements) {
     const tagName = CustomElement.tagName || OOMElement.resolveTagName(CustomElement.name)
 
     customElements.define(tagName, CustomElement, { extends: CustomElement.extendsTagName })
+
+    if (CustomElement.style instanceof OOMElement && CustomElement.style.dom instanceof OOMStyle) {
+      if (CustomElement.extendsTagName) {
+        CustomElement.style(`${CustomElement.extendsTagName}[is="${tagName}"]`)
+      } else {
+        CustomElement.style(tagName)
+      }
+      CustomElement.style.dom.setAttribute('oom-element', tagName)
+      document.head.append(CustomElement.style.dom)
+    }
   }
 
   return oomCustomElements

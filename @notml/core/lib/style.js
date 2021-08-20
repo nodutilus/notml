@@ -34,7 +34,7 @@ class OOMStyle extends HTMLStyleElement {
 
   /** @type {import('@notml/core').OOMStyle.update} */
   update(
-    /** @type {import('@notml/core').OOMStyle.ScopeName} */
+    /** @type {import('@notml/core').OOMStyle.ScopeName | import('@notml/core').OOMStyle.StyleSource} */
     scopeName,
     /** @type {Array<import('@notml/core').OOMStyle.StyleSource>} */
     ...styles
