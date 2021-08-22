@@ -5,6 +5,7 @@ const oomElementRedySymbol = Symbol('oomElementRedySymbol')
 const { document, DocumentFragment, HTMLElement, customElements } = window
 const oomCustomElementMap = new WeakMap()
 const optionsDefaultsGlobals = Object.freeze({})
+const extendsTagNameMap = new Map()
 
 
 /** @type {import('@notml/core').CustomElement.applyOOMTemplate} */
@@ -74,6 +75,9 @@ function extendsCustomElement(CustomElement, optionsDefaults) {
         } else {
           options = resolveOptions(OOMCustomElement.optionsDefaults, options)
           super(options)
+          if (extendsTagNameMap.has(this.constructor)) {
+            this.setAttribute('is', extendsTagNameMap.get(this.constructor))
+          }
         }
         if (!Reflect.has(this, 'options')) {
           Object.defineProperty(this, 'options', {
@@ -109,6 +113,7 @@ function defineCustomElement(...oomCustomElements) {
     if (CustomElement.style instanceof OOMElement && CustomElement.style.dom instanceof OOMStyle) {
       if (CustomElement.extendsTagName) {
         CustomElement.style(`${CustomElement.extendsTagName}[is="${tagName}"]`)
+        extendsTagNameMap.set(CustomElement, tagName)
       } else {
         CustomElement.style(tagName)
       }
