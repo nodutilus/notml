@@ -10,7 +10,8 @@
     "fastify-static": "latest",
     "jsdom": "latest",
     "rollup": "latest",
-    "rollup-plugin-cleanup": "latest"
+    "rollup-plugin-cleanup": "latest",
+    "rollup-plugin-terser": "latest"
   },
   "scripts": {
     "pre-test": "node test/pre-test"

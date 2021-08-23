@@ -1,7 +1,13 @@
 {
   "name": "@notml/core",
   "version": "0.1.0-pre.1",
-  "description": "Not a HTML - is object-oriented modeling of HTML",
+  "description": "Not a HTML - is object-oriented modeling of HTML and CSS",
+  "keywords": [
+    "web-components",
+    "custom-elements",
+    "html-in-js",
+    "css-in-js"
+  ],
   "license": "Unlicense",
   "repository": "github:nodutilus/notml",
   "type": "module",
@@ -10,7 +16,8 @@
   },
   "files": [
     "lib",
-    "core.js"
+    "core.js",
+    "types.d.ts"
   ],
   "exports": {
     ".": "./core.js"
