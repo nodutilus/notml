@@ -11,6 +11,8 @@ fastify
   .get('/', (req, reply) => { reply.sendFile('webtest.html', dir) })
   .get('/compatible', (req, reply) => { reply.sendFile('compatible.html', dir) })
   .get('/compatible-min', (req, reply) => { reply.sendFile('compatible-min.html', dir) })
+  .get('/core-global', (req, reply) => { reply.sendFile('core-global.html', dir) })
+  .get('/core-global-min', (req, reply) => { reply.sendFile('core-global-min.html', dir) })
   .listen({ host: '0.0.0.0', port: 3000 }, (err, address) => {
     if (err) {
       fastify.log.error(err)
