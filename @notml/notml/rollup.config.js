@@ -10,7 +10,7 @@ export default [{
   ]
 }, {
   input: 'src/core-global.js',
-  output: { file: 'core-global.js', format: 'iife', name: '$oom', compact: true },
+  output: { file: 'core-global.js', format: 'iife', name: 'oom', compact: true },
   plugins: [
     resolve({ browser: true, preferBuiltins: false }),
     cleanup({ comments: 'none' })
