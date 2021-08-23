@@ -19,7 +19,9 @@
     "check-compatible.min.js",
     "core-global.min.js",
     "core-global.js",
+    "core.min.d.ts",
     "core.min.js",
+    "core.d.ts",
     "core.js"
   ],
   "exports": {
