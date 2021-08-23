@@ -1,6 +1,6 @@
 # NotML Core [![npm][npmbadge]][npm] [![build][badge]][actions]
 
-Not a HTML - is object-oriented modeling of HTML
+Not a HTML - is object-oriented modeling of HTML and CSS
 
 [npmbadge]: https://img.shields.io/npm/v/@notml/core
 

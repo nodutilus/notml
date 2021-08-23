@@ -1,6 +1,6 @@
 # NotML Core [![npm][npmbadge]][npm] [![build][badge]][actions]
 
-All-in-one NotML library
+All-in-one NotML package for use via CDN
 
 [npmbadge]: https://img.shields.io/npm/v/notml
 
