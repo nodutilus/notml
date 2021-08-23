@@ -169,4 +169,26 @@ export default class OOMStyle extends Test {
     document.body.innerHTML = ''
   }
 
+  /**
+   * Имя области действия в общем случае является именем пользовательского элемента,
+   *  и начало селектора может начинаться с данного имени, что бы сделать модификатор стиля элемента.
+   * При это имя области не должно повторно добавляется к имени такого селектора.
+   */
+  ['Имя области действия в начале селектора']() {
+    const style = oom.style('my-scope', {
+      'my-scope.active': { color: 'yellow' },
+      '.active': { color: 'yellow' }
+    })
+
+    document.body.innerHTML = ''
+    document.body.append(style.dom)
+    assert.equal(document.body.innerHTML, `
+      <style is="oom-style">
+        my-scope.active{ color: yellow; }
+        my-scope .active{ color: yellow; }
+      </style>
+    `.replace(/\s*\n+\s+/g, ''))
+    document.body.innerHTML = ''
+  }
+
 }

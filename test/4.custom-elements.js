@@ -465,6 +465,51 @@ export default class CustomElements extends Test {
     document.body.innerHTML = ''
   }
 
+  /**
+   * Стили компонентов определяются в статическом свойстве класса style,
+   *  откуда при регистрации пользовательского элемента добавляются в документ в состав <head>.
+   * Стили автоматически привязываются к имени тега элемента, что позволяет избежать пересечений имен классов
+   */
+  ['Глобальные стили компонента']() {
+    /** Компонент с глобальными стилями */
+    class MyElement21 extends oom.extends(HTMLElement) {
+
+      static style = oom.style({
+        'my-element21': { fontSize: '12px' },
+        'my-element21.green': { color: 'green' },
+        '.small': { fontSize: '8px' }
+      })
+
+      template = oom.span('text', { class: 'small' })
+
+    }
+
+    document.head.innerHTML = ''
+    oom.define(MyElement21)
+    document.body.innerHTML = ''
+    document.body.append(new MyElement21())
+
+    assert.equal(document.getElementsByTagName('html')[0].outerHTML, `
+      <html>
+        <head>
+          <style is="oom-style" oom-element="my-element21">
+            my-element21{ font-size: 12px; }
+            my-element21.green{ color: green; }
+            my-element21 .small{ font-size: 8px; }
+          </style>
+        </head>
+        <body>
+          <my-element21>
+            <span class="small">text</span>
+          </my-element21>
+        </body>
+      </html>
+    `.replace(/\s*\n+\s+/g, ''))
+
+    document.head.innerHTML = ''
+    document.body.innerHTML = ''
+  }
+
   /** Тест примера из в extends из types.d.ts */
   ['types.d.ts - example for extends']() {
     /**
@@ -480,26 +525,38 @@ export default class CustomElements extends Test {
       static tagName = 'my-butt'
       static extendsTagName = 'button'
 
-      static style = oom.style({ '.my-butt__caption': { color: 'red' } })
+      static style = oom.style({
+        'button[is="my-butt"]': { fontSize: '12px' },
+        'button[is="my-butt"].active': { color: 'yellow' },
+        '.my-butt__caption': { color: 'red' }
+      })
 
       template = oom.span({ class: 'my-butt__caption' }, this.options.caption)
 
     }
 
+    document.head.innerHTML = ''
     oom.define(MyButton)
     document.body.innerHTML = ''
     document.body.append(new MyButton({ caption: 'Жми тут' }))
-    assert.equal(document.head.innerHTML, `
-      <style is="oom-style" oom-element="my-butt">
-        button[is="my-butt"] .my-butt__caption{ color: red; }
-      </style>
-    `.replace(/\s*\n+\s+/g, ''))
-    assert.equal(document.body.innerHTML, `
-      <button is="my-butt">
-        <span class="my-butt__caption">Жми тут</span>
-      </button>
+    assert.equal(document.getElementsByTagName('html')[0].outerHTML, `
+      <html>
+        <head>
+          <style is="oom-style" oom-element="my-butt">
+            button[is="my-butt"]{ font-size: 12px; }
+            button[is="my-butt"].active{ color: yellow; }
+            button[is="my-butt"] .my-butt__caption{ color: red; }
+          </style>
+        </head>
+        <body>
+          <button is="my-butt">
+            <span class="my-butt__caption">Жми тут</span>
+          </button>
+        </body>
+      </html>
     `.replace(/\s*\n+\s+/g, ''))
 
+    document.head.innerHTML = ''
     document.body.innerHTML = ''
   }
 

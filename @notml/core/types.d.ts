@@ -898,6 +898,11 @@ declare module '@notml/core' {
        * class MyButton extends oom.extends(HTMLButtonElement, optionsDefaults) {
        *   static tagName = 'my-butt'
        *   static extendsTagName = 'button'
+       *   static style = oom.style({
+       *     'button[is="my-butt"]': { fontSize: '12px' },
+       *     'button[is="my-butt"].active': { color: 'yellow' },
+       *     '.my-butt__caption': { color: 'red' }
+       *   })
        *   template = oom.span({ class: 'my-butt__caption' }, this.options.caption)
        * }
        *
@@ -906,9 +911,20 @@ declare module '@notml/core' {
        * document.body.append(new MyButton({ caption: 'Жми тут' }))
        *
        * >>
-       *   <button is="my-butt">
-       *     <span class="my-butt__caption">Жми тут</span>
-       *   </button>
+       *   <html>
+       *     <head>
+       *       <style is="oom-style" oom-element="my-butt">
+       *         button[is="my-butt"]{ font-size: 12px; }
+       *         button[is="my-butt"].active{ color: yellow; }
+       *         button[is="my-butt"] .my-butt__caption{ color: red; }
+       *       </style>
+       *     </head>
+       *     <body>
+       *       <button is="my-butt">
+       *         <span class="my-butt__caption">Жми тут</span>
+       *       </button>
+       *     </body>
+       *   </html>
        */
       extends<T, U>(
         CustomElement: CustomElement.CustomElementCls<T>,

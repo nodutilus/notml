@@ -54,7 +54,8 @@ class OOMStyle extends HTMLStyleElement {
     let textStyle = ''
 
     for (const [name, style] of this.#style) {
-      const selector = (this.#scopeName && name && `${this.#scopeName} ${name}`) ||
+      const selector = (this.#scopeName && name.startsWith(this.#scopeName) && name) ||
+        (this.#scopeName && name && `${this.#scopeName} ${name}`) ||
         this.#scopeName || name || '*'
 
       textStyle += `${selector}{ ${style.getAttribute('style')} }`
