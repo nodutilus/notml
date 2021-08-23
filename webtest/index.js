@@ -13,6 +13,8 @@ fastify
   .get('/compatible-min', (req, reply) => { reply.sendFile('compatible-min.html', dir) })
   .get('/core-global', (req, reply) => { reply.sendFile('core-global.html', dir) })
   .get('/core-global-min', (req, reply) => { reply.sendFile('core-global-min.html', dir) })
+  .get('/core', (req, reply) => { reply.sendFile('core.html', dir) })
+  .get('/core-min', (req, reply) => { reply.sendFile('core-min.html', dir) })
   .listen({ host: '0.0.0.0', port: 3000 }, (err, address) => {
     if (err) {
       fastify.log.error(err)
