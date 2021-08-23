@@ -38,8 +38,6 @@
     "/@notml/notml/check-compatible.min.js",
     "/@notml/notml/core.js",
     "/@notml/notml/core.min.js",
-    "/@notml/notml/core-global.js",
-    "/@notml/notml/core-global.min.js",
     "*.d.ts"
   ]
 }

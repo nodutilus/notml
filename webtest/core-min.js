@@ -7,4 +7,4 @@ oom(document.head, oom
   }))
 oom(document.body, oom
   .div({ class: 'test' }, oom
-    .span('NotML Core - Module Using (min)', { class: 'label' })))
+    .span('NotML Core - CDN lib (min)', { class: 'label' })))
