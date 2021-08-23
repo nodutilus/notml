@@ -5,10 +5,14 @@
     "test"
   ],
   "exclude": [
-    "@notml/notml/check-compatible.js",
-    "@notml/notml/core-global.js",
-    "@notml/notml/core.js",
-    "@notml/notml/rollup.config.js",
+    "@notml/notml/**",
+    "test/pre-test.js",
     "**/*.d.ts"
-  ]
+  ],
+
+  "all": true,
+  "branches": 100,
+  "lines": 100,
+  "functions": 100,
+  "statements": 100
 }

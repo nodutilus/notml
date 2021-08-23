@@ -18,6 +18,13 @@ export default [{
     cleanup({ comments: 'none' })
   ]
 }, {
+  input: 'check-compatible.js',
+  output: { file: 'check-compatible.min.js', compact: true },
+  plugins: [
+    cleanup({ comments: 'none' }),
+    terser()
+  ]
+}, {
   input: 'core.js',
   output: { file: 'core.min.js', format: 'esm', compact: true },
   plugins: [
