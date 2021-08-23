@@ -19,6 +19,8 @@ function assertEqual(name, actual, expected) {
   }
 }
 
+console.time('webtest')
+
 
 // Example #1 - базовая верстка
 const exp1 = document.getElementById('exp1')
@@ -144,3 +146,6 @@ assertEqual('Example #5-1', exp5.html, `
     </button>
   </div>
 `.replace(/\s*\n+\s*/g, ''))
+
+
+console.timeEnd('webtest')
