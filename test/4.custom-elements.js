@@ -58,6 +58,8 @@ export default class CustomElements extends Test {
     assert.equal(oom.MyButton1().html, '<button is="my-button1"></button>')
     assert.equal(oom('MyButton1').html, '<button is="my-button1"></button>')
     assert.equal(customElements.get('my-button1'), MyButton1)
+
+    assert.equal((new MyButton1()).getAttribute('is'), 'my-button1')
   }
 
   /** Свойство template экземпляра класса используется как шаблон компонента по аналогии с одноименным тегом */

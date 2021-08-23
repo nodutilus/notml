@@ -76,6 +76,8 @@ function extendsCustomElement(CustomElement, optionsDefaults) {
           options = resolveOptions(OOMCustomElement.optionsDefaults, options)
           super(options)
           if (extendsTagNameMap.has(this.constructor)) {
+            // Атрибут "is" предназначен для хранения имени тега пользовательского элемента,
+            //  но он не заполняется при создании элементов из JS, поэтому проставляем его принудительно
             this.setAttribute('is', extendsTagNameMap.get(this.constructor))
           }
         }
@@ -109,11 +111,12 @@ function defineCustomElement(...oomCustomElements) {
     const tagName = CustomElement.tagName || OOMElement.resolveTagName(CustomElement.name)
 
     customElements.define(tagName, CustomElement, { extends: CustomElement.extendsTagName })
-
+    if (CustomElement.extendsTagName) {
+      extendsTagNameMap.set(CustomElement, tagName)
+    }
     if (CustomElement.style instanceof OOMElement && CustomElement.style.dom instanceof OOMStyle) {
       if (CustomElement.extendsTagName) {
         CustomElement.style(`${CustomElement.extendsTagName}[is="${tagName}"]`)
-        extendsTagNameMap.set(CustomElement, tagName)
       } else {
         CustomElement.style(tagName)
       }
