@@ -1,6 +1,12 @@
-# NotML Core [![npm][npmbadge]][npm] [![build][badge]][actions]
+# NotML [![build][badge]][actions]
 
-Not a HTML - is object-oriented modeling of HTML
+Not a HTML - is object-oriented modeling of HTML and CSS
+
+## Packages
+
+[![npm][npmbadge_notml_core]][npm_notml_core]
+
+[![npm][npmbadge_notml]][npm_notml]
 
 ## Simple HTML-based
 
@@ -189,9 +195,13 @@ document.body.append(block)
 </my-element-exp4>
 ```
 
-[npmbadge]: https://img.shields.io/npm/v/@notml/core
+[npmbadge_notml_core]: https://img.shields.io/npm/v/@notml/core?label=@notml/core
 
-[npm]: https://www.npmjs.com/package/@notml/core
+[npm_notml_core]: https://www.npmjs.com/package/@notml/core
+
+[npmbadge_notml]: https://img.shields.io/npm/v/notml?label=notml
+
+[npm_notml]: https://www.npmjs.com/package/notml
 
 [badge]: https://github.com/nodutilus/notml/actions/workflows/main.yml/badge.svg
 
