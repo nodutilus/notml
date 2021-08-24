@@ -5,7 +5,6 @@ Not a HTML - is object-oriented modeling of HTML and CSS
 ## Packages
 
 [![npm][npmbadge_notml_core]][npm_notml_core]
-
 [![npm][npmbadge_notml]][npm_notml]
 
 ## Simple HTML-based
