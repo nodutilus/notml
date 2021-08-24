@@ -15,8 +15,8 @@
     "node": ">=16"
   },
   "files": [
-    "check-compatible.js",
     "check-compatible.min.js",
+    "check-compatible.js",
     "core.min.d.ts",
     "core.min.js",
     "core.d.ts",
