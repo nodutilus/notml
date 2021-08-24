@@ -1,4 +1,4 @@
-# NotML Core [![npm][npmbadge]][npm] [![build][badge]][actions]
+# NotML multi-package [![npm][npmbadge]][npm] [![build][badge]][actions]
 
 All-in-one NotML package for use via CDN
 
