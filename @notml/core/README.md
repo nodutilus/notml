@@ -2,7 +2,7 @@
 
 Not a HTML - is object-oriented modeling of HTML and CSS
 
-[npmbadge]: https://img.shields.io/npm/v/@notml/core
+[npmbadge]: https://img.shields.io/npm/v/@notml/core?label=@notml/core
 
 [npm]: https://www.npmjs.com/package/@notml/core
 
