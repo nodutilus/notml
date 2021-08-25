@@ -1,4 +1,4 @@
-import { oom } from 'https://cdn.jsdelivr.net/npm/notml@0.1.0-pre.1/core.js'
+import { oom } from 'https://cdn.jsdelivr.net/npm/@notml/core@0.1.0-pre.1/core.js'
 
 
 oom(document.head, oom
@@ -8,4 +8,4 @@ oom(document.head, oom
   }))
 oom(document.body, oom
   .div({ class: 'test' }, oom
-    .span('NotML Core - from CDN (All-in-one)', { class: 'label' })))
+    .span('NotML Core - from CDN (Source)', { class: 'label' })))

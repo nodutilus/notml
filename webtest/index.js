@@ -9,11 +9,6 @@ const dir = resolve('webtest')
 fastify
   .register(FastifyStatic, { root: resolve('.'), prefix: '/' })
   .get('/', (req, reply) => { reply.sendFile('webtest.html', dir) })
-  .get('/compatible', (req, reply) => { reply.sendFile('compatible.html', dir) })
-  .get('/compatible-min', (req, reply) => { reply.sendFile('compatible-min.html', dir) })
-  .get('/core', (req, reply) => { reply.sendFile('core.html', dir) })
-  .get('/core-min', (req, reply) => { reply.sendFile('core-min.html', dir) })
-  .get('/core-from-cdn', (req, reply) => { reply.sendFile('core-from-cdn.html', dir) })
   .listen({ host: '0.0.0.0', port: 3000 }, (err, address) => {
     if (err) {
       fastify.log.error(err)
