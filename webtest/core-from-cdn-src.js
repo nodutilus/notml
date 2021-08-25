@@ -1,4 +1,4 @@
-import { oom } from 'https://cdn.jsdelivr.net/npm/@notml/core@0.1.0-pre.1/core.js'
+import { oom } from 'https://cdn.jsdelivr.net/npm/@notml/core@latest/core.js'
 
 
 oom(document.head, oom

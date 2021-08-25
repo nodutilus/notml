@@ -1,6 +1,6 @@
 {
   "name": "notml",
-  "version": "0.1.0-pre.1",
+  "version": "0.1.0-pre.2",
   "description": "All-in-one NotML package for use via CDN",
   "keywords": [
     "web-components",
@@ -17,14 +17,10 @@
   "files": [
     "check-compatible.min.js",
     "check-compatible.js",
-    "core.min.d.ts",
     "core.min.js",
-    "core.d.ts",
     "core.js"
   ],
-  "exports": {
-    ".": "./core.js"
-  },
+  "browser": "./core.min.js",
   "scripts": {
     "build": "npx rollup --config",
     "prepack": "npx rollup --config"
