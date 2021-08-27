@@ -23,5 +23,6 @@ export default [{
   plugins: [
     resolve({ browser: true, preferBuiltins: false }),
     cleanup({ comments: 'none' }),
-    terser()]
+    terser()
+  ]
 }]
