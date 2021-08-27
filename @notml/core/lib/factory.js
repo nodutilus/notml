@@ -2,6 +2,7 @@ import { OOMStyle } from './style.js'
 
 const { document, customElements, DocumentFragment, HTMLElement } = window
 const isOOMElementSymbol = Symbol('isOOMElement')
+const proxiesMap = new WeakMap()
 /** @type {import('@notml/core').base.OOMProxyConstructor} */
 const OOMProxyConstructor = Proxy
 
@@ -14,10 +15,12 @@ class OOMElement {
     args
   ) {
     const wrapper = /* c8 ignore next */ () => { }
+    const proxy = new OOMProxyConstructor(wrapper, OOMElement.proxyHandler)
 
     wrapper.instance = new OOMElement(...args)
+    proxiesMap.set(wrapper.instance, proxy)
 
-    return new OOMProxyConstructor(wrapper, OOMElement.proxyHandler)
+    return proxy
   }
 
   /** @type {import('@notml/core').OOMElement.proxyApply} */
@@ -27,6 +30,8 @@ class OOMElement {
     /** @type {import('@notml/core').OOMElement.ProxyApplyArgs} */
     args
   ) {
+    const proxy = proxiesMap.get(instance)
+
     if (instance.dom instanceof OOMStyle) {
       // @ts-ignore вызываем независимо от аргументов, чтобы упало стандартное исключение из DOM API
       instance.dom.update(...args)
@@ -49,6 +54,8 @@ class OOMElement {
         }
       }
     }
+
+    return proxy
   }
 
   /** @type {import('@notml/core').OOMElement.proxyGetter} */

@@ -283,6 +283,22 @@ export default class BasicBehavior extends Test {
     assert.equal(fragment2.html, '<div>test1</div><div>test2</div><div>test3</div>')
   }
 
+  /**
+   * Чейнинг работает и после вызова базового элемента для обновления или вставки дочернего элемента.
+   * Используется когда удобнее добавлять дочерние элементы через вызов функции,
+   *  например при создании пользовательских элементов через `new`
+   */
+  ['Чейнинг после вызова элемента функции']() {
+    const div = oom.div({ class: 'test1' })
+    const fragment = div.clone()({ class: 'test2' }, oom.span('t1'))
+      .span('t2')
+      .span('t3')
+
+
+    assert.equal(div.html, '<div class="test1"></div>')
+    assert.equal(fragment.html, '<div class="test2"><span>t1</span></div><span>t2</span><span>t3</span>')
+  }
+
   /** Что бы уменьшить кол-во кода создание составных компонентов можно выполнять с использованием чейнинга */
   ['Верстка составного компонента через чейнинг']() {
     const component1 = oom('div', { class: 'link' }, oom

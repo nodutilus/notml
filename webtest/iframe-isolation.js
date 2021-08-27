@@ -1,4 +1,4 @@
-import { oom } from '../@notml/notml/core.js'
+import { oom } from '../@notml/core/core.js'
 
 const { document } = window
 /** @type {HTMLIFrameElement} */

@@ -592,7 +592,7 @@ declare module '@notml/core' {
      * Поведение выбирается в зависимости от переданного типа аргументов
      */
     interface proxyApply {
-      (wrapper: OOMElementWrapper, _: any, args: ProxyApplyArgs): void
+      (wrapper: OOMElementWrapper, _: any, args: ProxyApplyArgs): OOMElementProxy
     }
 
     /**
@@ -764,7 +764,7 @@ declare module '@notml/core' {
      * Создает экземпляр CustomElement
      */
     interface constructor {
-      attachShadow?: boolean
+      attachShadow?: boolean | ShadowRootInit
       (options: Options<any>): CustomElement<any>
     }
 
@@ -995,7 +995,7 @@ declare module '@notml/core' {
      *     <span>ok</span>
      *   </div>
      */
-    (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): void
+    (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMElementProxy
     //@ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
     [tagName: string]: OOMProxy.createElementProxy
   }
@@ -1025,7 +1025,7 @@ declare module '@notml/core' {
     (
       scopeName?: OOMStyle.ScopeName | OOMStyle.StyleSource,
       ...styles: Array<OOMStyle.StyleSource>
-    ): void
+    ): OOMStyleProxy
     //@ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
     [tagName: string]: OOMProxy.createElementProxy
   }

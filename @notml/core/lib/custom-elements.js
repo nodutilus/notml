@@ -16,7 +16,7 @@ function applyOOMTemplate(instance) {
   let root = instance
 
   if (attachShadow) {
-    root = instance.attachShadow({ mode: 'open' })
+    root = instance.attachShadow(typeof attachShadow === 'object' ? attachShadow : { mode: 'open' })
   }
 
   if (template instanceof OOMElement) {
