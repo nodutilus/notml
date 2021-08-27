@@ -764,6 +764,7 @@ declare module '@notml/core' {
      * Создает экземпляр CustomElement
      */
     interface constructor {
+      attachShadow?: boolean
       (options: Options<any>): CustomElement<any>
     }
 
@@ -808,6 +809,8 @@ declare module '@notml/core' {
      */
     static extendsTagName?: string
 
+    static attachShadow?: boolean
+
     /**
      * Коллекция CSS правил, описывающих стиль пользовательского компонента через oom.style.
      * При регистрации компонента через oom.define добавляться в документ в секцию <head>,
@@ -820,6 +823,11 @@ declare module '@notml/core' {
 
     /** Объект с опциями пользовательского компонента */
     readonly options: CustomElement.Options<T>
+
+    /**
+    * Создает экземпляр CustomElement
+    */
+    get constructor(): CustomElement.constructor
 
     /**
      * Содержимое пользовательского элемента, которое будет добавлено в его состав

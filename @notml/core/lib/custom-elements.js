@@ -10,14 +10,21 @@ const extendsTagNameMap = new Map()
 
 /** @type {import('@notml/core').CustomElement.applyOOMTemplate} */
 function applyOOMTemplate(instance) {
+  const { attachShadow } = instance.constructor
   const { template } = instance
+  /** @type {import('@notml/core').CustomElement | ShadowRoot} */
+  let root = instance
+
+  if (attachShadow) {
+    root = instance.attachShadow({ mode: 'open' })
+  }
 
   if (template instanceof OOMElement) {
-    instance.append(template.dom)
+    root.append(template.dom)
   } else if (template instanceof HTMLElement || template instanceof DocumentFragment) {
-    instance.append(template)
+    root.append(template)
   } else if (typeof template === 'string') {
-    instance.innerHTML += template
+    root.innerHTML += template
   }
 }
 
