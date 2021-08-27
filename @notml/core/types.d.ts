@@ -765,6 +765,7 @@ declare module '@notml/core' {
      */
     interface constructor {
       attachShadow?: boolean | ShadowRootInit
+      style?: OOMStyleProxy
       (options: Options<any>): CustomElement<any>
     }
 

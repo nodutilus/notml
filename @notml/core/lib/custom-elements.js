@@ -2,7 +2,7 @@ import { OOMElement } from './factory.js'
 import { OOMStyle } from './style.js'
 
 const oomElementRedySymbol = Symbol('oomElementRedySymbol')
-const { document, DocumentFragment, HTMLElement, customElements } = window
+const { document, DocumentFragment, HTMLElement, customElements, ShadowRoot } = window
 const oomCustomElementMap = new WeakMap()
 const optionsDefaultsGlobals = Object.freeze({})
 const extendsTagNameMap = new Map()
@@ -17,6 +17,14 @@ function applyOOMTemplate(instance) {
 
   if (attachShadow) {
     root = instance.attachShadow(typeof attachShadow === 'object' ? attachShadow : { mode: 'open' })
+  }
+
+  if (instance.getRootNode() instanceof ShadowRoot) {
+    const { style } = instance.constructor
+
+    if (style instanceof OOMElement && style.dom instanceof OOMStyle) {
+      instance.before(style.clone().dom)
+    }
   }
 
   if (template instanceof OOMElement) {
