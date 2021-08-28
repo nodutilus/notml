@@ -51,18 +51,20 @@ class OOMStyle extends HTMLStyleElement {
 
   /** @type {import('@notml/core').OOMStyle.connectedCallback} */
   connectedCallback() {
-    let textStyle = ''
+    if (this.#style.size) {
+      let textStyle = ''
 
-    for (const [name, style] of this.#style) {
-      const selector = (this.#scopeName && name.startsWith(this.#scopeName) && name) ||
-        (this.#scopeName && name && `${this.#scopeName} ${name}`) ||
-        this.#scopeName || name || '*'
+      for (const [name, style] of this.#style) {
+        const selector = (this.#scopeName && name.startsWith(this.#scopeName) && name) ||
+          (this.#scopeName && name && `${this.#scopeName} ${name}`) ||
+          this.#scopeName || name || '*'
 
-      textStyle += `${selector}{ ${style.getAttribute('style')} }`
+        textStyle += `${selector}{ ${style.getAttribute('style')} }`
+      }
+
+      this.innerHTML = textStyle
+      this.#style.clear()
     }
-
-    this.innerHTML = textStyle
-    this.#style.clear()
   }
 
 }

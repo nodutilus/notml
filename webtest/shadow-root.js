@@ -1,7 +1,6 @@
 import { oom } from '../@notml/core/core.js'
 
 const { HTMLElement, document } = window
-const body = oom(document.body)
 
 
 /** Тестовый класс со стилями */
@@ -35,6 +34,10 @@ class MyShadowRootClosed extends oom.extends(HTMLElement) {
 oom.define(MySpan, MyShadowRoot, MyShadowRootClosed)
 
 
-body(oom(new MySpan())
+oom(document.head, oom.style({
+  'my-span .my_shadow': { color: 'darkgreen' }
+}))
+
+oom(document.body, oom(new MySpan())
   .br()(new MyShadowRoot())
   .br()(new MyShadowRootClosed()))
