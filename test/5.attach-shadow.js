@@ -48,4 +48,59 @@ export default class AttachShadow extends Test {
     document.body.innerHTML = ''
   }
 
+  /**
+   * Стили компонентов при вставке в теневой DOM копируются,
+   *  и вставляются перед первым использованием компонента
+   */
+  ['Копирование Style в состав shadowRoot']() {
+    /** Компонент со стилями */
+    class MySpan1 extends oom.extends(HTMLElement) {
+
+      static style = oom.style({
+        '.my-span1_title': { background: 'red' }
+      })
+
+      template = oom.span({ class: '.my-span1_title' })
+
+    }
+
+    /** Теневой дом содержащий внутри компонент */
+    class MyShadow3 extends oom.extends(HTMLElement) {
+
+      static attachShadow = true
+
+      template = new MySpan1()
+
+    }
+
+    oom.define(MySpan1, MyShadow3)
+
+    const myShadow3 = new MyShadow3()
+
+    document.body.innerHTML = ''
+    document.body.append(myShadow3)
+
+    assert.equal(document.documentElement.innerHTML, `
+      <head>
+        <style is="oom-style" oom-element="my-span1">
+          my-span1 .my-span1_title{ background: red; }
+        </style>
+      </head>
+      <body>
+        <my-shadow3></my-shadow3>
+      </body>
+    `.replace(/\s*\n+\s+/g, ''))
+    assert.equal(myShadow3.shadowRoot.innerHTML, `
+      <style is="oom-style" oom-element="my-span1">
+        my-span1 .my-span1_title{ background: red; }
+      </style>
+      <my-span1>
+        <span class=".my-span1_title"></span>
+      </my-span1>
+    `.replace(/\s*\n+\s+/g, ''))
+
+    document.head.innerHTML = ''
+    document.body.innerHTML = ''
+  }
+
 }
