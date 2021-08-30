@@ -4,6 +4,7 @@ import { OOMStyle } from './style.js'
 const oomElementRedySymbol = Symbol('oomElementRedySymbol')
 const { document, DocumentFragment, HTMLElement, customElements, ShadowRoot } = window
 const oomCustomElementMap = new WeakMap()
+const shadowRootOOMStyleMap = new WeakMap()
 const optionsDefaultsGlobals = Object.freeze({})
 const extendsTagNameMap = new Map()
 
@@ -12,6 +13,7 @@ const extendsTagNameMap = new Map()
 function applyOOMTemplate(instance) {
   const { attachShadow } = instance.constructor
   const { template } = instance
+  const rootNode = instance.getRootNode()
   /** @type {import('@notml/core').CustomElement | ShadowRoot} */
   let root = instance
 
@@ -19,11 +21,14 @@ function applyOOMTemplate(instance) {
     root = instance.attachShadow(typeof attachShadow === 'object' ? attachShadow : { mode: 'open' })
   }
 
-  if (instance.getRootNode() instanceof ShadowRoot) {
+  if (rootNode instanceof ShadowRoot && !shadowRootOOMStyleMap.has(rootNode)) {
     const { style } = instance.constructor
 
     if (style instanceof OOMElement && style.dom instanceof OOMStyle) {
-      instance.before(style.clone().dom)
+      const shadowStyle = style.clone().dom
+
+      instance.before(shadowStyle)
+      shadowRootOOMStyleMap.set(rootNode, shadowStyle)
     }
   }
 

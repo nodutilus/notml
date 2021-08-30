@@ -18,6 +18,7 @@ class MyShadowRoot extends oom.extends(HTMLElement) {
   static attachShadow = true
 
   template = oom(new MySpan())
+    .br()(new MySpan())
 
 }
 
