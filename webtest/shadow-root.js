@@ -41,6 +41,9 @@ class MyShadowRootClosed extends oom.extends(HTMLElement) {
   static attachShadow = { mode: 'closed' }
 
   template = oom(new MySpan())
+    .br()(new MySpan())
+    .br()(new MySpan2())
+    .br()(new MySpan2())
 
 }
 
