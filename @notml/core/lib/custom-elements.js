@@ -21,14 +21,12 @@ function applyOOMTemplate(instance) {
     root = instance.attachShadow(typeof attachShadow === 'object' ? attachShadow : { mode: 'open' })
   }
 
-  if (rootNode instanceof ShadowRoot && !shadowRootOOMStyleMap.has(rootNode)) {
+  if (rootNode instanceof ShadowRoot && shadowRootOOMStyleMap.get(rootNode) !== instance.constructor) {
     const { style } = instance.constructor
 
     if (style instanceof OOMElement && style.dom instanceof OOMStyle) {
-      const shadowStyle = style.clone().dom
-
-      instance.before(shadowStyle)
-      shadowRootOOMStyleMap.set(rootNode, shadowStyle)
+      instance.before(style.clone().dom)
+      shadowRootOOMStyleMap.set(rootNode, instance.constructor)
     }
   }
 
