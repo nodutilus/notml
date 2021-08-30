@@ -91,9 +91,11 @@ export default class AttachShadow extends Test {
       </body>
     `.replace(/\s*\n+\s+/g, ''))
     assert.equal(myShadow3.shadowRoot.innerHTML, `
-      <style is="oom-style" oom-element="my-span1">
-        my-span1 .my-span1_title{ background: red; }
-      </style>
+      <head>
+        <style is="oom-style" oom-element="my-span1">
+          my-span1 .my-span1_title{ background: red; }
+        </style>
+      </head>
       <my-span1>
         <span class=".my-span1_title"></span>
       </my-span1>

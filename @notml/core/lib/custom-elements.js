@@ -2,7 +2,7 @@ import { OOMElement } from './factory.js'
 import { OOMStyle } from './style.js'
 
 const oomElementRedySymbol = Symbol('oomElementRedySymbol')
-const { document, DocumentFragment, HTMLElement, customElements, ShadowRoot } = window
+const { document, DocumentFragment, HTMLElement, HTMLHeadElement, customElements, ShadowRoot } = window
 const oomCustomElementMap = new WeakMap()
 const shadowRootOOMStyleMap = new WeakMap()
 const optionsDefaultsGlobals = Object.freeze({})
@@ -25,7 +25,16 @@ function applyOOMTemplate(instance) {
     const { style } = instance.constructor
 
     if (style instanceof OOMElement && style.dom instanceof OOMStyle) {
-      instance.before(style.clone().dom)
+      /** @type {HTMLElement} */
+      // @ts-ignore
+      let head = rootNode.firstChild
+
+      if (!(head instanceof HTMLHeadElement)) {
+        head = document.createElement('head')
+        rootNode.prepend(head)
+      }
+
+      head.append(style.clone().dom)
       shadowRootOOMStyleMap.set(rootNode, instance.constructor)
     }
   }

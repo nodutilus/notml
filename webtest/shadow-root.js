@@ -28,10 +28,7 @@ class MyShadowRoot extends oom.extends(HTMLElement) {
 
   static attachShadow = true
 
-  template = oom(new MySpan())
-    .br()(new MySpan())
-    .br()(new MySpan2())
-    .br()(new MySpan2())
+  template = oom()(new MySpan(), new MySpan(), new MySpan2(), new MySpan2())
 
 }
 
@@ -40,10 +37,7 @@ class MyShadowRootClosed extends oom.extends(HTMLElement) {
 
   static attachShadow = { mode: 'closed' }
 
-  template = oom(new MySpan())
-    .br()(new MySpan())
-    .br()(new MySpan2())
-    .br()(new MySpan2())
+  template = oom()(new MySpan(), new MySpan(), new MySpan2(), new MySpan2())
 
 }
 
@@ -56,7 +50,6 @@ oom(document.head, oom.style({
   'my-span2 .my_shadow2': { color: 'white' }
 }))
 
-oom(document.body, oom(new MySpan())
-  .br()(new MySpan2())
+oom(document.body, oom()(new MySpan(), new MySpan2())
   .br()(new MyShadowRoot())
   .br()(new MyShadowRootClosed()))

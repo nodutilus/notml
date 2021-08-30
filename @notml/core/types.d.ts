@@ -997,7 +997,7 @@ declare module '@notml/core' {
      *   </div>
      */
     (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMElementProxy
-    //@ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
+    // @ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
     [tagName: string]: OOMProxy.createElementProxy
   }
 
@@ -1027,7 +1027,7 @@ declare module '@notml/core' {
       scopeName?: OOMStyle.ScopeName | OOMStyle.StyleSource,
       ...styles: Array<OOMStyle.StyleSource>
     ): OOMStyleProxy
-    //@ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
+    // @ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
     [tagName: string]: OOMProxy.createElementProxy
   }
 
@@ -1053,7 +1053,7 @@ declare module '@notml/core' {
       tagName?: OOMElement.OOMTagName,
       ...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>
     ): OOMElementProxy
-    //@ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
+    // @ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
     [tagName: string]: OOMProxy.createElementProxy
   }
 
