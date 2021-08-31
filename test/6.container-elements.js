@@ -116,4 +116,45 @@ export default class ContainerElements extends Test {
     document.body.innerHTML = ''
   }
 
+  /**
+   * Слот по умолчанию работает как и в базовой реализации теневого DOM
+   */
+  ['Слот по умолчанию (первый без имени)']() {
+    /** Контейнер со слотом по умолчанию */
+    class MyContainer4 extends oom.extends(HTMLElement) {
+
+      static attachShadow = true
+
+      template = oom.div(oom.slot())
+
+    }
+
+    oom.define(MyContainer4)
+
+    const myC4 = new MyContainer4()
+    const mySpan = oom.span('my-span')
+
+    document.body.innerHTML = ''
+
+    oom(document.body, oom(myC4, mySpan))
+
+    /** @type {HTMLSlotElement} */
+    // @ts-ignore
+    const slot = myC4.shadowRoot.firstChild.firstChild
+
+    assert.equal(document.body.innerHTML, `
+      <my-container4>
+        <span>my-span</span>
+      </my-container4>
+    `.replace(/\s*\n+\s+/g, ''))
+    assert.equal(myC4.shadowRoot.innerHTML, `
+      <div>
+        <slot></slot>
+      </div>
+    `.replace(/\s*\n+\s+/g, ''))
+    assert.equal(mySpan.dom, slot.assignedElements()[0])
+
+    document.body.innerHTML = ''
+  }
+
 }
