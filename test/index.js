@@ -6,6 +6,7 @@ import BasicAPI from './2.basic-api.js'
 import OOMStyle from './3.style.js'
 import CustomElements from './4.custom-elements.js'
 import AttachShadow from './5.attach-shadow.js'
+import ContainerElements from './6.container-elements.js'
 
 // import TestOOM from './oom.js'
 
@@ -18,6 +19,7 @@ class TestNotMLCore extends Test {
   static ['Генератор CSS in JS'] = OOMStyle
   static ['Пользовательские элементы'] = CustomElements
   static ['Теневой DOM'] = AttachShadow
+  static ['Контейнерные элементы'] = ContainerElements
 
   // static TestOOM = TestOOM
 

@@ -1,0 +1,119 @@
+// @ts-ignore
+import { assert, Test } from '@nodutilus/test'
+import { oom } from '@notml/core'
+
+const { document, HTMLElement } = window
+
+
+/** Проверка работы контейнерных элементов */
+export default class ContainerElements extends Test {
+
+  /**
+   * В простом варианте контейнер не содержит собственной верстки
+   */
+  ['Контейнер без собственной верстки']() {
+    /** Контейнер без верстки */
+    class MyContainer1 extends oom.extends(HTMLElement) { }
+
+    oom.define(MyContainer1)
+
+    document.body.innerHTML = ''
+
+    oom(document.body, oom.MyContainer1(oom.span('test myContainer1')))
+
+    assert.equal(document.body.innerHTML, `
+      <my-container1>
+        <span>test myContainer1</span>
+      </my-container1>
+    `.replace(/\s*\n+\s+/g, ''))
+    document.body.innerHTML = ''
+  }
+
+  /**
+   * Компонент может иметь контентные опции, используемые при описание верстки шаблона
+   */
+  ['Контентные опции']() {
+    /** Контейнер с контентными опциями */
+    class MyContainer2 extends oom.extends(HTMLElement) {
+
+      template = oom
+        .div(this.options.span1)
+        .div(this.options.span2)
+
+    }
+
+    oom.define(MyContainer2)
+
+    document.body.innerHTML = ''
+
+    oom(document.body, new MyContainer2({
+      span1: oom.span('test myContainer2 span1'),
+      span2: oom.span('test myContainer2 span2')
+    }))
+
+    assert.equal(document.body.innerHTML, `
+      <my-container2>
+        <div>
+          <span>test myContainer2 span1</span>
+        </div>
+        <div>
+          <span>test myContainer2 span2</span>
+        </div>
+      </my-container2>
+    `.replace(/\s*\n+\s+/g, ''))
+    document.body.innerHTML = ''
+  }
+
+  /**
+   * В сочетании с теневым DOM можно использовать заполнение контента через слоты
+   */
+  ['Слоты теневого DOM']() {
+    /** Контейнер со слотами */
+    class MyContainer3 extends oom.extends(HTMLElement) {
+
+      static attachShadow = true
+
+      template = oom
+        .div(oom.slot({ name: 'title' }))
+        .div(oom.slot({ name: 'field' }))
+
+    }
+
+    oom.define(MyContainer3)
+
+    const myC3 = new MyContainer3()
+    const myTitle = oom.span('my-title', { slot: 'title' })
+    const myField = oom.span('my-field', { slot: 'field' })
+
+    document.body.innerHTML = ''
+
+    oom(document.body, oom(myC3, myTitle, myField))
+
+    /** @type {HTMLSlotElement} */
+    // @ts-ignore
+    const slotTitle = myC3.shadowRoot.firstChild.firstChild
+    /** @type {HTMLSlotElement} */
+    // @ts-ignore
+    const slotField = myC3.shadowRoot.lastChild.firstChild
+
+    assert.equal(document.body.innerHTML, `
+      <my-container3>
+        <span slot="title">my-title</span>
+        <span slot="field">my-field</span>
+      </my-container3>
+    `.replace(/\s*\n+\s+/g, ''))
+    assert.equal(myC3.shadowRoot.innerHTML, `
+      <div>
+        <slot name="title"></slot>
+      </div>
+      <div>
+        <slot name="field"></slot>
+      </div>
+    `.replace(/\s*\n+\s+/g, ''))
+    assert.equal(myTitle.dom, slotTitle.assignedElements()[0])
+    assert.equal(myField.dom, slotField.assignedElements()[0])
+
+    document.body.innerHTML = ''
+  }
+
+}
