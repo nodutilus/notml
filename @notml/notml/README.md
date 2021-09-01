@@ -2,6 +2,8 @@
 
 All-in-one NotML package for use via CDN
 
+Not a HTML - is object-oriented modeling of HTML and CSS
+
 [npmbadge]: https://img.shields.io/npm/v/notml?label=notml
 
 [npm]: https://www.npmjs.com/package/notml
