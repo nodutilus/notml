@@ -103,28 +103,6 @@ class OOMElement {
     return instance && instance[isOOMElementSymbol] === true
   }
 
-  /** @type {import('@notml/core').OOMElement.resolveTagName} */
-  static resolveTagName(
-    /** @type {string} */
-    tagName
-  ) {
-    let result
-
-    if (typeof tagName === 'string' && tagName[0] === tagName[0].toUpperCase()) {
-      result = tagName
-        .replace((/^[A-Z]/), str => str.toLowerCase())
-        .replace((/[A-Z][a-z]/g), str => `-${str.toLowerCase()}`)
-        .replace((/[A-Z]+/g), str => str.toLowerCase())
-    } else {
-      result = tagName
-    }
-    if (result === 'style') {
-      result = 'oom-style'
-    }
-
-    return result
-  }
-
   /** @type {import('@notml/core').OOMElement.setAttribute} */
   static setAttribute(
     /** @type {HTMLElement} */
@@ -216,7 +194,10 @@ class OOMElement {
     ...args
   ) {
     if (typeof tagName === 'string') {
-      tagName = OOMElement.resolveTagName(tagName)
+      tagName = tagName.replace((/[A-Z]+/g), str => `-${str.toLowerCase()}`)
+      if (tagName === 'style') {
+        tagName = 'oom-style'
+      }
 
       const Constructor = customElements.get(tagName)
 

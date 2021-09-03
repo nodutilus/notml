@@ -11,7 +11,11 @@ export default class CustomElements extends Test {
   /** Для удобства регистрации и переиспользования все опции define перенесены на класс */
   ['Регистрация пользовательского элемента']() {
     /** Имя тега забирается по названию класса */
-    class MyElement1 extends oom.extends(HTMLElement) { }
+    class MyElement1 extends oom.extends(HTMLElement) {
+
+      static tagName = 'my-element1'
+
+    }
 
     /** Имя тега получается из статического свойства класса */
     class MyElement2 extends oom.extends(HTMLElement) {
@@ -24,11 +28,16 @@ export default class CustomElements extends Test {
      * Несколько заклавных в названии класса подряд,
      * при использовании его в качетстве имени тега, не разделяется
      */
-    class OOMElement2 extends oom.extends(HTMLElement) { }
+    class OOMElement2 extends oom.extends(HTMLElement) {
+
+      static tagName = 'oom-element2'
+
+    }
 
     /** Расширения базового тега так же выполняется через класс */
     class MyButton1 extends oom.extends(HTMLButtonElement) {
 
+      static tagName = 'my-button1'
       static extendsTagName = 'button'
 
     }
@@ -37,26 +46,26 @@ export default class CustomElements extends Test {
 
     assert.equal(oom(new MyElement1()).html, '<my-element1></my-element1>')
     assert.equal(oom(MyElement1).html, '<my-element1></my-element1>')
-    assert.equal(oom.MyElement1().html, '<my-element1></my-element1>')
-    assert.equal(oom('MyElement1').html, '<my-element1></my-element1>')
+    assert.equal(oom.myElement1().html, '<my-element1></my-element1>')
+    assert.equal(oom('myElement1').html, '<my-element1></my-element1>')
     assert.equal(customElements.get('my-element1'), MyElement1)
 
     assert.equal(oom(new MyElement2()).html, '<me-2></me-2>')
     assert.equal(oom(MyElement2).html, '<me-2></me-2>')
-    assert.equal(oom['ME-2']().html, '<me-2></me-2>')
-    assert.equal(oom('ME-2').html, '<me-2></me-2>')
+    assert.equal(oom['me-2']().html, '<me-2></me-2>')
+    assert.equal(oom('me-2').html, '<me-2></me-2>')
     assert.equal(customElements.get('me-2'), MyElement2)
 
     assert.equal(oom(new OOMElement2()).html, '<oom-element2></oom-element2>')
     assert.equal(oom(OOMElement2).html, '<oom-element2></oom-element2>')
-    assert.equal(oom.OOMElement2().html, '<oom-element2></oom-element2>')
-    assert.equal(oom('OOMElement2').html, '<oom-element2></oom-element2>')
+    assert.equal(oom.oomElement2().html, '<oom-element2></oom-element2>')
+    assert.equal(oom('oomElement2').html, '<oom-element2></oom-element2>')
     assert.equal(customElements.get('oom-element2'), OOMElement2)
 
     assert.equal(oom(new MyButton1()).html, '<button is="my-button1"></button>')
     assert.equal(oom(MyButton1).html, '<button is="my-button1"></button>')
-    assert.equal(oom.MyButton1().html, '<button is="my-button1"></button>')
-    assert.equal(oom('MyButton1').html, '<button is="my-button1"></button>')
+    assert.equal(oom.myButton1().html, '<button is="my-button1"></button>')
+    assert.equal(oom('myButton1').html, '<button is="my-button1"></button>')
     assert.equal(customElements.get('my-button1'), MyButton1)
 
     assert.equal((new MyButton1()).getAttribute('is'), 'my-button1')
@@ -66,6 +75,8 @@ export default class CustomElements extends Test {
   ['Шаблон компонента в template']() {
     /** Класс с шаблоном */
     class MyElement3 extends oom.extends(HTMLElement) {
+
+      static tagName = 'my-element3'
 
       template = oom('div')
 
@@ -93,6 +104,8 @@ export default class CustomElements extends Test {
   ['Работа с constructor, connectedCallback и template']() {
     /** Шаблон + обновление верстки в конструкторе */
     class MyElement4 extends oom.extends(HTMLElement) {
+
+      static tagName = 'my-element4'
 
       template = oom('div')
 
@@ -151,6 +164,8 @@ export default class CustomElements extends Test {
     /** Наследуется от стороннего класса пользовательского элемента, при этом добавляя oom поведение */
     class MyElement10 extends oom.extends(MyElement9) {
 
+      static tagName = 'my-element10'
+
       template = 'test10'
 
     }
@@ -169,20 +184,28 @@ export default class CustomElements extends Test {
     const [MyElement5, MyElement6, MyElement7, MyElement8] = oom.define(
       class MyElement5 extends oom.extends(HTMLElement) {
 
+        static tagName = 'my-element5'
+
         template = oom('div')
 
       },
       class MyElement6 extends oom.extends(HTMLElement) {
+
+        static tagName = 'my-element6'
 
         template = '<div></div>'
 
       },
       class MyElement7 extends oom.extends(HTMLElement) {
 
+        static tagName = 'my-element7'
+
         template = document.createElement('div')
 
       },
       class MyElement8 extends oom.extends(HTMLElement) {
+
+        static tagName = 'my-element8'
 
         template = oom.a().b().dom
 
@@ -224,7 +247,11 @@ export default class CustomElements extends Test {
     let mye11, mye12
 
     /** Без опций по умолчанию */
-    class MyElement11 extends oom.extends(HTMLElement) { }
+    class MyElement11 extends oom.extends(HTMLElement) {
+
+      static tagName = 'my-element11'
+
+    }
 
     oom.define(MyElement11)
 
@@ -239,7 +266,11 @@ export default class CustomElements extends Test {
     assert.equal(mye11.options.b11.c11, 2)
 
     /** С опцией по умолчанию */
-    class MyElement12 extends oom.extends(HTMLElement, { a: 'test', b12: { c12: 2 } }) { }
+    class MyElement12 extends oom.extends(HTMLElement, { a: 'test', b12: { c12: 2 } }) {
+
+      static tagName = 'my-element12'
+
+    }
 
     oom.define(MyElement12)
 
@@ -262,7 +293,11 @@ export default class CustomElements extends Test {
     const options = ['ok']
 
     /** Опции в виде массива */
-    class MyElement15 extends oom.extends(HTMLElement, dOptions) { }
+    class MyElement15 extends oom.extends(HTMLElement, dOptions) {
+
+      static tagName = 'my-element15'
+
+    }
 
     oom.define(MyElement15)
 
@@ -289,7 +324,11 @@ export default class CustomElements extends Test {
     const options = { a16: new COptions() }
 
     /** Сложные объекты в опциях */
-    class MyElement16 extends oom.extends(HTMLElement, dOptions) { }
+    class MyElement16 extends oom.extends(HTMLElement, dOptions) {
+
+      static tagName = 'my-element16'
+
+    }
 
     oom.define(MyElement16)
 
@@ -318,7 +357,11 @@ export default class CustomElements extends Test {
     const optionsDefaults = { b13: { c13: 2 }, d13: [1, 2, 3] }
 
     /** объект + объект в объекте */
-    class MyElement13 extends oom.extends(HTMLElement, optionsDefaults) { }
+    class MyElement13 extends oom.extends(HTMLElement, optionsDefaults) {
+
+      static tagName = 'my-element13'
+
+    }
 
     oom.define(MyElement13)
 
@@ -355,7 +398,7 @@ export default class CustomElements extends Test {
       // @ts-ignore
       MyElement13.optionsDefaults = {}
     } catch (error) { err = error }
-    assert.equal(err.message, "Cannot assign to read only property 'optionsDefaults' of function 'class MyElement13 extends oom.extends(HTMLElement, optionsDefaults) { }'")
+    assert.ok(err.message.startsWith("Cannot assign to read only property 'optionsDefaults' of function 'class MyElement13"))
     try {
       MyElement13.optionsDefaults.b13.c13 = 4
     } catch (error) { err = error }
@@ -376,7 +419,11 @@ export default class CustomElements extends Test {
     const options = { a14: 2, d14: [{ e14: 0 }, 2, 3] }
 
     /** объект + объект в объекте */
-    class MyElement14 extends oom.extends(HTMLElement, dOptions) { }
+    class MyElement14 extends oom.extends(HTMLElement, dOptions) {
+
+      static tagName = 'my-element14'
+
+    }
 
     oom.define(MyElement14)
 
@@ -415,12 +462,16 @@ export default class CustomElements extends Test {
     /** Базовый класс */
     class MyElement19 extends oom.extends(HTMLElement, { name: 'testName' }) {
 
+      static tagName = 'my-element19'
+
       template = oom.div({ class: 'field' }, this.options.name)
 
     }
 
     /** Класс наследник */
     class MyElement20 extends oom.extends(MyElement19, { label: 'testLabel' }) {
+
+      static tagName = 'my-element20'
 
       template = oom.span({ class: 'label' },
         oom.span(this.options.label, {
@@ -474,6 +525,7 @@ export default class CustomElements extends Test {
     /** Компонент с глобальными стилями */
     class MyElement21 extends oom.extends(HTMLElement) {
 
+      static tagName = 'my-element21'
       static style = oom.style({
         'my-element21': { fontSize: '12px' },
         'my-element21.green': { color: 'green' },

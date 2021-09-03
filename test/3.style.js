@@ -48,7 +48,7 @@ export default class OOMStyle extends Test {
     style = oom.style()
     assert.equal(style.html, '<style is="oom-style"></style>')
 
-    style = oom.OOMStyle()
+    style = oom.oomStyle()
     assert.equal(style.html, '<style is="oom-style"></style>')
   }
 

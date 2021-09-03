@@ -16,6 +16,7 @@ export default class AttachShadow extends Test {
     /** Открытый теневой DOM */
     class MyShadow1 extends oom.extends(HTMLElement) {
 
+      static tagName = 'my-shadow1'
       static attachShadow = true
 
       template = oom.span('MyShadow1')
@@ -25,6 +26,7 @@ export default class AttachShadow extends Test {
     /** Закрытый теневой DOM */
     class MyShadow2 extends oom.extends(HTMLElement) {
 
+      static tagName = 'my-shadow2'
       static attachShadow = { mode: 'closed' }
 
       template = oom.span('MyShadow2')
@@ -56,6 +58,7 @@ export default class AttachShadow extends Test {
     /** Компонент со стилями */
     class MySpan1 extends oom.extends(HTMLElement) {
 
+      static tagName = 'my-span1'
       static style = oom.style({
         '.my-span1_title': { background: 'red' }
       })
@@ -67,6 +70,7 @@ export default class AttachShadow extends Test {
     /** Теневой дом содержащий внутри компонент */
     class MyShadow3 extends oom.extends(HTMLElement) {
 
+      static tagName = 'my-shadow3'
       static attachShadow = true
 
       template = new MySpan1()

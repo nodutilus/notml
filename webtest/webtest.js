@@ -79,6 +79,8 @@ assertEqual('Example #2-2', exp2.innerHTML,
 /** Test custom element */
 class MyElementExp3 extends oom.extends(HTMLElement) {
 
+  static tagName = 'my-element-exp3'
+
   mySpan = oom.span('My element new text')
 
   template = oom('div', { class: 'MyElement__inner' })
@@ -91,7 +93,7 @@ class MyElementExp3 extends oom.extends(HTMLElement) {
 oom.define(MyElementExp3)
 
 const exp3 = document.getElementById('exp3')
-const block3 = oom.MyElementExp3()
+const block3 = oom.myElementExp3()
 const html3 = block3.html
 
 exp3.append(block3.dom)

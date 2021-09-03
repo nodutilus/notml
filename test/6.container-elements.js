@@ -13,13 +13,17 @@ export default class ContainerElements extends Test {
    */
   ['Контейнер без собственной верстки']() {
     /** Контейнер без верстки */
-    class MyContainer1 extends oom.extends(HTMLElement) { }
+    class MyContainer1 extends oom.extends(HTMLElement) {
+
+      static tagName = 'my-container1'
+
+    }
 
     oom.define(MyContainer1)
 
     document.body.innerHTML = ''
 
-    oom(document.body, oom.MyContainer1(oom.span('test myContainer1')))
+    oom(document.body, oom.myContainer1(oom.span('test myContainer1')))
 
     assert.equal(document.body.innerHTML, `
       <my-container1>
@@ -35,6 +39,8 @@ export default class ContainerElements extends Test {
   ['Контентные опции']() {
     /** Контейнер с контентными опциями */
     class MyContainer2 extends oom.extends(HTMLElement) {
+
+      static tagName = 'my-container2'
 
       template = oom
         .div(this.options.span1)
@@ -71,6 +77,7 @@ export default class ContainerElements extends Test {
     /** Контейнер со слотами */
     class MyContainer3 extends oom.extends(HTMLElement) {
 
+      static tagName = 'my-container3'
       static attachShadow = true
 
       template = oom
@@ -123,6 +130,7 @@ export default class ContainerElements extends Test {
     /** Контейнер со слотом по умолчанию */
     class MyContainer4 extends oom.extends(HTMLElement) {
 
+      static tagName = 'my-container4'
       static attachShadow = true
 
       template = oom.div(oom.slot())

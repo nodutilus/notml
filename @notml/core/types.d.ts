@@ -621,14 +621,6 @@ declare module '@notml/core' {
     }
 
     /**
-     * Преобразование имени класса пользовательского элемента в имя html-тега.
-     * Заглавные буквы класса заменяются на нижний регистр, с разделением частей имени через "-"
-     */
-    interface resolveTagName {
-      (tagName: string): TagName
-    }
-
-    /**
      * Установка атрибута элемента.
      * Позволяет задавать методы, стили в виде объекта, и строковые атрибуты DOM элемента.
      */
@@ -702,7 +694,6 @@ declare module '@notml/core' {
     static proxyGetter: OOMElement.proxyGetter
     static proxyHandler: OOMElement.proxyHandler
     static [Symbol.hasInstance]: OOMElement.hasInstance
-    static resolveTagName: OOMElement.resolveTagName
     static setAttribute: OOMElement.setAttribute
     static setAttributes: OOMElement.setAttributes
     static getAttribute: OOMElement.getAttribute
@@ -719,13 +710,21 @@ declare module '@notml/core' {
 
   namespace CustomElement {
 
+    /** Базовый класс элемента OOM, который будет расширяться пользователем */
+    interface CustomElementClsBase<T> {
+
+      /** Объект с опциями компонента по умолчанию */
+      readonly optionsDefaults: CustomElement.Options<T>
+
+      new(options?: Options<T>): CustomElement<T>
+
+    }
+
     /** Класс пользовательского элемента, расширенный для работы с компонентами OOM */
-    interface CustomElementCls<T> {
-      /** Имя класса пользовательского элемента */
-      name?: string
+    interface CustomElementCls<T> extends CustomElementClsBase<T> {
 
       /** Имя тега для регистрации пользовательского элемента */
-      tagName?: string
+      tagName: string
 
       /**
        * Имя тега встроенного DOM элемента который расширяется данным классом
@@ -738,12 +737,8 @@ declare module '@notml/core' {
        * При регистрации компонента через oom.define добавляться в документ в секцию <head>,
        *  автоматически добавляя для стилей имя области действия соответствующее имени тега элемента.
        */
-      style: OOMStyleProxy
+      style?: OOMStyleProxy
 
-      /** Объект с опциями компонента по умолчанию */
-      readonly optionsDefaults: CustomElement.Options<T>
-
-      new(options?: Options<T>): CustomElement<T>
     }
 
     /** Опции пользовательского компонента */
@@ -798,11 +793,8 @@ declare module '@notml/core' {
   /** Экземпляр пользовательского DOM элемента, расширенный для работы с компонентами OOM */
   class CustomElement<T> extends HTMLElement {
 
-    /** Имя класса пользовательского элемента */
-    static name?: string
-
     /** Имя тега для регистрации пользовательского элемента */
-    static tagName?: string
+    static tagName: string
 
     /**
      * Имя тега встроенного DOM элемента который расширяется данным классом
@@ -817,7 +809,7 @@ declare module '@notml/core' {
      * При регистрации компонента через oom.define добавляться в документ в секцию <head>,
      *  автоматически добавляя для стилей имя области действия соответствующее имени тега элемента.
      */
-    static style: OOMStyleProxy
+    static style?: OOMStyleProxy
 
     /** Объект с опциями компонента по умолчанию */
     static readonly optionsDefaults: CustomElement.Options<any>
@@ -936,13 +928,13 @@ declare module '@notml/core' {
        *   </html>
        */
       extends<T, U>(
-        CustomElement: CustomElement.CustomElementCls<T>,
+        CustomElement: CustomElement.CustomElementClsBase<T>,
         optionsDefaults?: CustomElement.Options<U>
-      ): CustomElement.CustomElementCls<T & U>
+      ): CustomElement.CustomElementClsBase<T & U>
       extends<T>(
         CustomElement: typeof HTMLElement,
         optionsDefaults?: CustomElement.Options<T>
-      ): CustomElement.CustomElementCls<T>
+      ): CustomElement.CustomElementClsBase<T>
 
       /**
        * Регистрирует переданный набор классов пользовательских элементов в customElements.define.

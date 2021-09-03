@@ -135,7 +135,7 @@ function extendsCustomElement(CustomElement, optionsDefaults) {
 /** @type {import('@notml/core').CustomElement.defineCustomElement} */
 function defineCustomElement(...oomCustomElements) {
   for (const CustomElement of oomCustomElements) {
-    const tagName = CustomElement.tagName || OOMElement.resolveTagName(CustomElement.name)
+    const { tagName } = CustomElement
 
     customElements.define(tagName, CustomElement, { extends: CustomElement.extendsTagName })
     if (CustomElement.extendsTagName) {
