@@ -102,6 +102,25 @@ export default class OOMStyle extends Test {
   }
 
   /**
+   * При ошибке в имени или значение CSS свойства оно игнорируется и не добавляется в верстку
+   */
+  ['Неверные CSS свойства']() {
+    const style = oom.style({
+      // @ts-ignore
+      '.my-class': { background: 1, fontSize: 'red', noName: 'noName' }
+    })
+
+    document.body.innerHTML = ''
+    document.body.append(style.dom)
+    assert.equal(document.body.innerHTML, `
+      <style is="oom-style">
+        .my-class{  }
+      </style>
+    `.replace(/\s*\n+\s+/g, ''))
+    document.body.innerHTML = ''
+  }
+
+  /**
    * Основная фича использования стилей как объектов, это переиспользование описания стиля элементов.
    * Можно выносить описание классов отдельно и переиспользовать для нескольких компонентов
    */
@@ -186,6 +205,65 @@ export default class OOMStyle extends Test {
       <style is="oom-style">
         my-scope.active{ color: yellow; }
         my-scope .active{ color: yellow; }
+      </style>
+    `.replace(/\s*\n+\s+/g, ''))
+    document.body.innerHTML = ''
+  }
+
+  /**
+   * Фактически CSS переменные задаются так же как обычные свойства.
+   * Но на данный момент поведение нельзя полностью протестировать на сервере:
+   *  https://github.com/jsdom/jsdom/issues/1895
+   *  https://github.com/jsdom/cssstyle/issues/89
+   * Значение свойств вида var(--...) на данный момент не присваивается в jsdom/cssstyle,
+   *  но фактически в браузере все работает, см webtest/css-custom-properties
+   */
+  ['css переменные']() {
+    const style = oom.style({
+      ':root': {
+        '--my-var': 'yellow',
+        '--my-var2': 'var(--my-var)'
+      },
+      '.my-class': {
+        background: 'var(--my-var)'
+      }
+    })
+
+    document.body.innerHTML = ''
+    document.body.append(style.dom)
+    assert.equal(document.body.innerHTML, `
+      <style is="oom-style">
+        :root{ --my-var: yellow; --my-var2: var(--my-var); }
+        .my-class{  }
+      </style>
+    `.replace(/\s*\n+\s+/g, ''))
+    // Ждем реализации в jsdom/cssstyle
+    // assert.equal(document.body.innerHTML, `
+    //   <style is="oom-style">
+    //     :root{ --my-var: yellow; --my-var2: var(--my-var); }
+    //     .my-class{ background: var(--my-var); }
+    //   </style>
+    // `.replace(/\s*\n+\s+/g, ''))
+    document.body.innerHTML = ''
+  }
+
+  /**
+   * css переменные записываются на экземпляр style,
+   *  поэтому алгоритм первичной установки и обновления может отличаться.
+   * Проверим обновление работает как ожидалось и OOMStyle ничего не отломал
+   */
+  ['css переменные - перезапись']() {
+    const style = oom.style({
+      ':root': { '--my-var': 'yellow' }
+    })
+
+    style({ ':root': { '--my-var': 'red' } })
+
+    document.body.innerHTML = ''
+    document.body.append(style.dom)
+    assert.equal(document.body.innerHTML, `
+      <style is="oom-style">
+        :root{ --my-var: red; }
       </style>
     `.replace(/\s*\n+\s+/g, ''))
     document.body.innerHTML = ''

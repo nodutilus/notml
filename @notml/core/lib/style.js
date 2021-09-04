@@ -13,15 +13,23 @@ class OOMStyle extends HTMLStyleElement {
     /** @type {import('@notml/core').OOMStyle.StyleSource} */
     source
   ) {
+    let styleCollection = style.get(styleName)
+
     for (const [propName, propValue] of Object.entries(source)) {
       if (propValue && typeof propValue === 'object' && propValue.constructor === Object) {
         // Рекурсивно разворачиваем вложенное описание стилей в плоский список
         OOMStyle.updateStyle(style, styleName ? `${styleName} ${propName}` : propName, propValue)
       } else {
-        if (!style.has(styleName)) {
-          style.set(styleName, document.createElement('div'))
+        if (!styleCollection) {
+          styleCollection = document.createElement('div')
+          style.set(styleName, styleCollection)
         }
-        style.get(styleName).style[propName] = propValue
+        if (propName in styleCollection.style) {
+          styleCollection.style[propName] = propValue
+        } else {
+          // @ts-ignore Игнорируем типы, метод приводит любые значения к строке
+          styleCollection.style.setProperty(propName, propValue)
+        }
       }
     }
   }
@@ -59,7 +67,7 @@ class OOMStyle extends HTMLStyleElement {
           (this.#scopeName && name && `${this.#scopeName} ${name}`) ||
           this.#scopeName || name || '*'
 
-        textStyle += `${selector}{ ${style.getAttribute('style')} }`
+        textStyle += `${selector}{ ${style.getAttribute('style') || ''} }`
       }
 
       this.innerHTML = textStyle
