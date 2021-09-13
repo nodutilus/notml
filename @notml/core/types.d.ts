@@ -561,7 +561,7 @@ declare module '@notml/core' {
     }
 
     /** Экземпляр элемента для вставки */
-    type OOMChild = string | DocumentFragment | HTMLElement | OOMElement | OOMElementProxy
+    type OOMChild = string | DocumentFragment | HTMLElement | OOMElement | OOMFragmentProxy | OOMElementProxy
 
     /**
      * Аргументы вызова OOMElementProxy элемента - объекты с атрибутами элемента, или вложенные элементы.
@@ -687,35 +687,25 @@ declare module '@notml/core' {
 
   }
 
-  /** Общий абстрактный класс сущностей OOM шаблона */
-  class AbstractOOMElement {
+  /** Базовый класс для OOM элементов */
+  class OOMElement {
     static createProxy: OOMElement.createProxy
     static proxyApply: OOMElement.proxyApply
     static proxyGetter: OOMElement.proxyGetter
     static proxyHandler: OOMElement.proxyHandler
     static [Symbol.hasInstance]: OOMElement.hasInstance
+    static setAttribute: OOMElement.setAttribute
+    static setAttributes: OOMElement.setAttributes
+    static getAttribute: OOMElement.getAttribute
     // @ts-ignore https://github.com/microsoft/TypeScript/pull/44512
     [OOMElement.IsOOMElementSymbol]: OOMElement.isOOMElementSymbol
+    /** Ссылка на оригинальный DOM элемент */
+    dom: OOMElement.DOMElement
     /** HTML код элемента, аналогично HTMLElement.outerHTML, но работает и для DocumentFragment */
     html: OOMElement.HTML
     constructor(tagName: OOMElement.OOMTagName, ...args: OOMElement.ProxyApplyArgs)
     append: OOMElement.append
     clone: OOMElement.clone
-  }
-
-  /** Базовый класс для OOM элементов */
-  class OOMElement extends AbstractOOMElement {
-    static setAttribute: OOMElement.setAttribute
-    static setAttributes: OOMElement.setAttributes
-    static getAttribute: OOMElement.getAttribute
-    /** Ссылка на оригинальный DOM элемент */
-    dom: HTMLElement | CustomElement<any>
-  }
-
-  /** Базовый класс для фрагмент OOM */
-  class OOMDocumentFragment extends AbstractOOMElement {
-    /** Ссылка на оригинальный фрагмент DOM */
-    dom: DocumentFragment
   }
 
   namespace CustomElement {
@@ -860,6 +850,40 @@ declare module '@notml/core' {
     interface createElementProxy {
       (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMElementProxy
     }
+    /**
+     * Создает OOM элемент, добавляя его в верстку после текущего,
+     *  и возвращает новый фрагмент документа содержащий оба элемента
+     *
+     * @example
+     * const span = oom.span({ class: 'title' }, 'Link: ')
+     * const fragment = span.a({ href: 'https://test.ok' }, 'test.ok')
+     *
+     * document.body.append(span.dom)
+     *
+     * >>
+     *   <span class="title">Link: </span>
+     *   <a href="https://test.ok">test.ok</a>
+     */
+    interface createElementToFragmentProxy {
+      (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMFragmentProxy
+    }
+    /**
+     * Создает и добавляет к фрагменту документа еще один OOM элемент
+     *
+     * @example
+     * const fragment = oom().span({ class: 'title' }, 'Link: ')
+     *
+     * fragment.a({ href: 'https://test.ok' }, 'test.ok')
+     *
+     * document.body.append(component.dom)
+     *
+     * >>
+     *   <span class="title">Link: </span>
+     *   <a href="https://test.ok">test.ok</a>
+     */
+    interface createFragmentProxy {
+      (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMFragmentProxy
+    }
 
     /** Создает новый OOM элемент и оборачивает его в Proxy */
     interface apply {
@@ -893,6 +917,9 @@ declare module '@notml/core' {
         scopeName?: OOMStyle.ScopeName | OOMStyle.StyleSource,
         ...styles: Array<OOMStyle.StyleSource>
       ) => OOMStyleProxy
+
+      /** HTML код элемента, аналогично HTMLElement.outerHTML, но работает и для DocumentFragment */
+      html: OOMElement.HTML
 
     }
 
@@ -953,14 +980,14 @@ declare module '@notml/core' {
       define: CustomElement.defineCustomElement
     }
 
-    interface OOMElementOrigin extends OOMElement, CommonOrigin {
+    interface OOMElementOrigin extends CommonOrigin {
       /**
        * Добавление дочернего элемента к верстке в конец списка элементов.
        * Вернет замыкание на собственный OOMElementProxy для использования чейнинга
        *
        * @example
        * const mySpan = oom.span('My element new text')
-       * oom('div').append(mySpan)
+       * const div = oom('div').append(mySpan)
        */
       append(child: OOMElement.OOMChild): OOMElementProxy
       /**
@@ -971,6 +998,28 @@ declare module '@notml/core' {
        * const mySpan2 = mySpan1.clone()
        */
       clone(): OOMElementProxy
+      dom: HTMLElement | CustomElement<any>
+    }
+
+    interface OOMFragmentOrigin extends CommonOrigin {
+      /**
+       * Добавление дочернего элемента к верстке в конец списка элементов.
+       * Вернет замыкание на собственный OOMFragmentProxy для использования чейнинга
+       *
+       * @example
+       * const mySpan = oom.span('My element').span('new text')
+       * const div = oom('div').append(mySpan)
+       */
+      append(child: OOMElement.OOMChild): OOMFragmentProxy
+      /**
+       * Клонирует фрагмент и возвращает новый экземпляр OOM фрагмента, содержащий копию DOM элементов
+       *
+       * @example
+       * const mySpan1 = oom.span('My element').span('new text')
+       * const mySpan2 = mySpan1.clone()
+       */
+      clone(): OOMFragmentProxy
+      dom: DocumentFragment
     }
 
     interface OOMStyleOrigin extends OOMElementOrigin {
@@ -1000,7 +1049,25 @@ declare module '@notml/core' {
      */
     (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMElementProxy
     // @ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
-    [tagName: string]: OOMProxy.createElementProxy
+    [tagName: string]: OOMProxy.createElementToFragmentProxy
+  }
+
+  interface OOMFragmentProxy extends OOMProxy.OOMFragmentOrigin {
+    /**
+     * Выполняет добавление дочерних элемента к верстке в конец фрагмента документа.
+     *
+     * @example
+     *   const fragment = oom()
+     *
+     *   fragment(oom.span('My text'), oom.span('ok'))
+     *
+     * >>
+     *   <span>My text</span>
+     *   <span>ok</span>
+     */
+    (...args: Array<OOMElement.OOMChild>): OOMFragmentProxy
+    // @ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
+    [tagName: string]: OOMProxy.createFragmentProxy
   }
 
   /** Proxy для работы с OOMStyle элементом */
@@ -1030,7 +1097,7 @@ declare module '@notml/core' {
       ...styles: Array<OOMStyle.StyleSource>
     ): OOMStyleProxy
     // @ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
-    [tagName: string]: OOMProxy.createElementProxy
+    [tagName: string]: OOMProxy.createElementToFragmentProxy
   }
 
   /** Фабрика Proxy для создания OOM элементов и сопутствующее API */
@@ -1052,9 +1119,30 @@ declare module '@notml/core' {
      *   </div>
      */
     (
-      tagName?: OOMElement.OOMTagName,
+      tagName: HTMLElement | string | typeof HTMLElement,
       ...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>
     ): OOMElementProxy
+    /**
+     * Вернет новый экземпляр Proxy элемента для создания верстки
+     *
+     * @example
+     * const component = oom()
+     *   .span({ class: 'title' }, 'Link: ')
+     *   .a({ href: 'https://test.ok' }, 'test.ok')
+     *
+     * document.body.append(component.dom)
+     *
+     * >>
+     *   <span class="title">Link: </span>
+     *   <a href="https://test.ok">test.ok</a>
+     */
+    (
+      ...args: Array<OOMElement.OOMChild>
+    ): OOMFragmentProxy
+    (
+      tagName: DocumentFragment | typeof DocumentFragment,
+      ...args: Array<OOMElement.OOMChild>
+    ): OOMFragmentProxy
     // @ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
     [tagName: string]: OOMProxy.createElementProxy
   }

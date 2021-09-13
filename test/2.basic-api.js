@@ -22,6 +22,17 @@ export default class BasicAPI extends Test {
     assert.equal(div.html, '<div><a></a><b></b>test</div>')
   }
 
+  /**
+   * Добавление элемента в фрагмент выполняется аналогично добавлению в OOM элемент
+   */
+  ['OOMFragment#append - Вставка элемента в фрагмент']() {
+    const fragment = oom()
+      .append(oom('a'))
+      .append(document.createElement('b'))
+      .append('test')
+
+    assert.equal(fragment.html, '<a></a><b></b>test')
+  }
 
   /**
    * Клонирование элемента для его переиспользования.
@@ -34,9 +45,25 @@ export default class BasicAPI extends Test {
     div1('test1')
     div2('test2')
 
+    assert.notEqual(div1, div2)
     assert.notEqual(div1.dom, div2.dom)
     assert.equal(div1.html, '<div class="test">test1</div>')
     assert.equal(div2.html, '<div class="test">test2</div>')
+  }
+
+  /** Фрагменты документов копируются, как и элементы, включая все вложенные элементы */
+  ['OOMFragment#clone - Клонирование фрагмента документа']() {
+    const fragment1 = oom
+      .div('test1')
+      .div('test2')
+    const fragment2 = fragment1.clone()
+
+    fragment2.dom.children[0].className = 'test3'
+
+    assert.notEqual(fragment1, fragment2)
+    assert.notEqual(fragment1.dom, fragment2.dom)
+    assert.equal(fragment1.html, '<div>test1</div><div>test2</div>')
+    assert.equal(fragment2.html, '<div class="test3">test1</div><div>test2</div>')
   }
 
 }

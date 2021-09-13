@@ -255,6 +255,7 @@ export default class BasicBehavior extends Test {
     let err
 
     try {
+      // @ts-ignore Проверка на стандартное исключение DOM
       fragment({ class: 'test' })
     } catch (error) {
       err = error
@@ -274,9 +275,10 @@ export default class BasicBehavior extends Test {
       .div('test2')
       .div('test3')
     const fragment2 = oom()
+    const div1 = oom('div', 'test2')
 
     fragment2.div('test1')
-    fragment2(oom('div', 'test2'))
+    fragment2(div1)
     fragment2.div('test3')
 
     assert.equal(fragment1.html, '<div>test1</div><div>test2</div><div>test3</div>')
