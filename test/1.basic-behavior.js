@@ -318,4 +318,19 @@ export default class BasicBehavior extends Test {
     assert.equal(component2.html, componentText)
   }
 
+
+  /**
+   * Обработчики событий можно задавать через атрибуты или DOM свойства,
+   *  в оом шаблоне оба способа работают через объект с атрибутами.
+   * Функции автоматически определяются и присваиваются как свойства объекта
+   */
+  ['Базовая обработка событий DOM элементов']() {
+    let cnt = 0
+    const div1 = oom.div({ onclick: () => cnt++ })
+
+    assert.equal(cnt, 0)
+    div1.dom.click()
+    assert.equal(cnt, 1)
+  }
+
 }

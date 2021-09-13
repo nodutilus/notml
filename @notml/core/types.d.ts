@@ -687,25 +687,35 @@ declare module '@notml/core' {
 
   }
 
-  /** Базовый класс для OOM элементов */
-  class OOMElement {
+  /** Общий абстрактный класс сущностей OOM шаблона */
+  class AbstractOOMElement {
     static createProxy: OOMElement.createProxy
     static proxyApply: OOMElement.proxyApply
     static proxyGetter: OOMElement.proxyGetter
     static proxyHandler: OOMElement.proxyHandler
     static [Symbol.hasInstance]: OOMElement.hasInstance
-    static setAttribute: OOMElement.setAttribute
-    static setAttributes: OOMElement.setAttributes
-    static getAttribute: OOMElement.getAttribute
     // @ts-ignore https://github.com/microsoft/TypeScript/pull/44512
     [OOMElement.IsOOMElementSymbol]: OOMElement.isOOMElementSymbol
-    /** Ссылка на оригинальный DOM элемент */
-    dom: OOMElement.DOMElement
     /** HTML код элемента, аналогично HTMLElement.outerHTML, но работает и для DocumentFragment */
     html: OOMElement.HTML
     constructor(tagName: OOMElement.OOMTagName, ...args: OOMElement.ProxyApplyArgs)
     append: OOMElement.append
     clone: OOMElement.clone
+  }
+
+  /** Базовый класс для OOM элементов */
+  class OOMElement extends AbstractOOMElement {
+    static setAttribute: OOMElement.setAttribute
+    static setAttributes: OOMElement.setAttributes
+    static getAttribute: OOMElement.getAttribute
+    /** Ссылка на оригинальный DOM элемент */
+    dom: HTMLElement | CustomElement<any>
+  }
+
+  /** Базовый класс для фрагмент OOM */
+  class OOMDocumentFragment extends AbstractOOMElement {
+    /** Ссылка на оригинальный фрагмент DOM */
+    dom: DocumentFragment
   }
 
   namespace CustomElement {
