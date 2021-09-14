@@ -367,10 +367,15 @@ export default class BasicBehavior extends Test {
   ['Базовая обработка событий DOM элементов']() {
     let cnt = 0
     const div1 = oom.div({ onclick: () => cnt++ })
+    const div2 = oom.div({ onclick: `this.append('${cnt}')` })
 
     assert.equal(cnt, 0)
     div1.dom.click()
     assert.equal(cnt, 1)
+
+    assert.equal(div2.html, '<div onclick="this.append(\'0\')"></div>')
+    div2.dom.click()
+    assert.equal(div2.html, '<div onclick="this.append(\'0\')">0</div>')
   }
 
 }
