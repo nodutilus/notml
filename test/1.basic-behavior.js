@@ -154,6 +154,17 @@ export default class BasicBehavior extends Test {
     assert.equal(div3.html, '<div class="test3" test="&quot;"></div>')
   }
 
+  /**
+   * Атрибуты можно устанавливать в camelCase, чтобы не оборачивать в кавычки,
+   *  заглавные буквы автоматически заменяются с добавлением символа "-".
+   * Это классическое поведение для DataSet и CSSStyleDeclaration
+   */
+  ['Установка атрибутов в camelCase']() {
+    const div = oom.div({ camelCase: 'camelCase' })
+
+    assert.equal(div.html, '<div camel-case="camelCase"></div>')
+  }
+
   /** Выполняется вызовом как функции ранее созданного элемента */
   ['Обновление атрибутов элемента через ловушку apply']() {
     const div1 = oom.div({ class: 'test1' })
