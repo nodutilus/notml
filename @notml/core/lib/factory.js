@@ -124,9 +124,7 @@ class OOMElement {
         instance[attrName] = attrValue
         break
       default:
-        if ((/[A-Z]/).test(attrName)) {
-          attrName = attrName.replace(/[A-Z]/g, str => `-${str.toLowerCase()}`)
-        }
+        attrName = attrName.replace(/[A-Z]/g, str => `-${str.toLowerCase()}`)
         instance.setAttribute(attrName, attrValue)
         break
     }
