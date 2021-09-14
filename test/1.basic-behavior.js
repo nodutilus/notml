@@ -278,6 +278,21 @@ export default class BasicBehavior extends Test {
   }
 
   /**
+   * При вставке одного фрагмента DOM в другой элементы переданного фрагмента переносятся в целевой,
+   *  т.к. нет необходимости хранения иерархии для DocumentFragment
+   */
+  ['DocumentFragment в DocumentFragment']() {
+    const fragment1 = oom()(oom.div('test1'))
+    const fragment2 = oom()('test2')
+
+    assert.equal(fragment2.dom.childNodes.length, 1)
+    fragment1(fragment2)
+    assert.equal(fragment2.dom.childNodes.length, 0)
+    assert.equal(fragment1.html, '<div>test1</div>test2')
+    assert.ok(fragment1.dom.firstChild instanceof HTMLDivElement)
+  }
+
+  /**
    * Использование чейнинга на элементе создает DocumentFragment,
    *    помещая элементы последовательно
    */
