@@ -266,6 +266,18 @@ export default class BasicBehavior extends Test {
   }
 
   /**
+   * DocumentFragment может содержать на 1ом уровне не элементы а ноды,
+   *  значимой при версте через OOM является только TEXT_NODE, остальные игнорируются
+   */
+  ['DocumentFragment, Node и nodeType']() {
+    const comment = document.createComment('comment text')
+    // @ts-ignore - comment не может быть OOMChild, но при передаче в параметры он проигнорируется
+    const fragment = oom()('test text', oom.i(), comment)
+
+    assert.equal(fragment.html, 'test text<i></i>')
+  }
+
+  /**
    * Использование чейнинга на элементе создает DocumentFragment,
    *    помещая элементы последовательно
    */

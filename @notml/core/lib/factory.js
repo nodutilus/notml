@@ -176,8 +176,12 @@ class OOMElement {
     let html = ''
 
     if (dom instanceof DocumentFragment) {
-      for (const item of Array.from(dom.children)) {
-        html += item.outerHTML
+      for (const item of Array.from(dom.childNodes)) {
+        if (item instanceof HTMLElement) {
+          html += item.outerHTML
+        } else if (item.nodeType === document.TEXT_NODE) {
+          html += item.textContent
+        }
       }
     } else {
       html = dom.outerHTML
