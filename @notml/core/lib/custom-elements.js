@@ -114,6 +114,9 @@ function extendsCustomElement(CustomElement, optionsDefaults) {
             writable: false
           })
         }
+        if ('className' in this.constructor) {
+          this.className = this.constructor.className
+        }
       }
 
     }

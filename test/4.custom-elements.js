@@ -562,6 +562,39 @@ export default class CustomElements extends Test {
     document.body.innerHTML = ''
   }
 
+  /**
+   * Для пользовательского элемента можно задать собственный класс,
+   *  который не будет стираться обновлением атрибута через шаблонизатор oom.
+   * Это дает возможность удобно навешивать на элементы обязательные классы из внешних библиотек
+   */
+  ['Класс элемента в static className']() {
+    /** Компонент с собственным именем класса */
+    class MyElement22 extends oom.extends(HTMLElement) {
+
+      static tagName = 'my-element22'
+      static className = 'my-class22'
+
+    }
+
+    oom.define(MyElement22)
+
+    const mye22 = new MyElement22()
+
+    assert.equal(mye22.outerHTML, `
+      <my-element22 class="my-class22"></my-element22>
+    `.replace(/\s*\n+\s+/g, ''))
+
+    oom(mye22, { class: 'test1' })
+    assert.equal(mye22.outerHTML, `
+      <my-element22 class="my-class22 test1"></my-element22>
+    `.replace(/\s*\n+\s+/g, ''))
+
+    oom(mye22, { class: 'test2' })
+    assert.equal(mye22.outerHTML, `
+      <my-element22 class="my-class22 test2"></my-element22>
+    `.replace(/\s*\n+\s+/g, ''))
+  }
+
   /** Тест примера из в extends из types.d.ts */
   ['types.d.ts - example for extends']() {
     /**
