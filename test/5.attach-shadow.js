@@ -109,4 +109,39 @@ export default class AttachShadow extends Test {
     document.body.innerHTML = ''
   }
 
+  /**
+   * При работе с теневым DOM для добавления элементов в DOM в функцию шаблон передается корень теневого DOM.
+   * В случае с закрытым теневым DOM это позволит получить к нему доступ из функции шаблона.
+   * this сам компонент, а root теневой DOM
+   */
+  ['Функция шаблон и теневой DOM']() {
+    /** Шаблон-функция теневого DOM */
+    class MyShadow4 extends oom.extends(HTMLElement) {
+
+      static tagName = 'my-shadow4'
+      static attachShadow = true
+
+      template = (/** @type {ShadowRoot} */ root) => {
+        oom(root, oom.span('test root'))
+      }
+
+    }
+
+    oom.define(MyShadow4)
+    document.body.innerHTML = ''
+
+    const myE26 = new MyShadow4()
+
+    document.body.append(myE26)
+
+    assert.equal(myE26.shadowRoot.innerHTML, `
+      <span>test root</span>
+    `.replace(/\s*\n+\s+/g, ''))
+
+    assert.equal(document.body.innerHTML, `
+      <my-shadow4></my-shadow4>
+    `.replace(/\s*\n+\s+/g, ''))
+    document.body.innerHTML = ''
+  }
+
 }

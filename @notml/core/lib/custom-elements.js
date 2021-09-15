@@ -39,8 +39,8 @@ function applyOOMTemplate(instance) {
     }
   }
 
-  if (typeof instance.template === 'function') {
-    template = instance.template()
+  if (typeof instance.template === 'function' && !(template instanceof OOMElement)) {
+    template = instance.template(root)
   }
 
   if (template instanceof OOMElement) {

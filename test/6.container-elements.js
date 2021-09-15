@@ -165,4 +165,48 @@ export default class ContainerElements extends Test {
     document.body.innerHTML = ''
   }
 
+  /**
+   * При помощи теневого дом и шаблона функции можно создать компонент,
+   *  который в рамках шаблона будет работать сразу с 2мя деревьями, основным и теневым.
+   * this сам компонент, а root теневой DOM
+   */
+  ['Функция шаблон, основной и теневой DOM']() {
+    /** Шаблон-функция теневого DOM */
+    class MyContainer5 extends oom.extends(HTMLElement) {
+
+      static tagName = 'my-container5'
+      static attachShadow = true
+
+      template = (/** @type {ShadowRoot} */ root) => {
+        oom(root, oom.slot())
+        oom(this, oom.span('test root'))
+      }
+
+    }
+
+    oom.define(MyContainer5)
+    document.body.innerHTML = ''
+
+    const myС5 = new MyContainer5()
+
+    document.body.append(myС5)
+
+    /** @type {HTMLSlotElement} */
+    // @ts-ignore
+    const slot = myС5.shadowRoot.firstChild
+
+    assert.equal(myС5.firstChild, slot.assignedElements()[0])
+
+    assert.equal(myС5.shadowRoot.innerHTML, `
+      <slot></slot>
+    `.replace(/\s*\n+\s+/g, ''))
+
+    assert.equal(document.body.innerHTML, `
+      <my-container5>
+        <span>test root</span>
+      </my-container5>
+    `.replace(/\s*\n+\s+/g, ''))
+    document.body.innerHTML = ''
+  }
+
 }

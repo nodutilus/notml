@@ -543,7 +543,7 @@ declare module '@notml/core' {
 
     /**
      * Имя тега DOM элемента для создания элемента, сам DOM элемент,
-     * или его функция конструктор, на основе которого будет создан OOM элемент
+     *  или его функция конструктор, на основе которого будет создан OOM элемент
      */
     type OOMTagName = DocumentFragment | HTMLElement | string | typeof DocumentFragment | typeof HTMLElement
 
@@ -562,6 +562,17 @@ declare module '@notml/core' {
 
     /** Экземпляр элемента для вставки */
     type OOMChild = string | DocumentFragment | HTMLElement | OOMElement | OOMFragmentProxy | OOMElementProxy
+
+    /** Функция-шаблон для генерации пользовательского компонента */
+    interface TemplateFN {
+      (
+        /**
+         * Для случаев когда компонент имеет теневой DOM,
+         *  this будет самим компонентом, а root корнем теневого DOM
+         */
+        root: CustomElement<any> | ShadowRoot
+      ): OOMElement.OOMChild | void
+    }
 
     /**
      * Аргументы вызова OOMElementProxy элемента - объекты с атрибутами элемента, или вложенные элементы.
@@ -858,9 +869,9 @@ declare module '@notml/core' {
 
     /**
      * Содержимое пользовательского элемента, которое будет добавлено в его состав
-     * в момент вставки пользовательского компонента в состав документа
+     *  в момент вставки пользовательского компонента в состав документа
      */
-    template?: OOMElement.OOMChild | (() => OOMElement.OOMChild | void) | void
+    template?: OOMElement.OOMChild | OOMElement.TemplateFN | void
 
     /** Хук ЖЦ элемента срабатывающий при вставке элемента в DOM */
     connectedCallback(): void
