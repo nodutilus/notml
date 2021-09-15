@@ -727,6 +727,12 @@ declare module '@notml/core' {
       tagName: string
 
       /**
+       * Встроенное имя класса компонента,
+       *  устанавливается в конструкторе и сохраняется при обновлении атрибута class через oom шаблонизатор
+       */
+      className?: string
+
+      /**
        * Имя тега встроенного DOM элемента который расширяется данным классом
        * @see customElements.define~options.extends {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/define#syntax}
        */
@@ -759,7 +765,18 @@ declare module '@notml/core' {
      * Создает экземпляр CustomElement
      */
     interface constructor {
+      /** Имя тега для регистрации пользовательского элемента */
+      tagName: string
+      /**
+       * Встроенное имя класса компонента,
+       *  устанавливается в конструкторе и сохраняется при обновлении атрибута class через oom шаблонизатор
+       */
+      className?: string
+      /** Включает создание теневого DOM внутри компонента */
       attachShadow?: boolean | ShadowRootInit
+      /**
+       * Коллекция CSS правил, описывающих стиль пользовательского компонента через oom.style.
+       */
       style?: OOMStyleProxy
       (options: Options<any>): CustomElement<any>
     }
@@ -797,12 +814,19 @@ declare module '@notml/core' {
     static tagName: string
 
     /**
+     * Встроенное имя класса компонента,
+     *  устанавливается в конструкторе и сохраняется при обновлении атрибута class через oom шаблонизатор
+     */
+    static className?: string
+
+    /**
      * Имя тега встроенного DOM элемента который расширяется данным классом
      * @see customElements.define~options.extends {@link https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/define#syntax}
      */
     static extendsTagName?: string
 
-    static attachShadow?: boolean
+    /** Включает создание теневого DOM внутри компонента */
+    static attachShadow?: boolean | ShadowRootInit
 
     /**
      * Коллекция CSS правил, описывающих стиль пользовательского компонента через oom.style.

@@ -105,7 +105,7 @@ class OOMElement {
 
   /** @type {import('@notml/core').OOMElement.setAttribute} */
   static setAttribute(
-    /** @type {HTMLElement} */
+    /** @type {import('@notml/core').CustomElement<any>} */
     instance,
     /** @type {import('@notml/core').OOMElement.AttributeName} */
     attrName,
@@ -135,7 +135,7 @@ class OOMElement {
 
   /** @type {import('@notml/core').OOMElement.setAttributes} */
   static setAttributes(
-    /** @type {HTMLElement} */
+    /** @type {import('@notml/core').CustomElement<any>} */
     instance,
     /** @type {import('@notml/core').OOMElement.OOMAttributes} */
     attributes = {}
