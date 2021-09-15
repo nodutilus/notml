@@ -583,6 +583,38 @@ export default class CustomElements extends Test {
   }
 
   /**
+   * При передаче зацикленных полей в options
+   *  необходимо вовремя выходить из рекурсии чтобы избежать падения с ошибкой.
+   * Цикличные ссылки в опциях заменяются на undefined без изменения исходного объекта
+   */
+  ['Опции: бесконечная рекурсия в resolveOptions']() {
+    const options = { test1: {} }
+
+    /** Бесконечная рекурсия */
+    class MyElement25 extends oom.extends(HTMLElement) {
+
+      static tagName = 'my-element25'
+
+    }
+
+    oom.define(MyElement25)
+
+    options.test2 = options
+    options.test1.test3 = options
+
+    const myE25 = new MyElement25(options)
+
+    assert.equal(myE25.options.test2, undefined)
+    assert.equal(myE25.options.test1.test3, undefined)
+
+    assert.equal(options.test2, options)
+    assert.equal(options.test1.test3, options)
+
+    delete options.test2
+    delete options.test1.test3
+  }
+
+  /**
    * Стили компонентов определяются в статическом свойстве класса style,
    *  откуда при регистрации пользовательского элемента добавляются в документ в состав <head>.
    * Стили автоматически привязываются к имени тега элемента, что позволяет избежать пересечений имен классов

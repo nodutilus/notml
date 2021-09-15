@@ -54,16 +54,21 @@ function applyOOMTemplate(instance) {
 
 
 /** @type {import('@notml/core').CustomElement.resolveOptions } */
-function resolveOptions(target, source) {
+function resolveOptions(target, source, prevSources = new WeakSet()) {
   let result
 
   if (source && typeof source === 'object') {
+    // Только простые объекты и массивы подвергаем копированию и заморозке,
+    //  чтобы не сломать логику встроенных и пользовательских классов
     if (source.constructor === Object || source.constructor === Array) {
-      // Только простые объекты и массивы подвергаем копированию и заморозке,
-      //  чтобы не сломать логику встроенных и пользовательских классов
+      // Для защиты от бесконечной рекурсии заменяем цикличные ссылки на undefined
+      if (prevSources.has(source)) {
+        return undefined
+      }
+      prevSources.add(source)
       result = Object.assign(source instanceof Array ? [] : {}, target, source)
       for (const key in result) {
-        result[key] = resolveOptions(null, result[key])
+        result[key] = resolveOptions(null, result[key], prevSources)
       }
       result = Object.freeze(result)
     } else {
