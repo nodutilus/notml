@@ -850,7 +850,7 @@ declare module '@notml/core' {
      * Содержимое пользовательского элемента, которое будет добавлено в его состав
      * в момент вставки пользовательского компонента в состав документа
      */
-    template?: OOMElement.OOMChild
+    template?: OOMElement.OOMChild | (() => OOMElement.OOMChild | void) | void
 
     /** Хук ЖЦ элемента срабатывающий при вставке элемента в DOM */
     connectedCallback(): void

@@ -12,7 +12,7 @@ const extendsTagNameMap = new Map()
 /** @type {import('@notml/core').CustomElement.applyOOMTemplate} */
 function applyOOMTemplate(instance) {
   const { attachShadow } = instance.constructor
-  const { template } = instance
+  let { template } = instance
   const rootNode = instance.getRootNode()
   /** @type {import('@notml/core').CustomElement | ShadowRoot} */
   let root = instance
@@ -37,6 +37,10 @@ function applyOOMTemplate(instance) {
       head.append(style.clone().dom)
       shadowRootOOMStyleMap.set(rootNode, instance.constructor)
     }
+  }
+
+  if (typeof instance.template === 'function') {
+    template = instance.template()
   }
 
   if (template instanceof OOMElement) {

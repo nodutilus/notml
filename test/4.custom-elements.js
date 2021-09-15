@@ -180,7 +180,7 @@ export default class CustomElements extends Test {
   }
 
   /** Для разных типов шаблонов должна быть общая последовательность вставки */
-  ['Типы template']() {
+  ['Базовые типы template']() {
     const [MyElement5, MyElement6, MyElement7, MyElement8] = oom.define(
       class MyElement5 extends oom.extends(HTMLElement) {
 
@@ -230,6 +230,72 @@ export default class CustomElements extends Test {
       <my-element6>test<div></div></my-element6>
       <my-element7>test<div></div></my-element7>
       <my-element8>test<a></a><b></b></my-element8>
+    `.replace(/\s*\n+\s+/g, ''))
+    document.body.innerHTML = ''
+  }
+
+  /**
+   * Шаблон элемента может быть функцией возвращающей дочерний элемент для вставки,
+   *  или void, тогда предполагается что добавление дочерних элементов осуществляется внутри функции.
+   * Эта особенность позволяет создавать динамические шаблоны и влиять из функции на сам элемент.
+   */
+  ['Функция в качестве шаблона']() {
+    /** Шаблон функция */
+    class MyElement23 extends oom.extends(HTMLElement) {
+
+      static tagName = 'my-element23'
+
+      template = () => {
+        this.id = 'test-ok'
+        oom(this, oom.span('test ok'))
+      }
+
+      /** Aвтоматическая вставка в DOM */
+      constructor() {
+        super()
+        oom(document.body, this)
+      }
+
+    }
+
+    /** Шаблон функция */
+    class MyElement24 extends oom.extends(HTMLElement) {
+
+      static tagName = 'my-element24'
+
+      template = () => oom.span('test ok 2')
+
+      /** Aвтоматическая вставка в DOM */
+      constructor() {
+        super()
+        oom(document.body, this)
+      }
+
+    }
+
+    oom.define(MyElement23, MyElement24)
+    document.body.innerHTML = ''
+
+    const myElm23 = oom.myElement23().dom
+    const myElm24 = oom.myElement24().dom
+
+    assert.equal(myElm23.outerHTML, `
+      <my-element23 id="test-ok">
+        <span>test ok</span>
+      </my-element23>
+    `.replace(/\s*\n+\s+/g, ''))
+    assert.equal(myElm24.outerHTML, `
+      <my-element24>
+        <span>test ok 2</span>
+      </my-element24>
+  `.replace(/\s*\n+\s+/g, ''))
+    assert.equal(document.body.innerHTML, `
+      <my-element23 id="test-ok">
+        <span>test ok</span>
+      </my-element23>
+      <my-element24>
+        <span>test ok 2</span>
+      </my-element24>
     `.replace(/\s*\n+\s+/g, ''))
     document.body.innerHTML = ''
   }
