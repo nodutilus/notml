@@ -48,7 +48,7 @@ function applyOOMTemplate(instance) {
   }
 
   if (template instanceof Promise) {
-    instance.asyncTemplate = template.then(asyncTemplate => {
+    instance.ready = template.then(asyncTemplate => {
       if (asyncTemplate instanceof OOMElement) {
         root.append(asyncTemplate.dom)
       } else if (asyncTemplate instanceof HTMLElement || asyncTemplate instanceof DocumentFragment) {
@@ -56,15 +56,23 @@ function applyOOMTemplate(instance) {
       } else if (typeof asyncTemplate === 'string') {
         root.innerHTML += asyncTemplate
       }
+
+      return true
     }).catch(error => {
       root.innerHTML += String(error.stack || error)
+
+      return false
     })
-  } else if (template instanceof OOMElement) {
-    root.append(template.dom)
-  } else if (template instanceof HTMLElement || template instanceof DocumentFragment) {
-    root.append(template)
-  } else if (typeof template === 'string') {
-    root.innerHTML += template
+  } else {
+    if (template instanceof OOMElement) {
+      root.append(template.dom)
+    } else if (template instanceof HTMLElement || template instanceof DocumentFragment) {
+      root.append(template)
+    } else if (typeof template === 'string') {
+      root.innerHTML += template
+    }
+
+    instance.ready = true
   }
 }
 
@@ -116,6 +124,8 @@ function extendsCustomElement(CustomElement, optionsDefaults) {
           applyOOMTemplate(this)
         }
       }
+
+      ready = false
 
       /** @type {import('@notml/core').CustomElement.constructor} */
       constructor(

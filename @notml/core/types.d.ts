@@ -873,6 +873,13 @@ declare module '@notml/core' {
      */
     template?: Promise<OOMElement.OOMChild | void> | OOMElement.OOMChild | OOMElement.TemplateFN | void
 
+    /**
+     * Состояние готовности компонента.
+     * false, если еще не добавлен в DOM или имеется ошибка построения компонента.
+     * Promise, если template является асинхронной функцией
+     */
+    ready: boolean | Promise<boolean>
+
     /** Хук ЖЦ элемента срабатывающий при вставке элемента в DOM */
     connectedCallback(): void
 
