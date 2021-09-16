@@ -21,6 +21,7 @@ function applyOOMTemplate(instance) {
     root = instance.attachShadow(typeof attachShadow === 'object' ? attachShadow : { mode: 'open' })
   }
 
+  // Клонирование стилей компонента во внутрь ShadowRoot
   if (rootNode instanceof ShadowRoot && shadowRootOOMStyleMap.get(rootNode) !== instance.constructor) {
     const { style } = instance.constructor
 
@@ -39,6 +40,8 @@ function applyOOMTemplate(instance) {
     }
   }
 
+  // Построение верстки компонента произвольным методом
+  // Вернет void, если функция выполнила вставку дочерних элементов
   if (typeof instance.template === 'function' && !(template instanceof OOMElement)) {
     template = instance.template(root)
   }
