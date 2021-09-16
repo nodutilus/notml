@@ -301,6 +301,53 @@ export default class CustomElements extends Test {
   }
 
   /**
+   * Функция построения шаблона может быть асинхронной,
+   *  в этом случае содержимое компонента обновляется по завершению Promise, либо непосредственно из функции.
+   * Отображение заглушки на загрузку остается за автором пользовательского элемента.
+   * Необработанная ошибка шаблона выводится прямо в тело компонента,
+   *  прикладной шаблон должен сам позаботится об отображении, а вывод является последней фатальной мерой.
+   * Асинхронная загрузка не блокирует компоненты которые строятся после данного шаблона,
+   *  синхронизация состояний задача пользовательского шаблона
+   */
+  async ['Асинхронная функция в качестве шаблона']() {
+    /** Асинхроный шаблон */
+    class MyElement26 extends oom.extends(HTMLElement) {
+
+      static tagName = 'my-element26'
+
+      template = async () => {
+        const span = oom.span('async')
+
+        await new Promise(resolve => setTimeout(() => resolve(), 1))
+
+        return span
+      }
+
+    }
+
+    oom.define(MyElement26)
+
+    const myE26 = oom.myElement26()
+
+    document.body.innerHTML = ''
+    oom(document.body, myE26.span('sync'))
+
+    assert.equal(document.body.innerHTML, `
+      <my-element26></my-element26>
+      <span>sync</span>
+    `.replace(/\s*\n+\s+/g, ''))
+
+    await myE26.dom.asyncTemplate
+
+    assert.equal(document.body.innerHTML, `
+      <my-element26><span>async</span></my-element26>
+      <span>sync</span>
+    `.replace(/\s*\n+\s+/g, ''))
+
+    document.body.innerHTML = ''
+  }
+
+  /**
    * В качестве описания структуры опций можно использовать простые объекты и массивы.
    * - Объекты будут клонированы и объединены с опциями по умолчанию в новые объекты.
    * - Массивы из опций по умолчанию будет полностью заменены копиями массивов указанными в опциях.

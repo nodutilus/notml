@@ -14,7 +14,7 @@ function applyOOMTemplate(instance) {
   const { attachShadow } = instance.constructor
   let { template } = instance
   const rootNode = instance.getRootNode()
-  /** @type {import('@notml/core').CustomElement | ShadowRoot} */
+  /** @type {import('@notml/core').CustomElement<any> | ShadowRoot} */
   let root = instance
 
   if (attachShadow) {
@@ -43,10 +43,23 @@ function applyOOMTemplate(instance) {
   // Построение верстки компонента произвольным методом
   // Вернет void, если функция выполнила вставку дочерних элементов
   if (typeof instance.template === 'function' && !(template instanceof OOMElement)) {
+    // @ts-ignore - проверка на instanceof OOMElement откидывает все Proxy типы
     template = instance.template(root)
   }
 
-  if (template instanceof OOMElement) {
+  if (template instanceof Promise) {
+    instance.asyncTemplate = template.then(asyncTemplate => {
+      if (asyncTemplate instanceof OOMElement) {
+        root.append(asyncTemplate.dom)
+      } else if (asyncTemplate instanceof HTMLElement || asyncTemplate instanceof DocumentFragment) {
+        root.append(asyncTemplate)
+      } else if (typeof asyncTemplate === 'string') {
+        root.innerHTML += asyncTemplate
+      }
+    }).catch(error => {
+      root.innerHTML += String(error.stack || error)
+    })
+  } else if (template instanceof OOMElement) {
     root.append(template.dom)
   } else if (template instanceof HTMLElement || template instanceof DocumentFragment) {
     root.append(template)

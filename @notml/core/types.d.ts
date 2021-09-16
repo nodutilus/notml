@@ -561,7 +561,7 @@ declare module '@notml/core' {
     }
 
     /** Экземпляр элемента для вставки */
-    type OOMChild = string | DocumentFragment | HTMLElement | OOMElement | OOMFragmentProxy | OOMElementProxy
+    type OOMChild = string | DocumentFragment | HTMLElement | OOMElement | OOMFragmentProxy | OOMElementProxy | OOMStyleProxy
 
     /** Функция-шаблон для генерации пользовательского компонента */
     interface TemplateFN {
@@ -571,7 +571,7 @@ declare module '@notml/core' {
          *  this будет самим компонентом, а root корнем теневого DOM
          */
         root: CustomElement<any> | ShadowRoot
-      ): OOMElement.OOMChild | void
+      ): Promise<OOMElement.OOMChild | void> | OOMElement.OOMChild | void
     }
 
     /**
@@ -871,7 +871,7 @@ declare module '@notml/core' {
      * Содержимое пользовательского элемента, которое будет добавлено в его состав
      *  в момент вставки пользовательского компонента в состав документа
      */
-    template?: OOMElement.OOMChild | OOMElement.TemplateFN | void
+    template?: Promise<OOMElement.OOMChild | void> | OOMElement.OOMChild | OOMElement.TemplateFN | void
 
     /** Хук ЖЦ элемента срабатывающий при вставке элемента в DOM */
     connectedCallback(): void
@@ -1043,7 +1043,7 @@ declare module '@notml/core' {
        * const mySpan2 = mySpan1.clone()
        */
       clone(): OOMElementProxy
-      dom: HTMLElement | CustomElement<any>
+      dom: CustomElement<any>
     }
 
     interface OOMFragmentOrigin extends CommonOrigin {
@@ -1067,7 +1067,8 @@ declare module '@notml/core' {
       dom: DocumentFragment
     }
 
-    interface OOMStyleOrigin extends OOMElementOrigin {
+    interface OOMStyleOrigin extends CommonOrigin {
+      clone(): OOMStyleProxy
       dom: OOMStyle
     }
 

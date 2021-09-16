@@ -191,6 +191,12 @@ class OOMElement {
     return html
   }
 
+  /**
+   * Заглушка для возможности вернуть OOMElementProxy из асинхронного метода,
+   *  в противном случае Promise не завершается и код перестает исполняться
+   */
+  then = null
+
   /** @type {import('@notml/core').OOMElement.constructor} */
   constructor(
     /** @type {import('@notml/core').OOMElement.OOMTagName} */
