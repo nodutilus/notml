@@ -348,6 +348,91 @@ export default class CustomElements extends Test {
     document.body.innerHTML = ''
   }
 
+  /** Как и для базовых типов шаблонов, для асинхронных, должна быть общая последовательность вставки */
+  async ['Асинхронные типы template']() {
+    const [MyElement27, MyElement28, MyElement29, MyElement30] = oom.define(
+      class MyElement27 extends oom.extends(HTMLElement) {
+
+        static tagName = 'my-element27'
+
+        template = async () => {
+          await new Promise(resolve => setTimeout(() => resolve(), 1))
+
+          return oom('div')
+        }
+
+      },
+      class MyElement28 extends oom.extends(HTMLElement) {
+
+        static tagName = 'my-element28'
+
+        template = async () => {
+          await new Promise(resolve => setTimeout(() => resolve(), 1))
+
+          return '<div></div>'
+        }
+
+      },
+      class MyElement29 extends oom.extends(HTMLElement) {
+
+        static tagName = 'my-element29'
+
+        template = async () => {
+          await new Promise(resolve => setTimeout(() => resolve(), 1))
+
+          return document.createElement('div')
+        }
+
+      },
+      class MyElement30 extends oom.extends(HTMLElement) {
+
+        static tagName = 'my-element30'
+
+        template = async () => {
+          await new Promise(resolve => setTimeout(() => resolve(), 1))
+
+          return oom.a().b().dom
+        }
+
+      })
+    const myElm27 = new MyElement27()
+    const myElm28 = new MyElement28()
+    const myElm29 = new MyElement29()
+    const myElm30 = new MyElement30()
+
+
+    myElm27.innerHTML = 'test'
+    myElm28.innerHTML = 'test'
+    myElm29.innerHTML = 'test'
+    myElm30.innerHTML = 'test'
+
+    // До вставки в DOM Promise нет, т.к. компоненты еще не начали строятся
+    await Promise.all([oom(myElm27), oom(myElm28), oom(myElm29), oom(myElm30)])
+
+    document.body.innerHTML = ''
+    document.body.append(myElm27)
+    document.body.append(myElm28)
+    document.body.append(myElm29)
+    document.body.append(myElm30)
+
+    assert.equal(document.body.innerHTML, `
+      <my-element27>test</my-element27>
+      <my-element28>test</my-element28>
+      <my-element29>test</my-element29>
+      <my-element30>test</my-element30>
+    `.replace(/\s*\n+\s+/g, ''))
+
+    await Promise.all([oom(myElm27), oom(myElm28), oom(myElm29), oom(myElm30)])
+
+    assert.equal(document.body.innerHTML, `
+      <my-element27>test<div></div></my-element27>
+      <my-element28>test<div></div></my-element28>
+      <my-element29>test<div></div></my-element29>
+      <my-element30>test<a></a><b></b></my-element30>
+    `.replace(/\s*\n+\s+/g, ''))
+    document.body.innerHTML = ''
+  }
+
   /**
    * В качестве описания структуры опций можно использовать простые объекты и массивы.
    * - Объекты будут клонированы и объединены с опциями по умолчанию в новые объекты.
