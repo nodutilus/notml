@@ -685,7 +685,7 @@ declare module '@notml/core' {
      *  для асинхронных компонентов вернет Promise для ожидания построения шаблона,
      *  для синхронных вернет null
      */
-    type then = (resolve: Function) => void | null
+    type then = () => Promise<void>
 
     /**
      * Создает экземпляр OOMElement по переданному тегу DOM или классу пользовательского элемента,
@@ -729,6 +729,8 @@ declare module '@notml/core' {
     dom: OOMElement.DOMElement
     /** HTML код элемента, аналогично HTMLElement.outerHTML, но работает и для DocumentFragment */
     html: OOMElement.HTML
+    /** Заглушка для возможности вернуть OOMElementProxy из асинхронного метода */
+    then: OOMElement.then
     constructor(tagName: OOMElement.OOMTagName, ...args: OOMElement.ProxyApplyArgs)
     append: OOMElement.append
     clone: OOMElement.clone

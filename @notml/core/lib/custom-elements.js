@@ -56,12 +56,8 @@ function applyOOMTemplate(instance) {
       } else if (typeof asyncTemplate === 'string') {
         root.innerHTML += asyncTemplate
       }
-
-      return true
     }).catch(error => {
       root.innerHTML += String(error.stack || error)
-
-      return false
     })
   } else {
     if (template instanceof OOMElement) {

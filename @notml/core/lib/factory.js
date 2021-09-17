@@ -68,7 +68,16 @@ class OOMElement {
     proxy
   ) {
     if (tagName in instance) {
-      if (typeof instance[tagName] === 'function') {
+      if (tagName === 'then') {
+        if (instance.dom[OOMElement.async] instanceof Promise) {
+          return async (/** @type {Function } */ resolve) => {
+            await instance.then()
+            resolve(proxy)
+          }
+        } else {
+          return null
+        }
+      } else if (typeof instance[tagName] === 'function') {
         return (...args) => {
           const result = instance[tagName](...args)
 
@@ -195,14 +204,9 @@ class OOMElement {
   static async = Symbol('asyncOOMElement')
 
   /** @type {import('@notml/core').OOMElement.then} */
-  get then() {
-    if (this.dom[OOMElement.async] instanceof Promise) {
-      return (resolve) => {
-        this.dom[OOMElement.async].then(resolve)
-      }
-    } else {
-      return null
-    }
+  async then() {
+    await this.dom[OOMElement.async]
+    delete this.dom[OOMElement.async]
   }
 
   /** @type {import('@notml/core').OOMElement.constructor} */
