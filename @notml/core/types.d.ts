@@ -674,6 +674,20 @@ declare module '@notml/core' {
     type HTML = string
 
     /**
+     * Ключ ссылки на Promise ожидающий завершения построения асинхронного компонента
+     */
+    type async = symbol
+
+    /**
+     * Заглушка для возможности вернуть OOMElementProxy из асинхронного метода,
+     *  в противном случае Promise не завершается и код перестает исполняться
+     * Вернет функция для обработки Promise,
+     *  для асинхронных компонентов вернет Promise для ожидания построения шаблона,
+     *  для синхронных вернет null
+     */
+    type then = (resolve: Function) => void | null
+
+    /**
      * Создает экземпляр OOMElement по переданному тегу DOM или классу пользовательского элемента,
      * либо оборачивает в OOMElement существующий DOM элемент
      */
@@ -708,6 +722,7 @@ declare module '@notml/core' {
     static setAttribute: OOMElement.setAttribute
     static setAttributes: OOMElement.setAttributes
     static getAttribute: OOMElement.getAttribute
+    static async: OOMElement.async
     // @ts-ignore https://github.com/microsoft/TypeScript/pull/44512
     [OOMElement.IsOOMElementSymbol]: OOMElement.isOOMElementSymbol
     /** Ссылка на оригинальный DOM элемент */
@@ -874,11 +889,11 @@ declare module '@notml/core' {
     template?: Promise<OOMElement.OOMChild | void> | OOMElement.OOMChild | OOMElement.TemplateFN | void
 
     /**
-     * Состояние готовности компонента.
-     * false, если еще не добавлен в DOM или имеется ошибка построения компонента.
-     * Promise, если template является асинхронной функцией
+     * Ссылка на асинхронное состояние готовности компонента.
+     * void для синхронных компонентов, Promise, если template является асинхронной функцией
      */
-    ready: boolean | Promise<boolean>
+    // @ts-ignore https://github.com/microsoft/TypeScript/pull/44512
+    [OOMElement.async]: Promise<void> | void
 
     /** Хук ЖЦ элемента срабатывающий при вставке элемента в DOM */
     connectedCallback(): void

@@ -337,7 +337,7 @@ export default class CustomElements extends Test {
       <span>sync</span>
     `.replace(/\s*\n+\s+/g, ''))
 
-    await myE26.dom.ready
+    await myE26
 
     assert.equal(document.body.innerHTML, `
       <my-element26><span>async</span></my-element26>

@@ -191,11 +191,19 @@ class OOMElement {
     return html
   }
 
-  /**
-   * Заглушка для возможности вернуть OOMElementProxy из асинхронного метода,
-   *  в противном случае Promise не завершается и код перестает исполняться
-   */
-  then = null
+  /** @type {import('@notml/core').OOMElement.async} */
+  static async = Symbol('asyncOOMElement')
+
+  /** @type {import('@notml/core').OOMElement.then} */
+  get then() {
+    if (this.dom[OOMElement.async] instanceof Promise) {
+      return (resolve) => {
+        this.dom[OOMElement.async].then(resolve)
+      }
+    } else {
+      return null
+    }
+  }
 
   /** @type {import('@notml/core').OOMElement.constructor} */
   constructor(
