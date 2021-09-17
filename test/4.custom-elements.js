@@ -434,6 +434,76 @@ export default class CustomElements extends Test {
   }
 
   /**
+   * Ошибка в асинхронном шаблоне не должна приводить к падению построения всей страницы.
+   * Все необработанные компонентом ошибки добавляются в виде текста сообщения в вертску компонента.
+   * Это финальная проверки на ошибки, в правильном приложении все ошибки обрабатывают сами компоненты
+   */
+  async ['Ошибка в асинхронном шаблоне']() {
+    /** Компонент с ошибкой */
+    class MyAsyncError1 extends oom.extends(HTMLElement) {
+
+      static tagName = 'my-async-error1'
+
+      template = async () => {
+        await new Promise(resolve => setTimeout(() => resolve(), 1))
+        oom(this, oom.span('test1'))
+        throw new Error('test2')
+      }
+
+    }
+
+    /** Компонент с ошибкой (строка) */
+    class MyAsyncError2 extends oom.extends(HTMLElement) {
+
+      static tagName = 'my-async-error2'
+
+      template = async () => {
+        await new Promise(resolve => setTimeout(() => resolve(), 1))
+        oom(this, oom.span('test1'))
+        // eslint-disable-next-line
+        throw 'test2'
+      }
+
+    }
+
+    oom.define(MyAsyncError1, MyAsyncError2)
+
+    const myErr1 = oom.myAsyncError1()
+    const myErr2 = oom.myAsyncError2()
+
+    document.body.innerHTML = ''
+    oom(document.body, myErr1, myErr2)
+
+    assert.equal(document.body.innerHTML, `
+      <my-async-error1></my-async-error1>
+      <my-async-error2></my-async-error2>
+    `.replace(/\s*\n+\s+/g, ''))
+
+    const awaitedMyErr1 = await myErr1
+    const awaitedMyErr2 = await myErr2
+
+    assert.equal(awaitedMyErr1, myErr1)
+    assert.equal(awaitedMyErr2, myErr2)
+    assert.equal(document.body.innerHTML.replace(/\s*\n+\s+/g, '').replace(/:\d+:\d+/g, ''), `
+      <my-async-error1>
+        <span>test1</span>
+        <code>
+          Error: test2
+          at HTMLElement.template (file:///storage/development/nodutilus/notml/test/4.custom-elements.js)
+          at async OOMElement.then (file:///storage/development/nodutilus/notml/@notml/core/lib/factory.js)
+          at async Proxy.&lt;anonymous&gt; (file:///storage/development/nodutilus/notml/@notml/core/lib/factory.js)
+        </code>
+      </my-async-error1>
+      <my-async-error2>
+        <span>test1</span>
+        <code>test2</code>
+      </my-async-error2>
+    `.replace(/\s*\n+\s+/g, ''))
+
+    document.body.innerHTML = ''
+  }
+
+  /**
    * В качестве описания структуры опций можно использовать простые объекты и массивы.
    * - Объекты будут клонированы и объединены с опциями по умолчанию в новые объекты.
    * - Массивы из опций по умолчанию будет полностью заменены копиями массивов указанными в опциях.

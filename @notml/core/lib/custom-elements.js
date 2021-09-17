@@ -57,7 +57,10 @@ function applyOOMTemplate(instance) {
         root.innerHTML += asyncTemplate
       }
     }).catch(error => {
-      root.innerHTML += String(error.stack || error)
+      const err = document.createElement('code')
+
+      err.textContent = String(error.stack || error)
+      root.append(err)
     })
   } else {
     if (template instanceof OOMElement) {
