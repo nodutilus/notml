@@ -394,7 +394,8 @@ export default class CustomElements extends Test {
           return oom.a().b().dom
         }
 
-      })
+      }
+    )
     const myElm27 = new MyElement27()
     const myElm28 = new MyElement28()
     const myElm29 = new MyElement29()
