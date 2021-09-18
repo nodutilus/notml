@@ -484,16 +484,10 @@ export default class CustomElements extends Test {
 
     assert.equal(awaitedMyErr1, myErr1)
     assert.equal(awaitedMyErr2, myErr2)
-    assert.equal(document.body.innerHTML.replace(/\s*\n+\s+/g, '').replace(/:\d+:\d+/g, ''), `
-      <my-async-error1>
-        <span>test1</span>
-        <code>
-          Error: test2
-          at HTMLElement.template (file:///storage/development/nodutilus/notml/test/4.custom-elements.js)
-          at async OOMElement.then (file:///storage/development/nodutilus/notml/@notml/core/lib/factory.js)
-          at async Proxy.&lt;anonymous&gt; (file:///storage/development/nodutilus/notml/@notml/core/lib/factory.js)
-        </code>
-      </my-async-error1>
+
+    assert.ok(myErr1.dom.innerHTML.includes('<span>test1</span><code>Error: test2'))
+    assert.ok(myErr1.dom.innerHTML.includes('at HTMLElement.template (file:///storage/development/nodutilus/notml/test/4.custom-elements.js'))
+    assert.equal(myErr2.dom.outerHTML.replace(/\s*\n+\s+/g, ''), `
       <my-async-error2>
         <span>test1</span>
         <code>test2</code>
