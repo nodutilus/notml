@@ -10,7 +10,7 @@ for (let index = 0; index < 10000; index++) {
 }
 
 const initRSS = memoryUsage().rss
-const wait = () => { return new Promise(resolve => { setTimeout(resolve, 1) }) }
+const wait = () => { return new Promise(resolve => { setTimeout(resolve) }) }
 
 (async () => {
   for (let index = 0; index < 10000; index++) {
