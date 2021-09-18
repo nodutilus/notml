@@ -70,7 +70,7 @@ class OOMElement {
     if (tagName in instance) {
       if (tagName === 'then') {
         if (instance.dom[OOMElement.async] instanceof Promise) {
-          return async (/** @type {Function} */ resolve) => {
+          return async (/** @type {Function} */resolve) => {
             await instance.then()
             resolve(proxy)
           }
