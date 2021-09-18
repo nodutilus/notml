@@ -318,7 +318,7 @@ export default class CustomElements extends Test {
       template = async () => {
         const span = oom.span('async')
 
-        await new Promise(resolve => setTimeout(() => resolve()))
+        await new Promise(resolve => setTimeout(resolve))
 
         return span
       }
@@ -356,7 +356,7 @@ export default class CustomElements extends Test {
         static tagName = 'my-element27'
 
         template = async () => {
-          await new Promise(resolve => setTimeout(() => resolve()))
+          await new Promise(resolve => setTimeout(resolve))
 
           return oom('div')
         }
@@ -367,7 +367,7 @@ export default class CustomElements extends Test {
         static tagName = 'my-element28'
 
         template = async () => {
-          await new Promise(resolve => setTimeout(() => resolve()))
+          await new Promise(resolve => setTimeout(resolve))
 
           return '<div></div>'
         }
@@ -378,7 +378,7 @@ export default class CustomElements extends Test {
         static tagName = 'my-element29'
 
         template = async () => {
-          await new Promise(resolve => setTimeout(() => resolve()))
+          await new Promise(resolve => setTimeout(resolve))
 
           return document.createElement('div')
         }
@@ -389,7 +389,7 @@ export default class CustomElements extends Test {
         static tagName = 'my-element30'
 
         template = async () => {
-          await new Promise(resolve => setTimeout(() => resolve()))
+          await new Promise(resolve => setTimeout(resolve))
 
           return oom.a().b().dom
         }
@@ -445,7 +445,7 @@ export default class CustomElements extends Test {
       static tagName = 'my-async-error1'
 
       template = async () => {
-        await new Promise(resolve => setTimeout(() => resolve()))
+        await new Promise(resolve => setTimeout(resolve))
         oom(this, oom.span('test1'))
         throw new Error('test2')
       }
@@ -458,7 +458,7 @@ export default class CustomElements extends Test {
       static tagName = 'my-async-error2'
 
       template = async () => {
-        await new Promise(resolve => setTimeout(() => resolve()))
+        await new Promise(resolve => setTimeout(resolve))
         oom(this, oom.span('test1'))
         // eslint-disable-next-line
         throw 'test2'
