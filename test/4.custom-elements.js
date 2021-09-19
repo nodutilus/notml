@@ -487,7 +487,7 @@ export default class CustomElements extends Test {
     assert.equal(awaitedMyErr2, myErr2)
 
     assert.ok(myErr1.dom.innerHTML.includes('<span>test1</span><code>Error: test2'))
-    assert.ok(myErr1.dom.innerHTML.includes('at HTMLElement.template (file:///storage/development/nodutilus/notml/test/4.custom-elements.js'))
+    assert.ok(myErr1.dom.innerHTML.includes('at HTMLElement.template'))
     assert.equal(myErr2.dom.outerHTML.replace(/\s*\n+\s+/g, ''), `
       <my-async-error2>
         <span>test1</span>
