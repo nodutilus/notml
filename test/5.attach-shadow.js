@@ -52,10 +52,12 @@ export default class AttachShadow extends Test {
 
   /**
    * Стили компонентов при вставке в теневой DOM копируются,
-   *  и вставляются перед первым использованием компонента
+   *  и вставляются перед первым использованием компонента.
+   * При удалении компонента стили остаются в корне shadowRoot, аналогично стилям в основном дереве,
+   *  и при повторной вставке стили не дублируются.
    */
   ['Копирование Style в состав shadowRoot']() {
-    /** Компонент со стилями */
+    /** Компонент со стилями 1 */
     class MySpan1 extends oom.extends(HTMLElement) {
 
       static tagName = 'my-span1'
@@ -67,17 +69,29 @@ export default class AttachShadow extends Test {
 
     }
 
+    /** Компонент со стилями 2 */
+    class MySpan2 extends oom.extends(HTMLElement) {
+
+      static tagName = 'my-span2'
+      static style = oom.style({
+        '.my-span2_title': { background: 'green' }
+      })
+
+      template = oom.span({ class: '.my-span2_title' })
+
+    }
+
     /** Теневой дом содержащий внутри компонент */
     class MyShadow3 extends oom.extends(HTMLElement) {
 
       static tagName = 'my-shadow3'
       static attachShadow = true
 
-      template = new MySpan1()
+      template = oom()(new MySpan1(), new MySpan2())
 
     }
 
-    oom.define(MySpan1, MyShadow3)
+    oom.define(MySpan1, MySpan2, MyShadow3)
 
     const myShadow3 = new MyShadow3()
 
@@ -89,6 +103,9 @@ export default class AttachShadow extends Test {
         <style is="oom-style" oom-element="my-span1">
           my-span1 .my-span1_title{ background: red; }
         </style>
+        <style is="oom-style" oom-element="my-span2">
+          my-span2 .my-span2_title{ background: green; }
+        </style>
       </head>
       <body>
         <my-shadow3></my-shadow3>
@@ -99,10 +116,49 @@ export default class AttachShadow extends Test {
         <style is="oom-style" oom-element="my-span1">
           my-span1 .my-span1_title{ background: red; }
         </style>
+        <style is="oom-style" oom-element="my-span2">
+          my-span2 .my-span2_title{ background: green; }
+        </style>
       </head>
       <my-span1>
         <span class=".my-span1_title"></span>
       </my-span1>
+      <my-span2>
+        <span class=".my-span2_title"></span>
+      </my-span2>
+    `.replace(/\s*\n+\s+/g, ''))
+
+    myShadow3.shadowRoot.lastChild.remove()
+    myShadow3.shadowRoot.lastChild.remove()
+
+    assert.equal(myShadow3.shadowRoot.innerHTML, `
+      <head>
+        <style is="oom-style" oom-element="my-span1">
+          my-span1 .my-span1_title{ background: red; }
+        </style>
+        <style is="oom-style" oom-element="my-span2">
+          my-span2 .my-span2_title{ background: green; }
+        </style>
+      </head>
+    `.replace(/\s*\n+\s+/g, ''))
+
+    oom(myShadow3.shadowRoot, new MySpan1(), new MySpan2())
+
+    assert.equal(myShadow3.shadowRoot.innerHTML, `
+      <head>
+        <style is="oom-style" oom-element="my-span1">
+          my-span1 .my-span1_title{ background: red; }
+        </style>
+        <style is="oom-style" oom-element="my-span2">
+          my-span2 .my-span2_title{ background: green; }
+        </style>
+      </head>
+      <my-span1>
+        <span class=".my-span1_title"></span>
+      </my-span1>
+      <my-span2>
+        <span class=".my-span2_title"></span>
+      </my-span2>
     `.replace(/\s*\n+\s+/g, ''))
 
     document.head.innerHTML = ''

@@ -22,21 +22,28 @@ function applyOOMTemplate(instance) {
   }
 
   // Клонирование стилей компонента во внутрь ShadowRoot
-  if (rootNode instanceof ShadowRoot && shadowRootOOMStyleMap.get(rootNode) !== instance.constructor) {
+  if (rootNode instanceof ShadowRoot) {
     const { style } = instance.constructor
 
     if (style instanceof OOMElement && style.dom instanceof OOMStyle) {
-      /** @type {HTMLElement} */
-      // @ts-ignore
-      let head = rootNode.firstChild
+      let styleSet = shadowRootOOMStyleMap.get(rootNode)
 
-      if (!(head instanceof HTMLHeadElement)) {
-        head = document.createElement('head')
-        rootNode.prepend(head)
+      if (!styleSet) {
+        shadowRootOOMStyleMap.set(rootNode, (styleSet = new WeakSet()))
       }
+      if (!styleSet.has(instance.constructor)) {
+        /** @type {HTMLElement} */
+        // @ts-ignore
+        let head = rootNode.firstChild
 
-      head.append(style.clone().dom)
-      shadowRootOOMStyleMap.set(rootNode, instance.constructor)
+        if (!(head instanceof HTMLHeadElement)) {
+          head = document.createElement('head')
+          rootNode.prepend(head)
+        }
+
+        head.append(style.clone().dom)
+        styleSet.add(instance.constructor)
+      }
     }
   }
 
