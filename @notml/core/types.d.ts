@@ -551,7 +551,7 @@ declare module '@notml/core' {
     type AttributeName = string
 
     /** Поддерживаемые значения атрибутов для OOMElement */
-    type OOMAttributeValue = string | Function | base.CSSStyleDeclaration
+    type OOMAttributeValue = string | boolean | Function | base.CSSStyleDeclaration
 
     /** Справочник атрибутов для OOMElement */
     type OOMAttributes = {

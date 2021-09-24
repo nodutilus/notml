@@ -216,6 +216,21 @@ export default class BasicBehavior extends Test {
   }
 
   /**
+   * Для наглядной установки логических атрибутов добавим их переключение через true/false
+   */
+  ['Обновление логических атрибутов']() {
+    const div = oom.div()
+
+    assert.equal(div.html, '<div></div>')
+
+    div({ enabled: true })
+    assert.equal(div.html, '<div enabled=""></div>')
+
+    div({ enabled: false })
+    assert.equal(div.html, '<div></div>')
+  }
+
+  /**
    * Создание составных компонентов можно выполнять без использования промежуточных переменных,
    *    чтобы приблизить вид к верстке через HTML.
    */

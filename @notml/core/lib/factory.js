@@ -132,6 +132,15 @@ class OOMElement {
       case 'function':
         instance[attrName] = attrValue
         break
+      case 'boolean':
+        // Пустая строка по умолчанию для логических атрибутов:
+        // https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute
+        if (attrValue) {
+          instance.setAttribute(attrName, '')
+        } else {
+          instance.removeAttribute(attrName)
+        }
+        break
       default:
         attrName = attrName.replace(/[A-Z]/g, str => `-${str.toLowerCase()}`)
         if (attrName === 'class' && 'className' in instance.constructor) {
