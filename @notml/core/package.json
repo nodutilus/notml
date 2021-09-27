@@ -22,7 +22,6 @@
   "exports": {
     ".": "./core.js"
   },
-  "browser": "./core.js",
   "module": "./core.js",
   "types": "./types.d.ts",
   "publishConfig": {
