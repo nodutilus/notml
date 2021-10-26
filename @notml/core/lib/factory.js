@@ -142,9 +142,13 @@ class OOMElement {
         }
         break
       default:
-        attrName = attrName.replace(/[A-Z]/g, str => `-${str.toLowerCase()}`)
+        attrName = attrName.replace(/[A-Z]+/g, str => `-${str.toLowerCase()}`)
         if (attrName === 'class' && 'className' in instance.constructor) {
           attrValue = instance.constructor.className + ' ' + attrValue
+        }
+        if (attrName === 'inner-html') {
+          instance.innerHTML = attrValue
+          break
         }
         instance.setAttribute(attrName, attrValue)
         break

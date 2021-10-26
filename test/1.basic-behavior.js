@@ -231,6 +231,21 @@ export default class BasicBehavior extends Test {
   }
 
   /**
+   * Если имеется только текст верстки, то его можно задать в OOM элемент через атрибут innerHTML.
+   * Полезно если oom используется в другими библиотеками,
+   *  например @primer/octicons возвращает иконки в виде текста svg-разметки.
+   */
+  ['Установка innerHTML через атрибуты OOM']() {
+    const div = oom.div()
+
+    div({ innerHTML: '<span>test1</span>' })
+    assert.equal(div.html, '<div><span>test1</span></div>')
+
+    div({ 'inner-html': '<span>test2</span>' })
+    assert.equal(div.html, '<div><span>test2</span></div>')
+  }
+
+  /**
    * Создание составных компонентов можно выполнять без использования промежуточных переменных,
    *    чтобы приблизить вид к верстке через HTML.
    */
