@@ -1,5 +1,6 @@
 const { document, customElements, HTMLStyleElement } = window
-
+/** @type {WeakMap<OOMStyle, {scopeName: import('@notml/core').OOMStyle.ScopeName, style:import('@notml/core').OOMStyle.Style}>} */
+const privateOOMStyleMap = new WeakMap()
 
 /** @type {import('@notml/core').OOMStyle} */
 class OOMStyle extends HTMLStyleElement {
@@ -34,11 +35,16 @@ class OOMStyle extends HTMLStyleElement {
     }
   }
 
-  /** @type {import('@notml/core').OOMStyle.ScopeName} */
-  #scopeName = ''
+  /** Добавляем инициализацию приватных данных класса */
+  constructor() {
+    const privateSlots = {
+      scopeName: '',
+      style: new Map()
+    }
 
-  /** @type {import('@notml/core').OOMStyle.Style} */
-  #style = new Map()
+    super()
+    privateOOMStyleMap.set(this, privateSlots)
+  }
 
   /** @type {import('@notml/core').OOMStyle.update} */
   update(
@@ -47,31 +53,35 @@ class OOMStyle extends HTMLStyleElement {
     /** @type {Array<import('@notml/core').OOMStyle.StyleSource>} */
     ...styles
   ) {
+    const privateSlots = privateOOMStyleMap.get(this)
+
     if (typeof scopeName === 'string') {
-      this.#scopeName = scopeName
+      privateSlots.scopeName = scopeName
     } else if (typeof scopeName !== 'undefined') {
       styles.unshift(scopeName)
     }
     for (const style of styles) {
-      OOMStyle.updateStyle(this.#style, '', style)
+      OOMStyle.updateStyle(privateSlots.style, '', style)
     }
   }
 
   /** @type {import('@notml/core').OOMStyle.connectedCallback} */
   connectedCallback() {
-    if (this.#style.size) {
+    const privateSlots = privateOOMStyleMap.get(this)
+
+    if (privateSlots.style.size) {
       let textStyle = ''
 
-      for (const [name, style] of this.#style) {
-        const selector = (this.#scopeName && name.startsWith(this.#scopeName) && name) ||
-          (this.#scopeName && name && `${this.#scopeName} ${name}`) ||
-          this.#scopeName || name || '*'
+      for (const [name, style] of privateSlots.style) {
+        const selector = (privateSlots.scopeName && name.startsWith(privateSlots.scopeName) && name) ||
+          (privateSlots.scopeName && name && `${privateSlots.scopeName} ${name}`) ||
+          privateSlots.scopeName || name || '*'
 
         textStyle += `${selector}{ ${style.getAttribute('style') || ''} }`
       }
 
       this.innerHTML = textStyle
-      this.#style.clear()
+      privateSlots.style.clear()
     }
   }
 
