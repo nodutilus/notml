@@ -558,6 +558,10 @@ declare module '@notml/core' {
       [x: string]: OOMAttributeValue
       /** CSS стили DOM элемента */
       style?: base.CSSStyleDeclaration | string
+      /** HTML разметка для вставки в DOM элемент */
+      innerHTML?: string
+      /** HTML разметка для вставки в DOM элемент */
+      ['inner-html']?: string
     }
 
     /** Экземпляр элемента для вставки */
