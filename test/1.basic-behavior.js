@@ -408,4 +408,15 @@ export default class BasicBehavior extends Test {
     assert.equal(div2.html, '<div onclick="this.append(\'0\')">0</div>')
   }
 
+  /**
+   * Вставка oom элемента в другой не должна завершаться ошибкой.
+   * dom элемент передается по ссылке.
+   */
+  ['Вставка oom в oom']() {
+    const div1 = oom.div()
+    const div2 = oom(div1)
+
+    assert.equal(div1.dom, div2.dom)
+  }
+
 }

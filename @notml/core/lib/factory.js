@@ -250,6 +250,8 @@ class OOMElement {
       this.dom = new tagName()
     } else if (typeof tagName === 'undefined') {
       this.dom = document.createDocumentFragment()
+    } else if (tagName instanceof OOMElement) {
+      this.dom = tagName.dom
     } else {
       // @ts-ignore В остальных случаях createElement вернет собственную ошибку создания элемента
       this.dom = document.createElement(tagName)
