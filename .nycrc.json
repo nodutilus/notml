@@ -9,11 +9,5 @@
     "test/pre-test.js",
     "test/mem.js",
     "**/*.d.ts"
-  ],
-
-  "all": true,
-  "branches": 100,
-  "lines": 100,
-  "functions": 100,
-  "statements": 100
+  ]
 }
