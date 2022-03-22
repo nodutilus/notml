@@ -1,6 +1,6 @@
 import { OOMStyle } from './style.js'
 
-const { document, customElements, DocumentFragment, HTMLElement } = window
+const { document, customElements, DocumentFragment, HTMLElement, HTMLTemplateElement } = window
 const isOOMElementSymbol = Symbol('isOOMElement')
 const proxiesMap = new WeakMap()
 /** @type {import('@notml/core').base.OOMProxyConstructor} */
@@ -261,10 +261,15 @@ class OOMElement {
 
   /** @type {import('@notml/core').OOMElement.append} */
   append(/** @type {any} */child) {
+    let parent = this.dom
+
+    if (parent instanceof HTMLTemplateElement) {
+      parent = parent.content
+    }
     if (child instanceof OOMElement) {
-      this.dom.append(child.dom)
+      parent.append(child.dom)
     } else if (typeof child !== 'undefined') {
-      this.dom.append(child)
+      parent.append(child)
     }
 
     return this

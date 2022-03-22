@@ -419,4 +419,24 @@ export default class BasicBehavior extends Test {
     assert.equal(div1.dom, div2.dom)
   }
 
+
+  /**
+   * При работе с тегом template для работы с вложенными элементами нужно использовать elm.content.
+   * При этом clone из оом клонирует сам шаблон, а его содержимое клонируется через DOM API,
+   *  это дает возможность удобно создавать в JS через oom шаблоны для DOM шаблонов
+   */
+  ['Работа с тегом template']() {
+    const tmpl = oom.template(oom.div())
+    // Клонируем содержимое шаблона через DOM API
+    const elm1 = oom.main(tmpl.dom.content.cloneNode(true))
+    // Клонируем сам шаблон через OOM API
+    const elm2 = oom.section(tmpl.clone())
+
+    assert.equal(elm1.dom.outerHTML, '<main><div></div></main>')
+    assert.equal(elm2.dom.outerHTML, '<section><template><div></div></template></section>')
+    assert.equal(tmpl.dom.outerHTML, '<template><div></div></template>')
+    // @ts-ignore
+    assert.equal(tmpl.dom.content.firstChild.outerHTML, '<div></div>')
+  }
+
 }

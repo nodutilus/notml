@@ -565,7 +565,7 @@ declare module '@notml/core' {
     }
 
     /** Экземпляр элемента для вставки */
-    type OOMChild = string | DocumentFragment | HTMLElement | OOMElement | OOMFragmentProxy | OOMElementProxy | OOMStyleProxy
+    type OOMChild = string | Node | DocumentFragment | HTMLElement | OOMElement | OOMFragmentProxy | OOMElementProxy | OOMStyleProxy
 
     /** Функция-шаблон для генерации пользовательского компонента */
     interface TemplateFN {
@@ -991,6 +991,24 @@ declare module '@notml/core' {
         ...styles: Array<OOMStyle.StyleSource>
       ) => OOMStyleProxy
 
+      /**
+       * Создает элемент шаблона контента - template
+       * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/template
+       *
+       * @example
+       * const tmpl = oom.template(oom.div())
+       * // Клонируем содержимое шаблона через DOM API
+       * const elm1 = oom.main(tmpl.dom.content.cloneNode(true))
+       * // Клонируем сам шаблон через OOM API
+       * const elm2 = oom.section(tmpl.clone())
+       *
+       * >>
+       * elm1.dom.outerHTML === '<main><div></div></main>'
+       * elm2.dom.outerHTML === '<section><template><div></div></template></section>'
+       * tmpl.dom.outerHTML === '<template><div></div></template>'
+       */
+      template: (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>) => OOMTemplateProxy
+
       /** HTML код элемента, аналогично HTMLElement.outerHTML, но работает и для DocumentFragment */
       html: OOMElement.HTML
 
@@ -1124,6 +1142,13 @@ declare module '@notml/core' {
     (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMElementProxy
     // @ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
     [tagName: string]: OOMProxy.createElementToFragmentProxy
+  }
+
+  /** Proxy для работы с элементом template */
+  // @ts-ignore переопределение dom из OOMElementOrigin
+  interface OOMTemplateProxy extends OOMElementProxy {
+    // @ts-ignore проверка типа индекса в OOMElementProxy
+    dom: HTMLTemplateElement
   }
 
   interface OOMFragmentProxy extends OOMProxy.OOMFragmentOrigin {
