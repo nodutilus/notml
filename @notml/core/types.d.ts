@@ -565,7 +565,7 @@ declare module '@notml/core' {
     }
 
     /** Экземпляр элемента для вставки */
-    type OOMChild = string | Node | DocumentFragment | HTMLElement | OOMElement | OOMFragmentProxy | OOMElementProxy | OOMStyleProxy
+    type OOMChild = string | Node | DocumentFragment | HTMLElement | OOMElement | OOMFragmentProxy | OOMElementProxy | OOMTemplateProxy | OOMStyleProxy
 
     /** Функция-шаблон для генерации пользовательского компонента */
     interface TemplateFN {

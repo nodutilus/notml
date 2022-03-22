@@ -228,6 +228,12 @@ export default class BasicBehavior extends Test {
 
     div({ enabled: false })
     assert.equal(div.html, '<div></div>')
+
+    div({ testEnabled: true })
+    assert.equal(div.html, '<div test-enabled=""></div>')
+
+    div({ testEnabled: false })
+    assert.equal(div.html, '<div></div>')
   }
 
   /**

@@ -135,6 +135,7 @@ class OOMElement {
       case 'boolean':
         // Пустая строка по умолчанию для логических атрибутов:
         // https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute
+        attrName = attrName.replace(/[A-Z]+/g, str => `-${str.toLowerCase()}`)
         if (attrValue) {
           instance.setAttribute(attrName, '')
         } else {
