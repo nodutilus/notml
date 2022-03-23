@@ -1,6 +1,6 @@
 import { OOMStyle } from './style.js'
 
-const { document, customElements, DocumentFragment, HTMLElement, HTMLTemplateElement } = window
+const { document, customElements, DocumentFragment, Element, HTMLElement, HTMLTemplateElement } = window
 const isOOMElementSymbol = Symbol('isOOMElement')
 const proxiesMap = new WeakMap()
 /** @type {import('@notml/core').base.OOMProxyConstructor} */
@@ -137,9 +137,11 @@ class OOMElement {
         // https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute
         attrName = attrName.replace(/[A-Z]+/g, str => `-${str.toLowerCase()}`)
         if (attrValue) {
-          instance.setAttribute(attrName, '')
+          // Для защиты от подмены поведения на экземпляре, используем базовый метод
+          Element.prototype.setAttribute.call(instance, attrName, '')
         } else {
-          instance.removeAttribute(attrName)
+          // Для защиты от подмены поведения на экземпляре, используем базовый метод
+          Element.prototype.removeAttribute.call(instance, attrName)
         }
         break
       default:
@@ -151,7 +153,8 @@ class OOMElement {
           instance.innerHTML = attrValue
           break
         }
-        instance.setAttribute(attrName, attrValue)
+        // Для защиты от подмены поведения на экземпляре, используем базовый метод
+        Element.prototype.setAttribute.call(instance, attrName, attrValue)
         break
     }
   }

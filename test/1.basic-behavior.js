@@ -308,7 +308,7 @@ export default class BasicBehavior extends Test {
       err = error
     }
 
-    assert.equal(err.message, 'instance.setAttribute is not a function')
+    assert.equal(err.message, "'setAttribute' called on an object that is not a valid instance of Element.")
     assert.equal(fragment.html, '')
   }
 
