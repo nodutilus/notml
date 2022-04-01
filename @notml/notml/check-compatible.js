@@ -140,9 +140,7 @@
         '    <p><a href="https://www.google.ru/chrome/">Install Google Chrome</a></p>' +
         '    <p>' +
         '      <button id="moreMessages">More details...</button>' +
-        '      <code style="display: none;" id="errorMessages">' +
-        '        <pre></pre>' +
-        '      </code>' +
+        '      <code style="display: none;" id="errorMessages"></code>' +
         '    </p>' +
         '  </div>' +
         '</div>'
@@ -153,7 +151,7 @@
 
       moreMessages.onclick = () => {
         moreMessages.style.display = 'none'
-        errorMessages.innerHTML = messages.join('\n\n')
+        errorMessages.innerHTML += 'userAgent: ' + window.navigator.userAgent + '\n\n' + messages.join('\n\n')
         errorMessages.style.display = 'inline'
       }
     }
