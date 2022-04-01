@@ -116,6 +116,7 @@
   }
 
   if (!success) {
+    window['@notml/core:compatibility'] = false
     window.document.head.innerHTML = ''
     window.onload = function onload() {
       window.document.body.innerHTML =
@@ -134,6 +135,7 @@
         '<div class="flex-center" style="justify-content: space-around;">' +
         '  <div class="flex-center" style="margin: 1rem;">' +
         '    <p>Your browser or device is outdated and not supported.</p>' +
+        '    <p>Browser compatibility or newer: Chrome 74, Firefox 90, Safari 14.1, Safari on iOS 14.5</p>' +
         '    <p>We recommend using the latest version of the Google Chrome browser</p>' +
         '    <p><a href="https://www.google.ru/chrome/">Install Google Chrome</a></p>' +
         '    <p>' +
