@@ -86,34 +86,36 @@
     messages.push(error.message + '\n' + error.stack)
   }
 
-  try {
-    var testFunction5 = new Function(
-      'class TestClass {' +
-      '  static #a = 1;' +
-      '  #b = 1;' +
-      '}' +
-      'const a = new TestClass()'
-    )
-    testFunction5()
-  } catch (error) {
-    success = false
-    messages.push('Private properties are not supported in JS classes')
-    messages.push(error.message + '\n' + error.stack)
-  }
 
-  try {
-    var testFunction6 = new Function(
-      'class TestClass {' +
-      '  #test(){};' +
-      '}' +
-      'const a = new TestClass()'
-    )
-    testFunction6()
-  } catch (error) {
-    success = false
-    messages.push('Private methods are not supported in JS classes')
-    messages.push(error.message + '\n' + error.stack)
-  }
+  // Пока не везде поддерживается
+  // try {
+  //   var testFunction5 = new Function(
+  //     'class TestClass {' +
+  //     '  static #a = 1;' +
+  //     '  #b = 1;' +
+  //     '}' +
+  //     'const a = new TestClass()'
+  //   )
+  //   testFunction5()
+  // } catch (error) {
+  //   success = false
+  //   messages.push('Private properties are not supported in JS classes')
+  //   messages.push(error.message + '\n' + error.stack)
+  // }
+
+  // try {
+  //   var testFunction6 = new Function(
+  //     'class TestClass {' +
+  //     '  #test(){};' +
+  //     '}' +
+  //     'const a = new TestClass()'
+  //   )
+  //   testFunction6()
+  // } catch (error) {
+  //   success = false
+  //   messages.push('Private methods are not supported in JS classes')
+  //   messages.push(error.message + '\n' + error.stack)
+  // }
 
   if (!success) {
     window['@notml/core:compatibility'] = false
