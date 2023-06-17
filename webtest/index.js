@@ -7,7 +7,7 @@ const dir = resolve('webtest')
 
 
 fastify
-  .register(FastifyStatic, { root: resolve('.'), prefix: '/' })
+  .register(FastifyStatic, { root: resolve('.'), prefix: '/' }) // @ts-ignore
   .get('/', (req, reply) => { reply.sendFile('webtest.html', dir) })
   .listen({ host: '0.0.0.0', port: 3000 }, (err, address) => {
     if (err) {

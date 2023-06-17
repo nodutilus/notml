@@ -885,7 +885,7 @@ declare module '@notml/core' {
 
     /**
     * Создает экземпляр CustomElement
-    */
+    */// @ts-ignore
     get constructor(): CustomElement.constructor
 
     /**
