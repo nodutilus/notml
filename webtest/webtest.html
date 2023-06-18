@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NotML Core</title>
+  <script type="module" src="webtest/webtest.js"></script>
+</head>
+
+<style>
+  .border {
+    border: 1px solid #ccc;
+    padding: 4px;
+    margin-bottom: 8px;
+  }
+
+  .title {
+    border-bottom: 1px dotted #ccc;
+    margin-bottom: 4px;
+    display: inline-block;
+  }
+</style>
+
+<body>
+
+  <p>
+    <a href="/webtest/compatible.html">Compatible NotML Core</a><br>
+    <a href="/webtest/compatible-min.html">Compatible NotML Core (min)</a><br>
+    <a href="/webtest/core.html">NotML Core - CDN lib</a><br>
+    <a href="/webtest/core-min.html">NotML Core - CDN lib (min)</a><br>
+    <a href="/webtest/core-from-cdn.html">NotML Core - from CDN (All-in-one)</a><br>
+    <a href="/webtest/core-from-cdn-min.html">NotML Core - from CDN (All-in-one - minimized)</a><br>
+    <a href="/webtest/core-from-cdn-src.html">NotML Core - from CDN (Source)</a><br>
+    <a href="/webtest/iframe-isolation.html">NotML Core - iframe isolation</a><br>
+    <a href="/webtest/shadow-root.html">NotML Core - ShadowRoot</a><br>
+    <a href="/webtest/custom-elements-min.html">NotML Core - ContainerElements (min)</a><br>
+    <a href="/webtest/css-custom-properties.html">NotML Core - CSS Custom Properties</a><br>
+  </p>
+
+  <div class="border">
+    <span class="title">Example #1 - базовая верстка</span>
+    <div id="exp1"></div>
+  </div>
+
+  <div class="border">
+    <span class="title">Example #2 - переиспользование и копирование</span>
+    <div id="exp2"></div>
+  </div>
+
+  <div class="border">
+    <span class="title">Example #3 - простой кастомный компонент</span>
+    <div id="exp3"></div>
+  </div>
+
+  <div class="border">
+    <span class="title">Example #4 - генерация style is="oom-style"</span>
+    <div id="exp4"></div>
+  </div>
+
+  <div class="border">
+    <span class="title">Example #5 - стилизация CustomElement через static style</span>
+    <div id="exp5"></div>
+  </div>
+
+</body>
+
+</html>

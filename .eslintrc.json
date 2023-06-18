@@ -1,0 +1,35 @@
+{
+  "extends": "@nodutilus",
+  "env": {
+    "browser": true,
+    "node": false
+  },
+  "overrides": [
+    {
+      "files": [
+        "./test/**"
+      ],
+      "env": {
+        "browser": true,
+        "node": true
+      }
+    },
+    {
+      "files": [
+        "./webtest/index.js"
+      ],
+      "env": {
+        "browser": false,
+        "node": true
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "/_deprecated/",
+    "/build/",
+    "/@notml/notml/check-compatible.min.js",
+    "/@notml/notml/core.js",
+    "/@notml/notml/core.min.js",
+    "*.d.ts"
+  ]
+}

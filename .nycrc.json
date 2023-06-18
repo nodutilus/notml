@@ -1,0 +1,13 @@
+{
+  "extends": "@nodutilus/project-config/nyc",
+  "include": [
+    "@notml",
+    "test"
+  ],
+  "exclude": [
+    "@notml/notml/**",
+    "test/pre-test.js",
+    "test/mem.js",
+    "**/*.d.ts"
+  ]
+}

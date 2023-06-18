@@ -1,0 +1,30 @@
+{
+  "name": "@notml/ssr",
+  "version": "0.0.1-pre.1",
+  "description": "Not a HTML - server-side rendering of HTML and CSS",
+  "keywords": [
+    "ssr",
+    "server-side-rendering",
+    "html-in-js",
+    "css-in-js"
+  ],
+  "license": "Unlicense",
+  "repository": "github:nodutilus/notml",
+  "type": "module",
+  "engines": {
+    "node": ">=16"
+  },
+  "files": [
+    "lib",
+    "ssr.js",
+    "types.d.ts"
+  ],
+  "exports": {
+    ".": "./ssr.js"
+  },
+  "module": "./ssr.js",
+  "types": "./types.d.ts",
+  "publishConfig": {
+    "access": "public"
+  }
+}

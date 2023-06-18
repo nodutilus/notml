@@ -1,0 +1,19 @@
+{
+  "repository": "github:nodutilus/notml",
+  "license": "Unlicense",
+  "type": "module",
+  "devDependencies": {
+    "@nodutilus/project-config": "latest",
+    "@nodutilus/test": "latest",
+    "@rollup/plugin-node-resolve": "latest",
+    "fastify": "latest",
+    "fastify-static": "latest",
+    "jsdom": "latest",
+    "rollup": "latest",
+    "rollup-plugin-cleanup": "latest",
+    "rollup-plugin-terser": "latest"
+  },
+  "scripts": {
+    "pre-test": "node test/pre-test"
+  }
+}
