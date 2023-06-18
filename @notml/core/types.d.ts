@@ -565,7 +565,7 @@ declare module '@notml/core' {
     }
 
     /** Экземпляр элемента для вставки */
-    type OOMChild = string | Node | DocumentFragment | HTMLElement | OOMElement | OOMFragmentProxy | OOMElementProxy | OOMTemplateProxy | OOMStyleProxy
+    type OOMChild = string | Node | DocumentFragment | HTMLElement | OOMElement | OOMFragmentProxy | OOMElementProxy<any> | OOMTemplateProxy | OOMStyleProxy
 
     /** Функция-шаблон для генерации пользовательского компонента */
     interface TemplateFN {
@@ -598,7 +598,7 @@ declare module '@notml/core' {
 
     /** Создание внешнего Proxy для работы с OOM элементом */
     interface createProxy {
-      (args: OOMElementArgs): OOMElementProxy
+      (args: OOMElementArgs): OOMElementProxy<any>
     }
 
     /**
@@ -607,7 +607,7 @@ declare module '@notml/core' {
      * Поведение выбирается в зависимости от переданного типа аргументов
      */
     interface proxyApply {
-      (wrapper: OOMElementWrapper, _: any, args: ProxyApplyArgs): OOMElementProxy
+      (wrapper: OOMElementWrapper, _: any, args: ProxyApplyArgs): OOMElementProxy<any>
     }
 
     /**
@@ -617,7 +617,7 @@ declare module '@notml/core' {
      * Вернет метод или свойство из OOM элемента или фабрику для генерации DocumentFragment
      */
     interface proxyGetter {
-      (wrapper: OOMElementWrapper, tagName: TagName, proxy: OOMElementProxy): any
+      (wrapper: OOMElementWrapper, tagName: TagName, proxy: OOMElementProxy<any>): any
     }
 
     /** Набор ловушек для создания OOMElementProxy */
@@ -631,7 +631,7 @@ declare module '@notml/core' {
     interface hasInstance {
       (
         /** Экземпляр класса для проверки на соответствие OOMElement */
-        instance: OOMElementProxy
+        instance: OOMElementProxy<any>
       ): boolean
     }
 
@@ -711,7 +711,7 @@ declare module '@notml/core' {
      * Клонирует DOM элемент и возвращает новый экземпляр OOM, содержащий копию DOM элемента
      */
     interface clone {
-      (): OOMElementProxy
+      (): OOMElementProxy<any>
     }
 
   }
@@ -920,8 +920,8 @@ declare module '@notml/core' {
      *     ...childs
      *   </div>
      */
-    interface createElementProxy {
-      (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMElementProxy
+    interface createElementProxy<T> {
+      (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMElementProxy<T>
     }
     /**
      * Создает OOM элемент, добавляя его в верстку после текущего,
@@ -960,7 +960,7 @@ declare module '@notml/core' {
 
     /** Создает новый OOM элемент и оборачивает его в Proxy */
     interface apply {
-      (_: any, __: any, args: OOMElement.OOMElementArgs): OOMElementProxy
+      (_: any, __: any, args: OOMElement.OOMElementArgs): OOMElementProxy<any>
     }
 
     interface CommonOrigin {
@@ -1069,9 +1069,77 @@ declare module '@notml/core' {
        * В качестве тега используется имя класса или `static tagName`
        */
       define: CustomElement.defineCustomElement
+
+      a: OOMProxy.createElementProxy<HTMLAnchorElement>
+      abbr: OOMProxy.createElementProxy<HTMLElement>
+      address: OOMProxy.createElementProxy<HTMLElement>
+      area: OOMProxy.createElementProxy<HTMLAreaElement>
+      article: OOMProxy.createElementProxy<HTMLElement>
+      aside: OOMProxy.createElementProxy<HTMLElement>
+      audio: OOMProxy.createElementProxy<HTMLAudioElement>
+      b: OOMProxy.createElementProxy<HTMLElement>
+      blockquote: OOMProxy.createElementProxy<HTMLQuoteElement>
+      body: OOMProxy.createElementProxy<HTMLBodyElement>
+      br: OOMProxy.createElementProxy<HTMLElement>
+      button: OOMProxy.createElementProxy<HTMLButtonElement>
+      canvas: OOMProxy.createElementProxy<HTMLCanvasElement>
+      caption: OOMProxy.createElementProxy<HTMLTableCaptionElement>
+      cite: OOMProxy.createElementProxy<HTMLQuoteElement>
+      code: OOMProxy.createElementProxy<HTMLElement>
+      col: OOMProxy.createElementProxy<HTMLTableColElement>
+      colgroup: OOMProxy.createElementProxy<HTMLElement>
+      dialog: OOMProxy.createElementProxy<HTMLDialogElement>
+      div: OOMProxy.createElementProxy<HTMLDivElement>
+      footer: OOMProxy.createElementProxy<HTMLElement>
+      form: OOMProxy.createElementProxy<HTMLFormElement>
+      h1: OOMProxy.createElementProxy<HTMLElement>
+      h2: OOMProxy.createElementProxy<HTMLElement>
+      h3: OOMProxy.createElementProxy<HTMLElement>
+      h4: OOMProxy.createElementProxy<HTMLElement>
+      h5: OOMProxy.createElementProxy<HTMLElement>
+      h6: OOMProxy.createElementProxy<HTMLElement>
+      head: OOMProxy.createElementProxy<HTMLHeadElement>
+      header: OOMProxy.createElementProxy<HTMLElement>
+      hr: OOMProxy.createElementProxy<HTMLHRElement>
+      i: OOMProxy.createElementProxy<HTMLElement>
+      iframe: OOMProxy.createElementProxy<HTMLIFrameElement>
+      img: OOMProxy.createElementProxy<HTMLImageElement>
+      input: OOMProxy.createElementProxy<HTMLInputElement>
+      label: OOMProxy.createElementProxy<HTMLLabelElement>
+      li: OOMProxy.createElementProxy<HTMLLIElement>
+      main: OOMProxy.createElementProxy<HTMLElement>
+      meta: OOMProxy.createElementProxy<HTMLMetaElement>
+      nav: OOMProxy.createElementProxy<HTMLElement>
+      ol: OOMProxy.createElementProxy<HTMLOListElement>
+      optgroup: OOMProxy.createElementProxy<HTMLOptGroupElement>
+      option: OOMProxy.createElementProxy<HTMLOptionElement>
+      p: OOMProxy.createElementProxy<HTMLParagraphElement>
+      pre: OOMProxy.createElementProxy<HTMLPreElement>
+      progress: OOMProxy.createElementProxy<HTMLProgressElement>
+      q: OOMProxy.createElementProxy<HTMLQuoteElement>
+      s: OOMProxy.createElementProxy<HTMLElement>
+      section: OOMProxy.createElementProxy<HTMLElement>
+      select: OOMProxy.createElementProxy<HTMLSelectElement>
+      span: OOMProxy.createElementProxy<HTMLSpanElement>
+      strong: OOMProxy.createElementProxy<HTMLElement>
+      sub: OOMProxy.createElementProxy<HTMLElement>
+      sup: OOMProxy.createElementProxy<HTMLElement>
+      table: OOMProxy.createElementProxy<HTMLTableElement>
+      tbody: OOMProxy.createElementProxy<HTMLElement>
+      td: OOMProxy.createElementProxy<HTMLElement>
+      textarea: OOMProxy.createElementProxy<HTMLTextAreaElement>
+      tfoot: OOMProxy.createElementProxy<HTMLElement>
+      th: OOMProxy.createElementProxy<HTMLElement>
+      thead: OOMProxy.createElementProxy<HTMLElement>
+      title: OOMProxy.createElementProxy<HTMLTitleElement>
+      tr: OOMProxy.createElementProxy<HTMLElement>
+      track: OOMProxy.createElementProxy<HTMLTrackElement>
+      u: OOMProxy.createElementProxy<HTMLElement>
+      ul: OOMProxy.createElementProxy<HTMLUListElement>
+      video: OOMProxy.createElementProxy<HTMLVideoElement>
     }
 
-    interface OOMElementOrigin extends CommonOrigin {
+    interface OOMElementOrigin<T> extends CommonOrigin {
       /**
        * Добавление дочернего элемента к верстке в конец списка элементов.
        * Вернет замыкание на собственный OOMElementProxy для использования чейнинга
@@ -1080,7 +1148,7 @@ declare module '@notml/core' {
        * const mySpan = oom.span('My element new text')
        * const div = oom('div').append(mySpan)
        */
-      append(child: OOMElement.OOMChild): OOMElementProxy
+      append(child: OOMElement.OOMChild): OOMElementProxy<T>
       /**
        * Клонирует элемент и возвращает новый экземпляр OOM, содержащий копию DOM элемента
        *
@@ -1088,8 +1156,8 @@ declare module '@notml/core' {
        * const mySpan1 = oom.span('My element new text')
        * const mySpan2 = mySpan1.clone()
        */
-      clone(): OOMElementProxy
-      dom: CustomElement<any>
+      clone(): OOMElementProxy<T>
+      dom: T
     }
 
     interface OOMFragmentOrigin extends CommonOrigin {
@@ -1121,7 +1189,7 @@ declare module '@notml/core' {
   }
 
   /** Proxy для работы с OOM элементом */
-  interface OOMElementProxy extends OOMProxy.OOMElementOrigin {
+  interface OOMElementProxy<T> extends OOMProxy.OOMElementOrigin<T> {
     /**
      * Выполняет обновление атрибутов текущего элемента,
      *  а также добавление дочерних элемента к верстке в конец списка элементов.
@@ -1139,17 +1207,21 @@ declare module '@notml/core' {
      *     <span>ok</span>
      *   </div>
      */
-    (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMElementProxy
+    (...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>): OOMElementProxy<T>
     // @ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
     [tagName: string]: OOMProxy.createElementToFragmentProxy
   }
 
+  /**
+   * Краткая форма для объявления типа обернутого элемента
+   *
+   * @example import('@notml/core').OOM<HTMLSelectElement>
+   */
+  interface OOM<T> extends OOMElementProxy<T> { }
+
   /** Proxy для работы с элементом template */
   // @ts-ignore переопределение dom из OOMElementOrigin
-  interface OOMTemplateProxy extends OOMElementProxy {
-    // @ts-ignore проверка типа индекса в OOMElementProxy
-    dom: HTMLTemplateElement
-  }
+  interface OOMTemplateProxy extends OOMElementProxy<HTMLTemplateElement> { }
 
   interface OOMFragmentProxy extends OOMProxy.OOMFragmentOrigin {
     /**
@@ -1220,7 +1292,7 @@ declare module '@notml/core' {
     (
       tagName: HTMLElement | string | typeof HTMLElement,
       ...args: Array<OOMElement.OOMAttributes | OOMElement.OOMChild>
-    ): OOMElementProxy
+    ): OOMElementProxy<HTMLElement>
     /**
      * Вернет новый экземпляр Proxy элемента для создания верстки
      *
@@ -1243,7 +1315,7 @@ declare module '@notml/core' {
       ...args: Array<OOMElement.OOMChild>
     ): OOMFragmentProxy
     // @ts-ignore  проверка типа индекса (ts 2411) не подходит, а определения типа "все кроме указанных" нет
-    [tagName: string]: OOMProxy.createElementProxy
+    [tagName: string]: OOMProxy.createElementProxy<HTMLElement>
   }
 
   /** Фабрика Proxy для создания OOM элементов и сопутствующее API */

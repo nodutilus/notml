@@ -2,7 +2,7 @@
 import { assert, Test } from '@nodutilus/test'
 import { oom } from '@notml/core'
 
-const { document, HTMLDivElement, DocumentFragment } = window
+const { document, HTMLDivElement, HTMLInputElement, DocumentFragment } = window
 
 
 /** Проверка базового поведения создания верстки */
@@ -425,7 +425,6 @@ export default class BasicBehavior extends Test {
     assert.equal(div1.dom, div2.dom)
   }
 
-
   /**
    * При работе с тегом template для работы с вложенными элементами нужно использовать elm.content.
    * При этом clone из оом клонирует сам шаблон, а его содержимое клонируется через DOM API,
@@ -443,6 +442,18 @@ export default class BasicBehavior extends Test {
     assert.equal(tmpl.dom.outerHTML, '<template><div></div></template>')
     // @ts-ignore
     assert.equal(tmpl.dom.content.firstChild.outerHTML, '<div></div>')
+  }
+
+  /**
+   * Объявлены основные html теги для упрощения обращения и автоподстановки
+   */
+  ['Типизация .dom']() {
+    const input = oom.input()
+
+    input.dom.value = 'test'
+
+    assert.equal(input.dom.value, 'test')
+    assert.ok(input.dom instanceof HTMLInputElement)
   }
 
 }
